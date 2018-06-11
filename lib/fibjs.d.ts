@@ -522,6 +522,114 @@ declare module "assert" {
 declare module "test" {
     import * as asserts from "assert";
     export var assert: typeof asserts;
+
+    /**
+     *定义一个测试模块，可嵌套定义
+     *
+     * @export
+     * @param {string} name 定义模块名称
+     * @param {Function} block 模块初始化代码
+     */
+    export function describe(name: string, block: Function);
+
+    /**
+     *暂停测试的模块定义，test.setup 后可使用 describe.skip 调用
+     *
+     * @export 
+     * @param {string} name 定义模块名称
+     * @param {Function} block 模块初始化代码
+     */
+    export function xdescribe(name: string, block: Function);
+
+    /**
+     *独立测试的模块定义，test.setup 后可使用 describe.only 调用
+     *
+     * @export
+     * @param {string} name 定义模块名称
+     * @param {Function} block 模块初始化代码
+     */
+    export function odescribe(name: string, block: Function);
+
+    /**
+     *定义一个测试项目
+     *
+     * @export
+     * @param {string} name 定义项目名称
+     * @param {Function} block 测试内容
+     */
+    export function it(name: string, block: Function);
+
+    /**
+     *暂停测试的项目定义，test.setup 后可使用 it.skip 调用
+     *
+     * @export
+     * @param {string} name 定义项目名称
+     * @param {Function} block  测试内容
+     */
+    export function xit(name: string, block: Function);
+
+    /**
+    *独立测试的项目定义，test.setup 后可使用 it.only 调用
+    *
+    * @export
+    * @param {string} name 定义项目名称
+    * @param {Function} block  测试内容
+    */
+    export function oit(name: string, block: Function);
+
+    /**
+     *定义当前测试模块进入事件
+     *
+     * @export
+     * @param {string} name 定义项目名称
+     * @param {Function} block  测试内容
+     */
+    export function before(func: Function);
+
+    /**
+    *定义当前测试模块退出事件
+    *
+    * @export
+    * @param {string} name 定义项目名称
+    * @param {Function} block  测试内容
+    */
+    export function after(func: Function);
+
+    /**
+     *定义当前测试模块测试项目进入事件
+     *
+     * @export
+     * @param {Function} func
+     */
+    export function beforeEach(func: Function);
+
+    /**
+     *定义当前测试模块测试项目退出事件
+     *
+     * @export
+     * @param {Function} func
+     */
+    export function afterEach(func: Function);
+
+    /**
+     *开始执行定义的测试模块
+     *
+     * @export
+     * @param {number} log 指定进行测试时的日志输出级别，ERROR 时，项目报错信息集中在报告后显示，低于 ERROR 时，输出信息随时显示，高于 ERROR 时，只显示报告
+     */
+    export function run(log: number);
+
+    /**
+     *初始化当前脚本的测试环境，将 test 模块方法复制为当前脚本全局变量
+     *
+     * @export
+     */
+    export function setup();
+
+    /**
+     * 设置和查询慢速测试警告阀值，以 ms 为单位，缺省为 75
+     */
+    export var slow:number;
 }
 //#endregion
 
