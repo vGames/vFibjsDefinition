@@ -14,3 +14,4 @@ import * as test from "test";
  console.log(Map)
  console.log(undefined)
  console.log(global);
+

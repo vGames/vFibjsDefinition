@@ -629,7 +629,7 @@ declare module "test" {
     /**
      * 设置和查询慢速测试警告阀值，以 ms 为单位，缺省为 75
      */
-    export var slow:number;
+    export var slow: number;
 }
 //#endregion
 
@@ -2386,6 +2386,256 @@ declare var process: {
 declare function run(fname: string, args: Array<any>): void;
 //#endregion
 
+//#region===================================================coroutine========================================================
+declare module "coroutine" {
+    export var Lock: Lock;
+    export var Semaphore:Semaphore;
+    export var Condition:Condition;
+    export var Event:Event;
+
+    /**
+     *不同于操作系统的锁，纤程锁是纯逻辑实现，加锁与解锁负荷很小
+     *
+     * @interface Lock
+     */
+    interface Lock extends FibJS.Object {
+
+        /**
+         * 不同于操作系统的锁，纤程锁是纯逻辑实现，加锁与解锁负荷很小
+         */
+        new():Lock;
+
+        /**
+         *获取锁的拥有权
+         *@see acquire 方法用于获取锁的拥有权，当锁处于可获取状态时，此方法立即返回 true。
+         *   当锁不可获取，且 blocking 为 true，则当前纤程进入休眠，当其他纤程释放锁后，此方法返回 true。
+         *   当锁不可获取，且 blocking 为 false，则方法返回 false。
+         *
+         * @param {boolean} [blocking] 指定是否等待，为 true 时等待，缺省为真   
+         * @returns {boolean} 返回是否成功获取锁，为 true 表示成功获取
+         * @memberof Lock
+         */
+        acquire(blocking?: boolean): boolean;
+
+        /**
+         *  释放锁的拥有权
+         * 此方法将释放对锁的拥有权，如果当前纤程未拥有锁，此方法将抛出错误。
+         *
+         * @memberof Lock
+         */
+        release(): void;
+
+        /**
+         *查询当前等待任务数
+         *
+         * @returns {number}
+         * @memberof Lock
+         */
+        count(): number;
+    }
+
+    /**
+     *@see 对象 Semaphore
+     *   纤程信号量对象
+     *   信号量对象管理一个内部计数器，此计数器调用 acquire 或者 wait 后减一，调用 release 或者 post 后加一。 计数器不会减至负数，
+     *   因为 acquire 和 wait 在发现数值为 0 的时候，会休眠当前纤程，直至其它纤程通过 release 或 post 增加计数器的值。
+     *   信号量常用的场合是限制资源并发使用，以及生产者/消费者模式的应用。
+     * 
+     * @example 以数据库请求为例，限制资源并发使用的情形：
+     * ```js
+     *          var maxconnections = 5;
+     *          var l = new coroutine.Semaphore(maxconnections);
+     *          
+    *             ......
+     *
+     *           l.acquire();
+    *              var conn = connectdb()
+     *             .....
+     *          conn.close();
+     *          l.release();
+     * ```js
+     * 
+     * 生产者/消费者模式通常则将信号量与队列配合使用。生产者向队列中加入数据，并 post 一个信号，消费者则先 wait 信号，获取信号后去队查询取数据。
+     *
+     * @interface Semaphore
+     * @extends {FibJS.Object}
+     */
+    interface Semaphore extends FibJS.Object {
+
+        /**
+         * @param {number} value 计数器初始数值
+         */
+        new(value?:number):Semaphore;
+
+        /**
+         *等待一个信号量，等同于 acquire(true)
+         *
+         * @memberof Semaphore
+         */
+        wait():void;
+
+        /**
+         *释放一个信号量，等同于 release()
+         *
+         * @memberof Semaphore
+         */
+        post():void;
+
+        /**
+         *尝试获取一个信号，如不能获取，则立即返回并返回 false，等同于 acquire(false)
+         *
+         * @memberof Semaphore
+         */
+        trywait():void;
+
+        /**
+         *获取锁的拥有权
+         *@see
+         * acquire 方法用于获取锁的拥有权，当锁处于可获取状态时，此方法立即返回 true。
+         * 当锁不可获取，且 blocking 为 true，则当前纤程进入休眠，当其他纤程释放锁后，此方法返回 true。
+         * 当锁不可获取，且 blocking 为 false，则方法返回 false。
+         *
+         * @param {boolean} [blocking] 指定是否等待，为 true 时等待，缺省为真
+         * @returns {boolean} 返回是否成功获取锁，为 true 表示成功获取
+         * @memberof Semaphore
+         */
+        acquire(blocking?:boolean):boolean;
+
+        /**
+         *释放锁的拥有权
+         *此方法将释放对锁的拥有权，如果当前纤程未拥有锁，此方法将抛出错误。
+         *
+         * @memberof Semaphore
+         */
+        release():void;
+
+        /**
+         *查询当前等待任务数
+         *
+         * @returns {number}
+         * @memberof Semaphore
+         */
+        count():number;
+    }
+
+    /**
+     *条件变量对象
+     *@see
+     * 条件变量是利用纤程间共享的全局变量来进行同步的一种机制，主要包括两个动作： 1）一个线程等待某个条件成立，而将自己挂起； 2）
+     * 另一个线程使条件成立，并通知等待的纤程向下执行。
+     * 
+     * 为了防止竞争，每个条件变量都需要一个Lock的配合（Lock可自行显式创建并传递进来，也可交由fibjs为您创建）
+     * 通过使用条件变量，可以利用一个条件变量控制一批纤程的开关；
+     * 
+     * @example
+     * ```js
+     * var coroutine = require("coroutine");
+     * var cond = new coroutine.Condition();
+     * var ready = false;
+     * var state = "ready";
+     * function funcwait() {
+     *           cond.acquire();
+     *           while (!ready)
+     *               cond.wait();
+     *            state = "go"
+     *          cond.release();
+     * }
+     * 
+     * coroutine.start(funcwait);
+     * cond.acquire();
+     * console.log(state)
+     * ready = true;
+     * cond.notify();
+     * coroutine.sleep();
+     * console.log(state);
+     * 
+     * ```js
+     *
+     * @interface Condition
+     * @extends {FibJS.Object}
+     */
+    interface Condition extends Lock{
+
+        
+        new(lock?:Lock);
+
+        /**
+         *使纤程进入阻塞状态
+         *
+         * @memberof Condition
+         */
+        wait():void;
+
+        /**
+         *通知一个被阻塞的纤程（最后加入纤程池的）向下继续执行
+         *
+         * @memberof Condition
+         */
+        notify():void;
+
+        /**
+         *通知所有被阻塞的纤程向下继续执行
+         *
+         * @memberof Condition
+         */
+        notifyAll():void;
+    }
+
+    /**
+     *通过一个事件达到对一组纤程进行控制的目的（事件对象的状态为bool类型）
+     *
+     * @interface Event
+     * @extends {Lock}
+     */
+    interface Event extends Lock{
+
+        /**
+         * e 指定是否等待，为 true 时等待，缺省为 false
+         */        
+        new(e?:boolean):Event;
+
+        /**
+         *判断事件对象是否为真
+         *
+         * @returns {boolean}
+         * @memberof Event
+         */
+        isSet():boolean;
+
+        /**
+         *激活事件（将事件状态改为true），并调用pulse()
+         *
+         * @memberof Event
+         */
+        set():void;
+
+        /**
+         *激活等待该事件的所有纤程
+         *
+         * @memberof Event
+         */
+        pulse():void;
+
+        /**
+         *重置事件（将事件状态改为false）
+         *
+         * @memberof Event
+         */
+        clear():void;
+    }
+}
+//#endregion
+
+
+//#region===================================================events=========================================================
+// declare module "events" {
+//      export = EventEmitter;
+// }
+//#endregion
+
+//region======================================================encoding=======================================================
+
+//#endregion
 //#region ===================================================net========================================================
 declare module "net" {
 
