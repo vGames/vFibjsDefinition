@@ -6,6 +6,8 @@
  * @Last Modified Time: Jun 10, 2018 8:10 PM
  * @Description: Modify Here, Please 
  */
+import * as assert from "assert";
+import * as test from "test";
 
  console.log(new Object())
  console.log(Set)
