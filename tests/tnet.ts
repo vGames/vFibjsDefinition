@@ -8,10 +8,10 @@
  */
 import * as assert from "assert";
 import * as test from "test";
+import * as e from "events";
 
  console.log(new Object())
  console.log(Set)
  console.log(Map)
  console.log(undefined)
  console.log(global);
-

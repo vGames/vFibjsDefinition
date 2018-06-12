@@ -94,7 +94,7 @@ declare module "assert" {
     export function strictEqual(actual?: FibJS.Object, expected?: FibJS.Object, msg?: string);
 
     /**
-     *测试数值不严格等于预期值，相等则断言失败
+     *测试数值不严格等于预期值，相等则断言失
      *
      * @export
      * @param {FibJS.Object} [actual] 要测试的数值
@@ -827,6 +827,197 @@ declare namespace FibJS {
          * @memberof Worker
          */
         static defaultMaxListeners: number;
+    }
+
+    /**
+     *
+     *
+     * @export
+     * @class EventEmitter
+     */
+    export class EventEmitter {
+
+        /**
+         *Creates an instance of EventEmitter.
+         * @memberof EventEmitter
+         */
+        constructor();
+
+        /**
+         * 默认全局最大监听器数
+         *
+         * @static
+         * @type {number}
+         * @memberof EventEmitter
+         */
+        static defaultMaxListeners: number;
+
+        /**
+         *绑定一个事件处理函数到对象
+         *
+         * @param {string} ev 指定事件的名称
+         * @param {Function} func 指定事件处理函数
+         * @memberof EventEmitter 返回成功绑定的数量，如果函数已绑定则返回 
+         */
+        on(ev: string, func: Function): this;
+
+        /**
+         *绑定一个事件处理函数到对象
+         *
+         * @param {Object} map 指定事件映射关系，对象属性名称将作为事件名称，属性的值将作为事件处理函数
+         * @returns {Object} 返回事件对象本身，便于链式调用
+         * @memberof EventEmitter
+         */
+        on(map: Object): this;
+
+        /**
+         *绑定一个事件处理函数到对象
+         *
+         * @param {string} ev 指定事件的名称
+         * @param {Function} func  指定事件处理函数
+         * @returns {Object} 返回事件对象本身，便于链式调用
+         * @memberof EventEmitter
+         */
+        addListener(ev: string, func: Function): this;
+
+        /**
+         *绑定一个事件处理函数到对象起始
+         *
+         * @param {string} ev 指定事件的名称
+         * @param {Function} func 指定事件处理函数
+         * @returns {EventEmitter} 返回成功绑定的数量，如果函数已绑定则返回 0
+         * @memberof EventEmitter
+         */
+        prependListener(ev: string, func: Function): this;
+
+        /**
+         *绑定一个事件处理函数到对象起始
+         *
+         * @param {Object} map 指定事件映射关系，对象属性名称将作为事件名称，属性的值将作为事件处理函数
+         * @returns {EventEmitter}
+         * @memberof EventEmitter
+         */
+        prependListener(map: Object): this;
+
+        /**
+         *绑定一个一次性事件处理函数到对象，一次性处理函数只会触发一次
+         *
+         * @param {string} ev 指定事件的名称
+         * @param {Function} func  指定事件处理函数
+         * @returns {EventEmitter}
+         * @memberof EventEmitter
+         */
+        once(ev: string, func: Function): this;
+
+        /**
+         *绑定一个事件处理函数到对象起始
+         *
+         * @param {string} ev 指定事件的名称
+         * @param {Function} func 指定事件处理函数
+         * @returns {this} 返回成功绑定的数量，如果函数已绑定则返回 0
+         * @memberof EventEmitter
+         */
+        prependOnceListener(ev:string,func:Function):number;
+
+        /**
+         *绑定一个事件处理函数到对象起始
+         *
+         * @param {Object} map
+         * @returns {this} 返回成功绑定的数量，如果函数已绑定则返回 0
+         * @memberof EventEmitter
+         */
+        prependOnceListener(map:Object):number;
+
+        /**
+         *从对象处理队列中取消指定函数
+         *
+         * @param {string} ev 指定事件的名称
+         * @param {Function} func 指定事件处理函数
+         * @returns {this} 返回事件对象本身，便于链式调用
+         * @memberof EventEmitter
+         */
+        off(ev:string,func:Function):this;
+
+        /**
+         *从对象处理队列中取消指定函数
+         *
+         * @param {Object} map 指定事件映射关系，对象属性名称作为事件名称，属性的值作为事件处理函数
+         * @returns {this} 返回事件对象本身，便于链式调用
+         * @memberof EventEmitter
+         */
+        off(map:Object):this;
+
+        /**
+         *从对象处理队列中取消指定函数
+         *
+         * @param {string} ev 指定事件的名称
+         * @param {Function} func 指定事件处理函数
+         * @returns {this} 返回事件对象本身，便于链式调用
+         * @memberof EventEmitter
+         */
+        removeListener(ev:string,func:Function):this;
+
+        /**
+         *取消对象处理队列中的全部函数
+         *
+         * @param {string} ev 指定事件的名称
+         * @returns {this} 返回事件对象本身，便于链式调用
+         * @memberof EventEmitter
+         */
+        removeListener(ev:string):this;
+
+        /**
+         *从对象处理队列中取消所有事件的所有监听器， 如果指定事件，则移除指定事件的所有监听器。
+         *
+         * @param {Array<string>} evs 指定事件的名称
+         * @returns {this} 返回事件对象本身，便于链式调用
+         * @memberof EventEmitter
+         */
+        removeAllListeners(evs:Array<string>):this;
+
+        /**
+         *监听器的默认限制的数量，仅用于兼容
+         *
+         * @param {number} n 指定事件的数量
+         * @memberof EventEmitter 
+         */
+        setMaxListeners(n:number):void;
+
+        /**
+         *查询对象指定事件的监听器数组
+         *
+         * @param {string} ev
+         * @returns {Array<EventEmitter>} 返回指定事件的监听器数组
+         * @memberof EventEmitter
+         */
+        listeners(ev:string):Array<EventEmitter>;
+
+        /**
+         *查询对象指定事件的监听器数量
+         *
+         * @param {string} ev
+         * @returns {number}
+         * @memberof EventEmitter
+         */
+        listenerCount(ev:string):number;
+
+        /**
+         *查询监听器事件名称
+         *
+         * @returns {Array<string>}
+         * @memberof EventEmitter
+         */
+        eventNames():Array<string>;
+
+        /**
+         *主动触发一个事件
+         *
+         * @param {string} ev 事件名称
+         * @param {*} args 事件参数，将会传递给事件处理函数
+         * @returns 返回事件触发状态，有响应事件返回 true，否则返回 false
+         * @memberof EventEmitter
+         */
+        emit(ev:string,...args):boolean;
     }
 }
 
@@ -2389,9 +2580,9 @@ declare function run(fname: string, args: Array<any>): void;
 //#region===================================================coroutine========================================================
 declare module "coroutine" {
     export var Lock: Lock;
-    export var Semaphore:Semaphore;
-    export var Condition:Condition;
-    export var Event:Event;
+    export var Semaphore: Semaphore;
+    export var Condition: Condition;
+    export var Event: Event;
 
     /**
      *不同于操作系统的锁，纤程锁是纯逻辑实现，加锁与解锁负荷很小
@@ -2403,7 +2594,7 @@ declare module "coroutine" {
         /**
          * 不同于操作系统的锁，纤程锁是纯逻辑实现，加锁与解锁负荷很小
          */
-        new():Lock;
+        new(): Lock;
 
         /**
          *获取锁的拥有权
@@ -2465,28 +2656,28 @@ declare module "coroutine" {
         /**
          * @param {number} value 计数器初始数值
          */
-        new(value?:number):Semaphore;
+        new(value?: number): Semaphore;
 
         /**
          *等待一个信号量，等同于 acquire(true)
          *
          * @memberof Semaphore
          */
-        wait():void;
+        wait(): void;
 
         /**
          *释放一个信号量，等同于 release()
          *
          * @memberof Semaphore
          */
-        post():void;
+        post(): void;
 
         /**
          *尝试获取一个信号，如不能获取，则立即返回并返回 false，等同于 acquire(false)
          *
          * @memberof Semaphore
          */
-        trywait():void;
+        trywait(): void;
 
         /**
          *获取锁的拥有权
@@ -2499,7 +2690,7 @@ declare module "coroutine" {
          * @returns {boolean} 返回是否成功获取锁，为 true 表示成功获取
          * @memberof Semaphore
          */
-        acquire(blocking?:boolean):boolean;
+        acquire(blocking?: boolean): boolean;
 
         /**
          *释放锁的拥有权
@@ -2507,7 +2698,7 @@ declare module "coroutine" {
          *
          * @memberof Semaphore
          */
-        release():void;
+        release(): void;
 
         /**
          *查询当前等待任务数
@@ -2515,7 +2706,7 @@ declare module "coroutine" {
          * @returns {number}
          * @memberof Semaphore
          */
-        count():number;
+        count(): number;
     }
 
     /**
@@ -2554,31 +2745,31 @@ declare module "coroutine" {
      * @interface Condition
      * @extends {FibJS.Object}
      */
-    interface Condition extends Lock{
+    interface Condition extends Lock {
 
-        
-        new(lock?:Lock);
+
+        new(lock?: Lock);
 
         /**
          *使纤程进入阻塞状态
          *
          * @memberof Condition
          */
-        wait():void;
+        wait(): void;
 
         /**
          *通知一个被阻塞的纤程（最后加入纤程池的）向下继续执行
          *
          * @memberof Condition
          */
-        notify():void;
+        notify(): void;
 
         /**
          *通知所有被阻塞的纤程向下继续执行
          *
          * @memberof Condition
          */
-        notifyAll():void;
+        notifyAll(): void;
     }
 
     /**
@@ -2587,12 +2778,12 @@ declare module "coroutine" {
      * @interface Event
      * @extends {Lock}
      */
-    interface Event extends Lock{
+    interface Event extends Lock {
 
         /**
          * e 指定是否等待，为 true 时等待，缺省为 false
-         */        
-        new(e?:boolean):Event;
+         */
+        new(e?: boolean): Event;
 
         /**
          *判断事件对象是否为真
@@ -2600,37 +2791,37 @@ declare module "coroutine" {
          * @returns {boolean}
          * @memberof Event
          */
-        isSet():boolean;
+        isSet(): boolean;
 
         /**
          *激活事件（将事件状态改为true），并调用pulse()
          *
          * @memberof Event
          */
-        set():void;
+        set(): void;
 
         /**
          *激活等待该事件的所有纤程
          *
          * @memberof Event
          */
-        pulse():void;
+        pulse(): void;
 
         /**
          *重置事件（将事件状态改为false）
          *
          * @memberof Event
          */
-        clear():void;
+        clear(): void;
     }
 }
 //#endregion
 
 
 //#region===================================================events=========================================================
-// declare module "events" {
-//      export = EventEmitter;
-// }
+declare module "events"{
+    
+}
 //#endregion
 
 //region======================================================encoding=======================================================
