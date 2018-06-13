@@ -2,6 +2,9 @@
  * https://github.com/fibjs/fibjs
  * fibjs typescript definition
  * 
+ * fibjs.d.ts的写法参考了node.d.ts
+ * thinks https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/a4a912a0cd1849fa7df0e5d909c8625fba04e49d/node/index.d.ts
+ * 
  * @CreateTime: Jun 10, 2018 11:28 PM
  * @Author: 544430497@qq.com
  * @Contact: 544430497@qq.com
@@ -31,6 +34,15 @@ interface SymbolConstructor {
     readonly iterator: symbol;
 }
 declare var Symbol: SymbolConstructor;
+
+interface NodeRequireFunction {
+    (id: string): any;
+}
+declare var require: NodeRequireFunction;
+
+type Integer = number;
+type Value = any;
+type Long = number;
 
 //#endregion
 
@@ -811,7 +823,7 @@ declare namespace FibJS {
      * @class Worker
      * @extends {Object}
      */
-    export class Worker extends Object {
+    export class Worker extends EventEmitter {
         /**
          *Creates an instance of Worker.
          * @param {string} path 指定 Worker 入口脚本，只接受绝对路径
@@ -827,6 +839,21 @@ declare namespace FibJS {
          * @memberof Worker
          */
         static defaultMaxListeners: number;
+
+        /**
+         * 查询和绑定接受 postMessage 消息事件，相当于 on("message", func);
+         *
+         * @memberof Worker
+         */
+        onmessage():void;
+
+        /**
+         *向 Master 或 Worker 发送消息，
+         *
+         * @param {Value} data 指定发送的消息内容
+         * @memberof Worker
+         */
+        postMessage(data:Value):void;
     }
 
     /**
@@ -917,7 +944,7 @@ declare namespace FibJS {
          * @returns {this} 返回成功绑定的数量，如果函数已绑定则返回 0
          * @memberof EventEmitter
          */
-        prependOnceListener(ev:string,func:Function):number;
+        prependOnceListener(ev: string, func: Function): number;
 
         /**
          *绑定一个事件处理函数到对象起始
@@ -926,7 +953,7 @@ declare namespace FibJS {
          * @returns {this} 返回成功绑定的数量，如果函数已绑定则返回 0
          * @memberof EventEmitter
          */
-        prependOnceListener(map:Object):number;
+        prependOnceListener(map: Object): number;
 
         /**
          *从对象处理队列中取消指定函数
@@ -936,7 +963,7 @@ declare namespace FibJS {
          * @returns {this} 返回事件对象本身，便于链式调用
          * @memberof EventEmitter
          */
-        off(ev:string,func:Function):this;
+        off(ev: string, func: Function): this;
 
         /**
          *从对象处理队列中取消指定函数
@@ -945,7 +972,7 @@ declare namespace FibJS {
          * @returns {this} 返回事件对象本身，便于链式调用
          * @memberof EventEmitter
          */
-        off(map:Object):this;
+        off(map: Object): this;
 
         /**
          *从对象处理队列中取消指定函数
@@ -955,7 +982,7 @@ declare namespace FibJS {
          * @returns {this} 返回事件对象本身，便于链式调用
          * @memberof EventEmitter
          */
-        removeListener(ev:string,func:Function):this;
+        removeListener(ev: string, func: Function): this;
 
         /**
          *取消对象处理队列中的全部函数
@@ -964,7 +991,7 @@ declare namespace FibJS {
          * @returns {this} 返回事件对象本身，便于链式调用
          * @memberof EventEmitter
          */
-        removeListener(ev:string):this;
+        removeListener(ev: string): this;
 
         /**
          *从对象处理队列中取消所有事件的所有监听器， 如果指定事件，则移除指定事件的所有监听器。
@@ -973,7 +1000,7 @@ declare namespace FibJS {
          * @returns {this} 返回事件对象本身，便于链式调用
          * @memberof EventEmitter
          */
-        removeAllListeners(evs:Array<string>):this;
+        removeAllListeners(evs: Array<string>): this;
 
         /**
          *监听器的默认限制的数量，仅用于兼容
@@ -981,7 +1008,7 @@ declare namespace FibJS {
          * @param {number} n 指定事件的数量
          * @memberof EventEmitter 
          */
-        setMaxListeners(n:number):void;
+        setMaxListeners(n: number): void;
 
         /**
          *查询对象指定事件的监听器数组
@@ -990,7 +1017,7 @@ declare namespace FibJS {
          * @returns {Array<EventEmitter>} 返回指定事件的监听器数组
          * @memberof EventEmitter
          */
-        listeners(ev:string):Array<EventEmitter>;
+        listeners(ev: string): Array<EventEmitter>;
 
         /**
          *查询对象指定事件的监听器数量
@@ -999,7 +1026,7 @@ declare namespace FibJS {
          * @returns {number}
          * @memberof EventEmitter
          */
-        listenerCount(ev:string):number;
+        listenerCount(ev: string): number;
 
         /**
          *查询监听器事件名称
@@ -1007,7 +1034,7 @@ declare namespace FibJS {
          * @returns {Array<string>}
          * @memberof EventEmitter
          */
-        eventNames():Array<string>;
+        eventNames(): Array<string>;
 
         /**
          *主动触发一个事件
@@ -1017,7 +1044,41 @@ declare namespace FibJS {
          * @returns 返回事件触发状态，有响应事件返回 true，否则返回 false
          * @memberof EventEmitter
          */
-        emit(ev:string,...args):boolean;
+        emit(ev: string, ...args): boolean;
+    }
+
+    class Fiber extends Object{
+
+        /**
+         *查询纤程的唯一 id
+         *
+         * @type {Long}
+         * @memberof Fiber
+         */
+        id:Long;
+
+        /**
+         *查询纤程的调用纤程
+         *
+         * @type {Fiber}
+         * @memberof Fiber
+         */
+        caller:Fiber;
+
+        /**
+         *询纤程的调用堆栈
+         *
+         * @type {string}
+         * @memberof Fiber
+         */
+        stack:string;
+
+        /**
+         *等待纤程结束
+         *
+         * @memberof Fiber
+         */
+        join():void;
     }
 }
 
@@ -2583,6 +2644,95 @@ declare module "coroutine" {
     export var Semaphore: Semaphore;
     export var Condition: Condition;
     export var Event: Event;
+    export var Worker:FibJS.Worker;
+
+    /**
+     *启动一个纤程并返回纤程对象
+     *
+     * @export
+     * @param {Function} func 制定纤程执行的函数
+     * @param {*} args 可变参数序列，此序列会在纤程内传递给函数
+     * @returns {FibJS.Fiber}
+     */
+    export function start(func:Function,...args):FibJS.Fiber;
+
+    /**
+     *并行执行一组函数，并等待返回
+     *
+     * @export
+     * @param {Array<Function>} funcs 并行执行的函数数组
+     * @param {Integer} [fibers]  限制并发 fiber 数量，缺省为 -1，启用与 funcs 数量相同 fiber
+     * @returns {Array<Value>}
+     */
+    export function parallel(funcs:Array<Function>,fibers?:Integer):Array<Value>;
+
+    /**
+     *并行执行一个函数处理一组数据，并等待返回
+     *
+     * @export
+     * @param {Array<Value>} datas 并行执行的数据数组
+     * @param {Function} func 并行执行的函数
+     * @param {Integer} [fibers] 限制并发 fiber 数量，缺省为 -1，启用与 datas 数量相同 fiber
+     * @returns {Array<Value>}
+     */
+    export function parallel(datas:Array<Value>,func:Function,fibers?:Integer):Array<Value>;
+
+    /**
+     *并行执行一个函数多次，并等待返回
+     *
+     * @export
+     * @param {Function} func 并行执行的函数数
+     * @param {Integer} num  重复任务数量
+     * @param {Integer} [fibers] 限制并发 fiber 数量，缺省为 -1，启用与 funcs 数量相同 fiber
+     * @returns {Array<Value>}
+     */
+    export function parallel(func:Function,num:Integer,fibers?:Integer):Array<Value>;
+
+    /**
+     *并行执行一组函数，并等待返回
+     *
+     * @export
+     * @param {...Array<Function>} funcs  一组并行执行的函数
+     * @returns {Array<Value>}  返回函数执行结果的数组
+     */
+    export function parallel(...funcs:Array<Function>):Array<Value>;
+
+    /**
+     *返回当前纤程
+     *
+     * @export
+     * @returns {FibJS.Fiber} 当前纤程对象
+     */
+    export function current():FibJS.Fiber;
+
+    /**
+     * 暂停当前纤程指定的时间
+     *@async
+     *
+     * @export
+     * @param {Integer} [ms] 指定要暂停的时间，以毫秒为单位，缺省为 0，即有空闲立即回恢复运行
+     */
+    export function sleep(ms?:Integer):void;
+
+    /**
+     * 返回当前正在运行的全部 fiber 数组
+     */
+    export const fibers:Array<FibJS.Fiber>;
+
+    /**
+     * 查询和设置空闲 Fiber 数量，服务器抖动较大时可适度增加空闲 Fiber 数量。缺省为 256
+     */
+    export const spareFibers:Integer;
+
+    /**
+     * 查询当前 vm 编号
+     */
+    export const vmid:Integer;
+
+    /**
+     * 修改和查询本 vm 的输出级别，用以过滤输出信息，缺省为 console.NOTSET，全部输出
+     */
+    export const loglevel:Integer;
 
     /**
      *不同于操作系统的锁，纤程锁是纯逻辑实现，加锁与解锁负荷很小
@@ -2820,13 +2970,245 @@ declare module "coroutine" {
 
 //#region===================================================events=========================================================
 declare module "events"{
-    
+    class internal extends FibJS.EventEmitter { }
+
+    namespace internal {
+        export class EventEmitter extends internal {
+        
+        }
+    }
+
+    export = internal;
+}
+
+//#endregion
+
+//#region======================================================encoding=======================================================
+
+declare module "base32" {
+    /**
+     *以 base32 方式编码数据
+     *
+     * @export
+     * @param {Buffer} data 要编码的数据
+     * @returns {string}返回编码的字符串
+     */
+    export function encode(data: Buffer): string;
+
+    /**
+     *以 base32 方式解码字符串为二进制数据
+     *
+     * @export
+     * @param {string} data 要解码的字符串
+     * @returns {Buffer}  返回解码的二进制数据
+     */
+    export function decode(data: string): Buffer;
+}
+
+declare module "base64" {
+
+    /**
+     *以 base64 方式编码数据
+     *
+     * @export
+     * @param {Buffer} data 要编码的数据
+     * @param {boolean} [url] 指定是否使用 url 安全字符编码
+     * @returns {string} 返回编码的字符串
+     */
+    export function encode(data: Buffer, url?: boolean): string;
+
+    /**
+     *以 base64 方式解码字符串为二进制数据
+     *
+     * @export
+     * @param {string} data 要解码的字符串
+     * @returns {string}  返回解码的二进制数据
+     */
+    export function decode(data: string): string;
+}
+
+declare module "base64vlq" {
+    /**
+       *以 base64vlq 方式编码数据
+       *
+       * @export
+       * @param {number} data 要编码的数据
+       * @returns {string}返回编码的字符串
+       */
+    export function encode(data: Integer): string;
+
+    /**
+     *以 base64vlq 方式编码数据
+     *
+     * @export
+     * @param {Array<any>} data 要编码的数据
+     * @returns {string} 返回编码的字符串
+     */
+    export function encode(data: Array<any>): string;
+
+    /**
+     *以 base64vlq 方式解码字符串为二进制数据
+     *
+     * @export
+     * @param {string} data 要解码的字符串
+     * @returns {string}  返回解码的二进制数据
+     */
+    export function decode(data: string): string;
+}
+
+declare module "hex" {
+    /**
+         *以 hex 方式编码数据
+         *
+         * @export
+         * @param {Buffer} data 要编码的数据
+         * @returns {string}返回编码的字符串
+         */
+    export function encode(data: Buffer): string;
+
+    /**
+     *以 hex 方式解码字符串为二进制数据
+     *
+     * @export
+     * @param {string} data 要解码的字符串
+     * @returns {string}  返回解码的二进制数据
+     */
+    export function decode(data: string): Buffer;
+}
+
+declare module "iconv" {
+    /**
+     *用 iconv 将文本转换为二进制数据
+     *
+     * @export
+     * @param {string} charset 指定字符集
+     * @param {string} data 要转换的文本
+     * @returns {Buffer} 返回解码的二进制数据
+     */
+    export function encode(charset: string, data: string): Buffer;
+
+    /**
+     *用 iconv 将 Buffer 内容转换为文本
+     *
+     * @export
+     * @param {string} charset  指定字符集
+     * @param {Buffer} data 要转换的二进制数据
+     * @returns {string} 返回编码的字符串
+     */
+    export function decode(charset: string, data: Buffer): string;
+
+    /**
+     *检测字符集是否被支持
+     *
+     * @export
+     * @param {string} charset 指定字符集
+     * @returns {boolean} 返回是否支持该字符集
+     */
+    export function isEncoding(charset: string): boolean;
+}
+
+declare module "json" {
+    /**
+     *以 json 格式编码变量
+     *
+     * @export
+     * @param {Value} data  要编码的变量
+     * @returns {string} 返回编码的字符串
+     */
+    export function encode(data: Value): string;
+
+    /**
+     *以 json 方式解码字符串为一个变量
+     *
+     * @export
+     * @param {string} data 要解码的字符串
+     * @returns {Value} 返回解码的变量
+     */
+    export function decode(data: string): Value;
+}
+
+declare module "bson" {
+    /**
+      *以 bson 格式编码变量
+      *
+      * @export
+      * @param {FibJS.Object} data 要编码的数据
+      * @returns {Buffer}返回编码的二进制数据
+      */
+    export function encode(data: FibJS.Object): Buffer;
+
+    /**
+     *以 bson 方式解码字符串为一个变量
+     *
+     * @export
+     * @param {Buffer} data 要解码的二进制数据
+     * @returns {FibJS.Object}  返回解码的变量
+     */
+    export function decode(data: Buffer): FibJS.Object;
+}
+
+declare module "encoding" {
+    import * as Base32 from "base32";
+    import * as Base64 from "base64";
+    import * as Base64vlq from "base64vlq";
+    import * as Hex from "hex";
+    import * as Iconv from "iconv";
+    import * as Json from "json";
+    import * as Bson from "base32";
+
+    export var base32: typeof Base32;
+    export var base64: typeof Base64;
+    export var base64vlq: typeof Base64vlq;
+    export var hex: typeof Hex;
+    export var iconv: typeof Iconv;
+    export var json: typeof Json;
+    export var bson: typeof Bson;
+
+    /**
+     *将字符串编码为 javascript 转义字符串，用以在 javascript 代码中包含文本
+     *
+     * @export
+     * @param {string} str 要编码的字符串
+     * @param {boolean} [json] 是否生成json兼容字符串
+     * @returns {string}返回编码的字符串
+     */
+    export function jsstr(str: string, json?: boolean): string;
+
+    /**
+     *url 字符串安全编码
+     *
+     * @export
+     * @param {string} str 要编码的 url
+     * @returns {string} 返回编码的字符串
+     */
+    export function encodeURI(str: string): string;
+
+    /**
+     *url 部件字符串安全编码
+     *
+     * @export
+     * @param {string} url 要编码的 url
+     * @returns {string} 返回编码的字符串
+     */
+    export function encodeURIComponent(url: string): string;
+
+    /**
+     *url 安全字符串解码
+     *
+     * @export
+     * @param {string} url 要解码的 url
+     * @returns {string} 返回解码的字符串
+     */
+    export function decodeURI(url: string): string;
 }
 //#endregion
 
-//region======================================================encoding=======================================================
+//#region=====================================================constants============================================================
+declare module "constants"{
 
+}
 //#endregion
+
 //#region ===================================================net========================================================
 declare module "net" {
 
