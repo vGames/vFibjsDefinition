@@ -40,6 +40,7 @@ interface NodeRequireFunction {
 }
 declare var require: NodeRequireFunction;
 
+//type placeholder
 type Integer = number;
 type Value = any;
 type Long = number;
@@ -55,452 +56,452 @@ declare module "assert" {
      * @param {FibJS.Object} [actual]
      * @param {string} [msg]
      */
-    export function Function(actual?: FibJS.Object, msg?: string);
+    export function Function(actual?: Value, msg?: string);
 
     /**
      *测试数值为真，为假则断言失败
      *
      * @export
-     * @param {FibJS.Object} [actual]
+     * @param {Value} [actual]
      * @param {string} [msg]
      */
-    export function ok(actual?: FibJS.Object, msg?: string);
+    export function ok(actual?: Value, msg?: string);
 
     /**
      *测试数值为假，为真则断言失败
      *
      * @export
-     * @param {FibJS.Object} [actual]
+     * @param {Value} [actual]
      * @param {string} [msg]
      */
-    export function notOk(actual?: FibJS.Object, msg?: string);
+    export function notOk(actual?: Value, msg?: string);
 
     /**
      *测试数值等于预期值，不相等则断言失败
      *
      * @export
-     * @param {FibJS.Object} [actual]  要测试的数值
-     * @param {FibJS.Object} [expected] 预期的数值
+     * @param {Value} [actual]  要测试的数值
+     * @param {Value} [expected] 预期的数值
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function equals(actual?: FibJS.Object, expected?: FibJS.Object, msg?: string);
+    export function equals(actual?: Value, expected?: Value, msg?: string);
 
     /**
      *测试数值等于预期值，不相等则断言失败
      *
      * @export
-     * @param {FibJS.Object} [actual] 要测试的数值
-     * @param {FibJS.Object} [expected]  预期的数值
+     * @param {Value} [actual] 要测试的数值
+     * @param {Value} [expected]  预期的数值
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function notEqual(actual?: FibJS.Object, expected?: FibJS.Object, msg?: string);
+    export function notEqual(actual?: Value, expected?: Value, msg?: string);
 
     /**
      * 测试数值严格等于预期值，不相等则断言失败
      *
      * @export
-     * @param {FibJS.Object} [actual]  要测试的数值
-     * @param {FibJS.Object} [expected] 预期的数值
+     * @param {Value} [actual]  要测试的数值
+     * @param {Value} [expected] 预期的数值
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function strictEqual(actual?: FibJS.Object, expected?: FibJS.Object, msg?: string);
+    export function strictEqual(actual?: Value, expected?: Value, msg?: string);
 
     /**
      *测试数值不严格等于预期值，相等则断言失
      *
      * @export
-     * @param {FibJS.Object} [actual] 要测试的数值
-     * @param {FibJS.Object} [expected] 预期的数值
+     * @param {Value} [actual] 要测试的数值
+     * @param {Value} [expected] 预期的数值
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function notStrictEqual(actual?: FibJS.Object, expected?: FibJS.Object, msg?: string);
+    export function notStrictEqual(actual?: Value, expected?: Value, msg?: string);
 
     /**
      *测试数值深度等于预期值，不相等则断言失败
      *
      * @export
-     * @param {FibJS.Object} [actual] 要测试的数值
-     * @param {FibJS.Object} [expected] 预期的数值
+     * @param {Value} [actual] 要测试的数值
+     * @param {Value} [expected] 预期的数值
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function deepEqual(actual?: FibJS.Object, expected?: FibJS.Object, msg?: string);
+    export function deepEqual(actual?: Value, expected?: Value, msg?: string);
 
 
     /**
      *测试数值不深度等于预期值，相等则断言失败
      *
      * @export
-     * @param {FibJS.Object} [actual] 要测试的数值
-     * @param {FibJS.Object} [expected] 预期的数值
+     * @param {Value} [actual] 要测试的数值
+     * @param {Value} [expected] 预期的数值
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function notDeepEqual(actual?: FibJS.Object, expected?: FibJS.Object, msg?: string);
+    export function notDeepEqual(actual?: Value, expected?: Value, msg?: string);
 
 
     /**
      *测试数值近似等于预期值，否则断言失败
      *
      * @export
-     * @param {FibJS.Object} actual  要测试的数值
-     * @param {FibJS.Object} expected 预期的数值
-     * @param {FibJS.Object} delta 近似的小数精度
+     * @param {Value} actual  要测试的数值
+     * @param {Value} expected 预期的数值
+     * @param {Value} delta 近似的小数精度
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function closeTo(actual: FibJS.Object, expected: FibJS.Object, delta: FibJS.Object, msg?: string);
+    export function closeTo(actual: Value, expected: Value, delta: Value, msg?: string);
 
     /**
       *测试数值不近似等于预期值，否则断言失败
       *
       * @export
-      * @param {FibJS.Object} actual  要测试的数值
-      * @param {FibJS.Object} expected 预期的数值
-      * @param {FibJS.Object} delta 近似的小数精度
+      * @param {Value} actual  要测试的数值
+      * @param {Value} expected 预期的数值
+      * @param {Value} delta 近似的小数精度
       * @param {string} [msg] 断言失败时的提示信息
       */
-    export function notCloseTo(actual: FibJS.Object, expected: FibJS.Object, delta: FibJS.Object, msg?: string);
+    export function notCloseTo(actual: Value, expected: Value, delta: Value, msg?: string);
 
     /**
     * 测试数值小于预期值，大于或等于则断言失败
     *
     * @export
-    * @param {FibJS.Object} [actual]  要测试的数值
-    * @param {FibJS.Object} [expected] 预期的数值
+    * @param {Value} [actual]  要测试的数值
+    * @param {Value} [expected] 预期的数值
     * @param {string} [msg] 断言失败时的提示信息
     */
-    export function lessThan(actual?: FibJS.Object, expected?: FibJS.Object, msg?: string);
+    export function lessThan(actual?: Value, expected?: Value, msg?: string);
 
     /**
     * 测试数值不小于预期值，小于则断言失败
     *
     * @export
-    * @param {FibJS.Object} [actual]  要测试的数值
-    * @param {FibJS.Object} [expected] 预期的数值
+    * @param {Value} [actual]  要测试的数值
+    * @param {Value} [expected] 预期的数值
     * @param {string} [msg] 断言失败时的提示信息
     */
-    export function notLessThan(actual?: FibJS.Object, expected?: FibJS.Object, msg?: string);
+    export function notLessThan(actual?: Value, expected?: Value, msg?: string);
 
     /**
    * 测试数值大于预期值，小于或等于则断言失败
    *
    * @export
-   * @param {FibJS.Object} [actual]  要测试的数值
-   * @param {FibJS.Object} [expected] 预期的数值
+   * @param {Value} [actual]  要测试的数值
+   * @param {Value} [expected] 预期的数值
    * @param {string} [msg] 断言失败时的提示信息
    */
-    export function greaterThan(actual?: FibJS.Object, expected?: FibJS.Object, msg?: string);
+    export function greaterThan(actual?: Value, expected?: Value, msg?: string);
 
     /**
      * 测试数值不大于预期值，大于则断言失败
      *
      * @export
-     * @param {FibJS.Object} [actual]  要测试的数值
-     * @param {FibJS.Object} [expected] 预期的数值
+     * @param {Value} [actual]  要测试的数值
+     * @param {Value} [expected] 预期的数值
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function notGreaterThan(actual?: FibJS.Object, expected?: FibJS.Object, msg?: string);
+    export function notGreaterThan(actual?: Value, expected?: Value, msg?: string);
 
     /**
      * 测试变量存在，为假则断言失败
      *
      * @export
-     * @param {FibJS.Object} [actual]  要测试的数值
+     * @param {Value} [actual]  要测试的数值
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function exist(actual?: FibJS.Object, msg?: string);
+    export function exist(actual?: Value, msg?: string);
 
     /**
      * 测试变量不存在，为真则断言失败
      *
      * @export
-     * @param {FibJS.Object} [actual]  要测试的数值
+     * @param {Value} [actual]  要测试的数值
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function notExist(actual?: FibJS.Object, msg?: string);
+    export function notExist(actual?: Value, msg?: string);
 
     /**
     *测试数值为布尔值真，否则断言失败
     *
     * @export
-    * @param {FibJS.Object} [actual]  要测试的数值
+    * @param {Value} [actual]  要测试的数值
     * @param {string} [msg] 断言失败时的提示信息
     */
-    export function isTrue(actual?: FibJS.Object, msg?: string);
+    export function isTrue(actual?: Value, msg?: string);
 
     /**
      *测试数值不为布尔值真，否则断言失败
      *
      * @export
-     * @param {FibJS.Object} [actual]  要测试的数值
+     * @param {Value} [actual]  要测试的数值
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function isNotTrue(actual?: FibJS.Object, msg?: string);
+    export function isNotTrue(actual?: Value, msg?: string);
 
     /**
      *测试数值不为布尔值真，否则断言失败
      *
      * @export
-     * @param {FibJS.Object} [actual]  要测试的数值
+     * @param {Value} [actual]  要测试的数值
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function isFalse(actual?: FibJS.Object, msg?: string);
+    export function isFalse(actual?: Value, msg?: string);
 
     /**
      *测试数值不为布尔值假，否则断言失败
      *
      * @export
-     * @param {FibJS.Object} [actual]  要测试的数值
+     * @param {Value} [actual]  要测试的数值
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function isNotFalse(actual?: FibJS.Object, msg?: string);
+    export function isNotFalse(actual?: Value, msg?: string);
 
     /**
     *测试数值为 Null，否则断言失败
     *
     * @export
-    * @param {FibJS.Object} [actual]  要测试的数值
+    * @param {Value} [actual]  要测试的数值
     * @param {string} [msg] 断言失败时的提示信息
     */
-    export function isNull(actual?: FibJS.Object, msg?: string);
+    export function isNull(actual?: Value, msg?: string);
 
     /**
      *测试数值不为 Null，否则断言失败
      *
      * @export
-     * @param {FibJS.Object} [actual]  要测试的数值
+     * @param {Value} [actual]  要测试的数值
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function isNotNull(actual?: FibJS.Object, msg?: string);
+    export function isNotNull(actual?: Value, msg?: string);
 
     /**
     *测试数值为 undefined，否则断言失败
     *
     * @export
-    * @param {FibJS.Object} [actual]  要测试的数值
+    * @param {Value} [actual]  要测试的数值
     * @param {string} [msg] 断言失败时的提示信息
     */
-    export function isUndefined(actual?: FibJS.Object, msg?: string);
+    export function isUndefined(actual?: Value, msg?: string);
 
     /**
     *测试数值不为 undefined，否则断言失败
     *
     * @export
-    * @param {FibJS.Object} [actual]  要测试的数值
+    * @param {Value} [actual]  要测试的数值
     * @param {string} [msg] 断言失败时的提示信息
     */
-    export function isDefined(actual?: FibJS.Object, msg?: string);
+    export function isDefined(actual?: Value, msg?: string);
 
     /**
    *测试数值不为 undefined，否则断言失败
    *
    * @export
-   * @param {FibJS.Object} [actual]  要测试的数值
+   * @param {Value} [actual]  要测试的数值
    * @param {string} [msg] 断言失败时的提示信息
    */
-    export function isFunction(actual?: FibJS.Object, msg?: string);
+    export function isFunction(actual?: Value, msg?: string);
 
     /**
     *测试数值不为函数，否则断言失败
     *
     * @export
-    * @param {FibJS.Object} [actual]  要测试的数值
+    * @param {Value} [actual]  要测试的数值
     * @param {string} [msg] 断言失败时的提示信息
     */
-    export function isNotFunction(actual?: FibJS.Object, msg?: string);
+    export function isNotFunction(actual?: Value, msg?: string);
 
     /**
      *测试数值为对象，否则断言失败
      *
      * @export
-     * @param {FibJS.Object} [actual]  要测试的数值
+     * @param {Value} [actual]  要测试的数值
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function isObject(actual?: FibJS.Object, msg?: string);
+    export function isObject(actual?: Value, msg?: string);
 
     /**
      *测试数值不为对象，否则断言失败
      *
      * @export
-     * @param {FibJS.Object} [actual]  要测试的数值
+     * @param {Value} [actual]  要测试的数值
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function isNotObject(actual?: FibJS.Object, msg?: string);
+    export function isNotObject(actual?: Value, msg?: string);
 
     /**
     *测试数值为数组，否则断言失败
     *
     * @export
-    * @param {FibJS.Object} [actual]  要测试的数值
+    * @param {Value} [actual]  要测试的数值
     * @param {string} [msg] 断言失败时的提示信息
     */
-    export function isArray(actual?: FibJS.Object, msg?: string);
+    export function isArray(actual?: Value, msg?: string);
 
     /**
     *测试数值不为数组，否则断言失败
     *
     * @export
-    * @param {FibJS.Object} [actual]  要测试的数值
+    * @param {Value} [actual]  要测试的数值
     * @param {string} [msg] 断言失败时的提示信息
     */
-    export function isNotArray(actual?: FibJS.Object, msg?: string);
+    export function isNotArray(actual?: Value, msg?: string);
 
     /**
     *测试数值为字符串，否则断言失败
     *
     * @export
-    * @param {FibJS.Object} [actual]  要测试的数值
+    * @param {Value} [actual]  要测试的数值
     * @param {string} [msg] 断言失败时的提示信息
     */
-    export function isString(actual?: FibJS.Object, msg?: string);
+    export function isString(actual?: Value, msg?: string);
 
     /**
      *测试数值不为字符串，否则断言失败
      *
      * @export
-     * @param {FibJS.Object} [actual]  要测试的数值
+     * @param {Value} [actual]  要测试的数值
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function isNotString(actual?: FibJS.Object, msg?: string);
+    export function isNotString(actual?: Value, msg?: string);
 
     /**
     *测试数值为数字，否则断言失败
     *
     * @export
-    * @param {FibJS.Object} [actual]  要测试的数值
+    * @param {Value} [actual]  要测试的数值
     * @param {string} [msg] 断言失败时的提示信息
     */
-    export function isNumber(actual?: FibJS.Object, msg?: string);
+    export function isNumber(actual?: Value, msg?: string);
 
     /**
      *测试数值不为数字，否则断言失败
      *
      * @export
-     * @param {FibJS.Object} [actual]  要测试的数值
+     * @param {Value} [actual]  要测试的数值
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function isNotNumber(actual?: FibJS.Object, msg?: string);
+    export function isNotNumber(actual?: Value, msg?: string);
 
     /**
     *测试数值为布尔，否则断言失败
     *
     * @export
-    * @param {FibJS.Object} [actual]  要测试的数值
+    * @param {Value} [actual]  要测试的数值
     * @param {string} [msg] 断言失败时的提示信息
     */
-    export function isBoolean(actual?: FibJS.Object, msg?: string);
+    export function isBoolean(actual?: Value, msg?: string);
 
 
     /**
     *测试数值为布尔，否则断言失败
     *
     * @export
-    * @param {FibJS.Object} [actual]  要测试的数值
+    * @param {Value} [actual]  要测试的数值
     * @param {string} [msg] 断言失败时的提示信息
     */
-    export function isNotBoolean(actual?: FibJS.Object, msg?: string);
+    export function isNotBoolean(actual?: Value, msg?: string);
 
     /**
      *测试数值为给定类型，否则断言失败
      *
      * @export
-     * @param {FibJS.Object} actual 要测试的数值
+     * @param {Value} actual 要测试的数值
      * @param {string} type 指定的类型
      * @param {?string} msg 断言失败时的提示信息
      */
-    export function typeOf(actual: FibJS.Object, type: string, msg: string);
+    export function typeOf(actual: Value, type: string, msg: string);
 
     /**
      *测试数值不为给定类型，否则断言失败
      *
      * @export
-     * @param {FibJS.Object} actual 要测试的数值
+     * @param {Value} actual 要测试的数值
      * @param {string} type 指定的类型
      * @param {?string} msg 断言失败时的提示信息
      */
-    export function notTypeOf(actual: FibJS.Object, type: string, msg: string);
+    export function notTypeOf(actual: Value, type: string, msg: string);
 
     /**
      *测试对象中包含指定属性，否则断言失败
      *
      * @export
-     * @param {FibJS.Object} value 要测试的对象
-     * @param {FibJS.Object} prop 要测试的属性
+     * @param {Value} value 要测试的对象
+     * @param {Value} prop 要测试的属性
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function property(value: FibJS.Object, prop: FibJS.Object, msg?: string);
+    export function property(value: Value, prop: Value, msg?: string);
 
     /**
      *测试对象中不包含指定属性，否则断言失败
      *
      * @export
-     * @param {FibJS.Object} value 要测试的对象
-     * @param {FibJS.Object} prop 要测试的属性
+     * @param {Value} value 要测试的对象
+     * @param {Value} prop 要测试的属性
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function notProperty(value: FibJS.Object, prop: FibJS.Object, msg?: string);
+    export function notProperty(value: Value, prop: Value, msg?: string);
 
     /**
      *深度测试对象中包含指定属性，否则断言失败
      *
      * @export
-     * @param {FibJS.Object} value 要测试的对象
-     * @param {FibJS.Object} prop 要测试的属性
+     * @param {Value} value 要测试的对象
+     * @param {Value} prop 要测试的属性
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function deepProperty(value: FibJS.Object, prop: FibJS.Object, msg?: string);
+    export function deepProperty(value: Value, prop: Value, msg?: string);
 
     /**
      *深度测试对象中不包含指定属性，否则断言失败
      *
      * @export
-     * @param {FibJS.Object} value 要测试的对象
-     * @param {FibJS.Object} prop 要测试的属性
+     * @param {Value} value 要测试的对象
+     * @param {Value} prop 要测试的属性
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function notDeepProperty(value: FibJS.Object, prop: FibJS.Object, msg?: string);
+    export function notDeepProperty(value: Value, prop: Value, msg?: string);
 
     /**
      *测试对象中指定属性的值为给定值，否则断言失败
      *
      * @export
-     * @param {FibJS.Object} obj 要测试的对象
-     * @param {FibJS.Object} prop 要测试的属性
-     * @param {FibJS.Object} value 给定的值
+     * @param {Value} obj 要测试的对象
+     * @param {Value} prop 要测试的属性
+     * @param {Value} value 给定的值
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function propertyVal(obj: FibJS.Object, prop: FibJS.Object, value: FibJS.Object, msg?: string);
+    export function propertyVal(obj: Value, prop: Value, value: Value, msg?: string);
 
     /**
      *测试对象中指定属性的值不为给定值，否则断言失败
      *
      * @export
-     * @param {FibJS.Object} obj 要测试的对象
-     * @param {FibJS.Object} prop 要测试的属性
-     * @param {FibJS.Object} value 给定的值
+     * @param {Value} obj 要测试的对象
+     * @param {Value} prop 要测试的属性
+     * @param {Value} value 给定的值
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function propertyNotVal(obj: FibJS.Object, prop: FibJS.Object, value: FibJS.Object, msg?: string);
+    export function propertyNotVal(obj: Value, prop: Value, value: Value, msg?: string);
 
     /**
      *深度测试对象中指定属性的值为给定值，否则断言失败
      *
      * @export
-     * @param {FibJS.Object} obj 要测试的对象
-     * @param {FibJS.Object} prop 要测试的属性，以“.”分割
-     * @param {FibJS.Object} value 给定的值
+     * @param {Value} obj 要测试的对象
+     * @param {Value} prop 要测试的属性，以“.”分割
+     * @param {Value} value 给定的值
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function deepPropertyVal(obj: FibJS.Object, prop: FibJS.Object, value: FibJS.Object, msg?: string);
+    export function deepPropertyVal(obj: Value, prop: Value, value: Value, msg?: string);
 
     /**
      *深度测试对象中指定属性的值不为给定值，否则断言失败
      *
      * @export
-     * @param {FibJS.Object} obj 要测试的对象
-     * @param {FibJS.Object} prop 要测试的属性，以“.”分割
-     * @param {FibJS.Object} value 给定的值
+     * @param {Value} obj 要测试的对象
+     * @param {Value} prop 要测试的属性，以“.”分割
+     * @param {Value} value 给定的值
      * @param {string} [msg] 断言失败时的提示信息
      */
-    export function deepPropertyNotVal(obj: FibJS.Object, prop: FibJS.Object, value: FibJS.Object, msg?: string);
+    export function deepPropertyNotVal(obj: Value, prop: Value, value: Value, msg?: string);
 
     /**
      *测试给定的代码会抛出错误，未抛出则断言失败
@@ -524,9 +525,9 @@ declare module "assert" {
      *如果参数为真，则抛出
      *
      * @export
-     * @param {FibJS.Object} [obj]
+     * @param {Value} [obj]
      */
-    export function ifError(obj?: FibJS.Object);
+    export function ifError(obj?: Value);
 }
 //#endregion
 
@@ -569,7 +570,23 @@ declare module "test" {
      * @param {string} name 定义项目名称
      * @param {Function} block 测试内容
      */
-    export function it(name: string, block: Function);
+    export var it: {
+        (name: string, block: Function):void;
+        /**
+         *test.setup 后可使用 it.skip 调用
+         *
+         * @param {string} name
+         * @param {Function} block
+         */
+        skip(name: string, block: Function):void;
+        /**
+         *test.setup 后可使用 it.only 调用
+         *
+         * @param {string} name
+         * @param {Function} block
+         */
+        only(name: string, block: Function):void;
+    }
 
     /**
      *暂停测试的项目定义，test.setup 后可使用 it.skip 调用
@@ -845,7 +862,7 @@ declare namespace FibJS {
          *
          * @memberof Worker
          */
-        onmessage():void;
+        onmessage(): void;
 
         /**
          *向 Master 或 Worker 发送消息，
@@ -853,7 +870,7 @@ declare namespace FibJS {
          * @param {Value} data 指定发送的消息内容
          * @memberof Worker
          */
-        postMessage(data:Value):void;
+        postMessage(data: Value): void;
     }
 
     /**
@@ -1047,7 +1064,7 @@ declare namespace FibJS {
         emit(ev: string, ...args): boolean;
     }
 
-    class Fiber extends Object{
+    class Fiber extends Object {
 
         /**
          *查询纤程的唯一 id
@@ -1055,7 +1072,7 @@ declare namespace FibJS {
          * @type {Long}
          * @memberof Fiber
          */
-        id:Long;
+        id: Long;
 
         /**
          *查询纤程的调用纤程
@@ -1063,7 +1080,7 @@ declare namespace FibJS {
          * @type {Fiber}
          * @memberof Fiber
          */
-        caller:Fiber;
+        caller: Fiber;
 
         /**
          *询纤程的调用堆栈
@@ -1071,14 +1088,14 @@ declare namespace FibJS {
          * @type {string}
          * @memberof Fiber
          */
-        stack:string;
+        stack: string;
 
         /**
          *等待纤程结束
          *
          * @memberof Fiber
          */
-        join():void;
+        join(): void;
     }
 }
 
@@ -2644,7 +2661,7 @@ declare module "coroutine" {
     export var Semaphore: Semaphore;
     export var Condition: Condition;
     export var Event: Event;
-    export var Worker:FibJS.Worker;
+    export var Worker: FibJS.Worker;
 
     /**
      *启动一个纤程并返回纤程对象
@@ -2654,7 +2671,7 @@ declare module "coroutine" {
      * @param {*} args 可变参数序列，此序列会在纤程内传递给函数
      * @returns {FibJS.Fiber}
      */
-    export function start(func:Function,...args):FibJS.Fiber;
+    export function start(func: Function, ...args): FibJS.Fiber;
 
     /**
      *并行执行一组函数，并等待返回
@@ -2664,7 +2681,7 @@ declare module "coroutine" {
      * @param {Integer} [fibers]  限制并发 fiber 数量，缺省为 -1，启用与 funcs 数量相同 fiber
      * @returns {Array<Value>}
      */
-    export function parallel(funcs:Array<Function>,fibers?:Integer):Array<Value>;
+    export function parallel(funcs: Array<Function>, fibers?: Integer): Array<Value>;
 
     /**
      *并行执行一个函数处理一组数据，并等待返回
@@ -2675,7 +2692,7 @@ declare module "coroutine" {
      * @param {Integer} [fibers] 限制并发 fiber 数量，缺省为 -1，启用与 datas 数量相同 fiber
      * @returns {Array<Value>}
      */
-    export function parallel(datas:Array<Value>,func:Function,fibers?:Integer):Array<Value>;
+    export function parallel(datas: Array<Value>, func: Function, fibers?: Integer): Array<Value>;
 
     /**
      *并行执行一个函数多次，并等待返回
@@ -2686,7 +2703,7 @@ declare module "coroutine" {
      * @param {Integer} [fibers] 限制并发 fiber 数量，缺省为 -1，启用与 funcs 数量相同 fiber
      * @returns {Array<Value>}
      */
-    export function parallel(func:Function,num:Integer,fibers?:Integer):Array<Value>;
+    export function parallel(func: Function, num: Integer, fibers?: Integer): Array<Value>;
 
     /**
      *并行执行一组函数，并等待返回
@@ -2695,7 +2712,7 @@ declare module "coroutine" {
      * @param {...Array<Function>} funcs  一组并行执行的函数
      * @returns {Array<Value>}  返回函数执行结果的数组
      */
-    export function parallel(...funcs:Array<Function>):Array<Value>;
+    export function parallel(...funcs: Array<Function>): Array<Value>;
 
     /**
      *返回当前纤程
@@ -2703,7 +2720,7 @@ declare module "coroutine" {
      * @export
      * @returns {FibJS.Fiber} 当前纤程对象
      */
-    export function current():FibJS.Fiber;
+    export function current(): FibJS.Fiber;
 
     /**
      * 暂停当前纤程指定的时间
@@ -2712,27 +2729,27 @@ declare module "coroutine" {
      * @export
      * @param {Integer} [ms] 指定要暂停的时间，以毫秒为单位，缺省为 0，即有空闲立即回恢复运行
      */
-    export function sleep(ms?:Integer):void;
+    export function sleep(ms?: Integer): void;
 
     /**
      * 返回当前正在运行的全部 fiber 数组
      */
-    export const fibers:Array<FibJS.Fiber>;
+    export const fibers: Array<FibJS.Fiber>;
 
     /**
      * 查询和设置空闲 Fiber 数量，服务器抖动较大时可适度增加空闲 Fiber 数量。缺省为 256
      */
-    export const spareFibers:Integer;
+    export const spareFibers: Integer;
 
     /**
      * 查询当前 vm 编号
      */
-    export const vmid:Integer;
+    export const vmid: Integer;
 
     /**
      * 修改和查询本 vm 的输出级别，用以过滤输出信息，缺省为 console.NOTSET，全部输出
      */
-    export const loglevel:Integer;
+    export const loglevel: Integer;
 
     /**
      *不同于操作系统的锁，纤程锁是纯逻辑实现，加锁与解锁负荷很小
@@ -2969,12 +2986,12 @@ declare module "coroutine" {
 
 
 //#region===================================================events=========================================================
-declare module "events"{
+declare module "events" {
     class internal extends FibJS.EventEmitter { }
 
     namespace internal {
         export class EventEmitter extends internal {
-        
+
         }
     }
 
@@ -3204,7 +3221,7 @@ declare module "encoding" {
 //#endregion
 
 //#region=====================================================constants============================================================
-declare module "constants"{
+declare module "constants" {
 
 }
 //#endregion

@@ -6,10 +6,7 @@
       "es2016",
     ],
     "sourceMap": true,
-    "experimentalDecorators": true,
-    "noImplicitReturns":true,
-    "noEmitHelpers": true,
-    "importHelpers": true
+    "experimentalDecorators": true
   },
   "exclude": [
     "node_modules"
