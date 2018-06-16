@@ -1,5 +1,5 @@
 import * as test from "test";
-import { describe, before, beforeEach, after, afterEach, assert, xit, it, oit } from "test";
+import { describe, beforeEach, after, afterEach, assert, xit, it, oit, before } from "test";
 test.setup();
 
 describe('test', () => {

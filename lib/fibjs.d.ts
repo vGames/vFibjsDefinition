@@ -571,21 +571,21 @@ declare module "test" {
      * @param {Function} block 测试内容
      */
     export var it: {
-        (name: string, block: Function):void;
+        (name: string, block: Function): void;
         /**
          *test.setup 后可使用 it.skip 调用
          *
          * @param {string} name
          * @param {Function} block
          */
-        skip(name: string, block: Function):void;
+        skip(name: string, block: Function): void;
         /**
          *test.setup 后可使用 it.only 调用
          *
          * @param {string} name
          * @param {Function} block
          */
-        only(name: string, block: Function):void;
+        only(name: string, block: Function): void;
     }
 
     /**
@@ -2655,6 +2655,3065 @@ declare var process: {
 declare function run(fname: string, args: Array<any>): void;
 //#endregion
 
+interface PKeyCurve {
+    "secp521r1", "brainpoolP512r1", "secp384r1", "brainpoolP384r1", "secp256r1", "secp256k1", "brainpoolP256r1", "secp224r1", "secp224k1", "secp192r1", "secp192k1"
+}
+
+declare enum a {
+    NONE = 0,
+
+}
+
+//#region===================================================crypto==========================================================
+declare module "crypto" {
+
+    export var Cipher: Cipher;
+    export var PKey: PKey;
+    export var X509Cert: X509Cert;
+    export var X509Crl: X509Crl;
+    export var X509Req: X509Req;
+
+    /**
+		 * 
+		 * @brief 指定对称加密算法 AES，支持 128, 192, 256 位 key，分组密码工作模式支持 ECB, CBC, CFB128, CTR, GCM
+		 * 
+		 * 
+		 */
+    export const AES = 1;
+
+    /**
+     * 
+     * @brief 指定对称加密算法 CAMELLIA，支持 128, 192, 256 位 key，分组密码工作模式支持 ECB, CBC, CFB128, CTR, GCM
+     * 
+     * 
+     */
+    export const CAMELLIA = 2;
+
+    /**
+     * 
+     * @brief 指定对称加密算法 DES，支持 64 位 key，分组密码工作模式支持 ECB, CBC
+     * 
+     * 
+     */
+    export const DES = 3;
+
+    /**
+     * 
+     * @brief 指定对称加密算法 DES-EDE，支持 128 位 key，分组密码工作模式支持 ECB, CBC
+     * 
+     * 
+     */
+    export const DES_EDE = 4;
+
+    /**
+     * 
+     * @brief 指定对称加密算法 DES-EDE3，支持 192 位 key，分组密码工作模式支持 ECB, CBC
+     * 
+     * 
+     */
+    export const DES_EDE3 = 5;
+
+    /**
+     * 
+     * @brief 指定对称加密算法 BLOWFISH，支持 192 位 key，分组密码工作模式支持 ECB, CBC, CFB64, CTR
+     * 
+     * 
+     */
+    export const BLOWFISH = 6;
+
+    /**
+     * 
+     * @brief 指定对称加密算法 ARC4，支持 40, 56, 64, 128 位 key
+     * 
+     * 
+     */
+    export const ARC4 = 7;
+
+    /**
+     * 
+     * @brief 指定分组密码工作模式支持 ECB
+     * 
+     * 
+     */
+    export const ECB = 1;
+
+    /**
+     * 
+     * @brief 指定分组密码工作模式支持 CBC
+     * 
+     * 
+     */
+    export const CBC = 2;
+
+    /**
+     * 
+     * @brief 指定分组密码工作模式支持 CFB64
+     * 
+     * 
+     */
+    export const CFB64 = 3;
+
+    /**
+     * 
+     * @brief 指定分组密码工作模式支持 CFB128
+     * 
+     * 
+     */
+    export const CFB128 = 4;
+
+    /**
+     * 
+     * @brief 指定分组密码工作模式支持 OFB
+     * 
+     * 
+     */
+    export const OFB = 5;
+
+    /**
+     * 
+     * @brief 指定分组密码工作模式支持 CTR
+     * 
+     * 
+     */
+    export const CTR = 6;
+
+    /**
+     * 
+     * @brief 指定分组密码工作模式支持 GCM
+     * 
+     * 
+     */
+    export const GCM = 7;
+
+    /**
+     * 
+     * @brief 指定流密码模式
+     * 
+     * 
+     */
+    export const STREAM = 8;
+
+    /**
+     * 
+     * @brief 指定分组密码工作模式支持 CCM
+     * 
+     * 
+     */
+    export const CCM = 9;
+
+    /**
+     * 
+     * @brief 指定填充模式为 PKCS7
+     * 
+     * 
+     */
+    export const PKCS7 = 0;
+
+    /**
+     * 
+     * @brief 指定填充模式为 ONE_AND_ZEROS
+     * 
+     * 
+     */
+    export const ONE_AND_ZEROS = 1;
+
+    /**
+     * 
+     * @brief 指定填充模式为 ZEROS_AND_LEN
+     * 
+     * 
+     */
+    export const ZEROS_AND_LEN = 2;
+
+    /**
+     * 
+     * @brief 指定填充模式为 ZEROS
+     * 
+     * 
+     */
+    export const ZEROS = 3;
+
+    /**
+     * 
+     * @brief 指定填充模式为 NOPADDING
+     * 
+     * 
+     */
+    export const NOPADDING = 4;
+
+
+    interface Digest {
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 查询当前信息摘要算法的摘要字节数
+         * 
+         * @readonly
+         * @type Integer
+         */
+
+        size: number
+
+
+
+        /**
+         * 
+         * @brief 更新二进制摘要信息
+         * @param data 二进制数据块
+         * @return 返回信息摘要对象本身
+         * 
+         * 
+         * 
+         */
+        update(data: Buffer): Digest;
+
+        /**
+         * 
+         * @brief 计算并返回摘要
+         * @param data 二进制数据块，此数据块将在计算前更新进摘要
+         * @return 返回摘要的二进制数据
+         * 
+         * 
+         * 
+         */
+        digest(data: Buffer): Buffer;
+
+        /**
+         * 
+         * @brief 计算并返回摘要
+         * @return 返回摘要的二进制数据
+         * 
+         * 
+         * 
+         */
+        digest(): Buffer;
+    }
+
+    /**
+		 * 
+		 * @brief 根据给定的算法名称创建一个信息摘要对象
+		 * @param algo 指定信息摘要对象的算法
+		 * @return 返回信息摘要对象
+		 * 
+		 * 
+		 * 
+		 */
+    export function createHash(algo: string): Digest;
+
+    /**
+     * 
+     * @brief 根据给定的算法名称创建一个 hmac 信息摘要对象
+     * @param algo 指定信息摘要对象的算法
+     * @param key 二进制签名密钥
+     * @return 返回信息摘要对象
+     * 
+     * 
+     * 
+     */
+    export function createHmac(algo: string, key: Buffer): Digest;
+
+    /**
+     * 
+     * @brief 加载一个 PEM/DER 格式的密钥文件
+     * @param filename 密钥文件名
+     * @param password 解密密码
+     * @return 返回包含密钥的对象
+     * 
+     * 
+     * 
+     */
+    export function loadPKey(filename: string, password?: string/** = ""*/): PKey;
+
+    /**
+     * 
+     * @brief 加载一个 CRT/PEM/DER/TXT 格式的证书，可多次调用
+     * 
+     * loadFile 加载 mozilla 的 certdata,txt， 可于 http://hg.mozilla.org/releases/mozilla-release/raw-file/default/security/nss/lib/ckfw/builtins/certdata.txt 下载使用
+     * @param filename 证书文件名
+     * @return 返回包含证书的对象
+     * 
+     * 
+     * 
+     */
+    export function loadCert(filename: string): X509Cert;
+
+    /**
+     * 
+     * @brief 加载一个 PEM/DER 格式的撤销证书，可多次调用
+     * @param filename 撤销证书文件名
+     * @return 返回包含撤销证书的对象
+     * 
+     * 
+     * 
+     */
+    export function loadCrl(filename: string): X509Crl;
+
+    /**
+     * 
+     * @brief 加载一个 PEM/DER 格式的证书请求，可多次调用
+     * @param filename 证书请求文件名
+     * @return 返回包含请求证书的对象
+     * 
+     * 
+     * 
+     */
+    export function loadReq(filename: string): X509Req;
+
+    /**
+     * 
+     * @brief 生成指定尺寸的随机数，使用 havege 生成器
+     * @param size 指定生成的随机数尺寸
+     * @return 返回生成的随机数
+     * 
+     * 
+     * @async
+     */
+    export function randomBytes(size: number): Buffer;
+
+    /**
+     * 
+     * @brief 生成指定尺寸的低强度随机数，使用快速的算法
+     * @param size 指定生成的随机数尺寸
+     * @return 返回生成的随机数
+     * 
+     * 
+     * @async
+     */
+    export function simpleRandomBytes(size: number): Buffer;
+
+    /**
+     * 
+     * @brief 生成指定尺寸的伪随机数，使用 entropy 生成器
+     * @param size 指定生成的随机数尺寸
+     * @return 返回生成的随机数
+     * 
+     * 
+     * @async
+     */
+    export function pseudoRandomBytes(size: number): Buffer;
+
+    /**
+     * 
+     * @brief 生成给定数据的可视化字符图像
+     * @param data 指定要展示的数据
+     * @param title 指定字符图像的标题，多字节字符会导致宽度错误
+     * @param size 字符图像尺寸
+     * @return 返回生成的可视化字符串图像
+     * 
+     * 
+     * 
+     */
+    export function randomArt(data: Buffer, title: string, size?: number/** = 8*/): string;
+
+    /**
+     * 
+     * @brief 依据 pbkdf1 根据明文 password 生成要求的二进制钥匙
+     * @param password 指定使用的密码
+     * @param salt 指定 hmac 使用的 salt
+     * @param iterations 指定迭代次数
+     * @param size 指定钥匙尺寸
+     * @param algo 指定要使用的 hash 算法，详见 hash 模块
+     * @return 返回生成的二进制钥匙
+     * 
+     * 
+     * @async
+     */
+    export function pbkdf1(password: Buffer, salt: Buffer, iterations: number, size: number, algo: number): Buffer;
+
+    /**
+     * 
+     * @brief 依据 pbkdf1 根据明文 password 生成要求的二进制钥匙
+     * @param password 指定使用的密码
+     * @param salt 指定 hmac 使用的 salt
+     * @param iterations 指定迭代次数
+     * @param size 指定钥匙尺寸
+     * @param algoName 指定要使用的 hash 算法，详见 hash 模块
+     * @return 返回生成的二进制钥匙
+     * 
+     * 
+     * @async
+     */
+    export function pbkdf1(password: Buffer, salt: Buffer, iterations: number, size: number, algoName: string): Buffer;
+
+    /**
+     * 
+     * @brief 依据 rfc2898 根据明文 password 生成要求的二进制钥匙
+     * @param password 指定使用的密码
+     * @param salt 指定 hmac 使用的 salt
+     * @param iterations 指定迭代次数
+     * @param size 指定钥匙尺寸
+     * @param algo 指定要使用的 hash 算法，详见 hash 模块
+     * @return 返回生成的二进制钥匙
+     * 
+     * 
+     * @async
+     */
+    export function pbkdf2(password: Buffer, salt: Buffer, iterations: number, size: number, algo: number): Buffer;
+
+    /**
+     * 
+     * @brief 依据 rfc2898 根据明文 password 生成要求的二进制钥匙
+     * @param password 指定使用的密码
+     * @param salt 指定 hmac 使用的 salt
+     * @param iterations 指定迭代次数
+     * @param size 指定钥匙尺寸
+     * @param algoName 指定要使用的 hash 算法，详见 hash 模块
+     * @return 返回生成的二进制钥匙
+     * 
+     * 
+     * @async
+     */
+    export function pbkdf2(password: Buffer, salt: Buffer, iterations: number, size: number, algoName: string): Buffer;
+
+    interface X509Req extends FibJS.Object {
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 获取证书的主题可分辨名称
+         * 
+         * @readonly
+         * @type String
+         */
+
+        subject: Readonly<string>;
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 获取证书的公钥
+         * 
+         * @readonly
+         * @type PKey
+         */
+
+        publicKey: Readonly<PKey>;
+
+        /**
+         * 
+         */
+        new();
+
+        /**
+         * 
+         * @brief X509Req 构造函数，根据给定的信息创建一个证书请求
+         * 
+         * @param subject 证书的主题可分辨名称
+         * @param key 证书的公钥
+         * @param hash 证书摘要算法，缺省为 hash.SHA1
+         * 
+         * 
+         * 
+         */
+        new(subject: string, key: PKey, hash?: number/** = undefined*/);
+
+        /**
+         * 
+         * @brief 加载一个 DER 格式的证书请求
+         * @param derReq DER 格式的证书请求
+         * 
+         * 
+         * 
+         */
+        load(derReq: Buffer): void;
+
+        /**
+         * 
+         * @brief 加载一个 PEM 格式的证书请求
+         * @param pemReq PEM 格式的证书请求
+         * 
+         * 
+         * 
+         */
+        load(pemReq: string): void;
+
+        /**
+         * 
+         * @brief 加载一个 PEM/DER 格式的证书请求，可多次调用
+         * @param filename 证书请求文件名
+         * 
+         * 
+         * 
+         */
+        loadFile(filename: string): void;
+
+        /**
+         * 
+         * @brief 返回当前证书请求的 PEM 格式编码
+         * @return 当前证书请求的 PEM 格式编码
+         * 
+         * 
+         * 
+         */
+        exportPem(): string;
+
+        /**
+         * 
+         * @brief 返回当前证书请求的 DER 格式编码
+         * @return 当前证书请求的 DER 格式编码
+         * 
+         * 
+         * 
+         */
+        exportDer(): Buffer;
+
+        /**
+         * 
+         * @brief 签名当前证书请求为正式证书
+         * 
+         * opts 接收的字段如下：
+         * ```JavaScript
+         * {
+         * ca: false,      // 证书为 ca，缺省为 false
+         * pathlen: -1,    // 证书深度，缺省为 -1
+         * notBefore: "",  // 证书生效时间，缺省为当前时间
+         * notAfter: "",   // 证书失效时间，缺省为 notBefore 后一年
+         * usage: "",      // 证书使用范围，接收：digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment, keyAgreement, keyCertSign, cRLSign
+         * type: ""        // 证书 Netscape 证书类型，接收：client, server, email, objsign, reserved, sslCA, emailCA, objCA
+         * }
+         * ```
+         * @param issuer 签名机构的可分辨名称
+         * @param key 签名机构的私钥
+         * @param opts 其他可选参数
+         * @return 返回签名后的正式证书
+         * 
+         * 
+         * @async
+         */
+        sign(issuer: string, key: PKey, opts?: {
+            ca: boolean,
+            pathlen: number,
+            notBefore: string,
+            notAfter: string,
+            usage: string,
+            type: string
+        }): X509Cert;
+    }
+
+    interface X509Crl extends FibJS.Object {
+        new(): X509Crl;
+
+        /**
+	 * 
+	 * @brief 加载一个 DER 格式的撤销证书，可多次调用
+	 * @param derCrl DER 格式的撤销证书
+	 * 
+	 * 
+	 * 
+	 */
+        load(derCrl: Buffer): void;
+
+        /**
+         * 
+         * @brief 加载一个 PEM 格式的撤销证书，可多次调用
+         * @param pemCrl PEM 格式的撤销证书
+         * 
+         * 
+         * 
+         */
+        load(pemCrl: string): void;
+
+        /**
+         * 
+         * @brief 加载一个 PEM/DER 格式的撤销证书，可多次调用
+         * @param filename 撤销证书文件名
+         * 
+         * 
+         * 
+         */
+        loadFile(filename: string): void;
+
+        /**
+         * 
+         * @brief 导出已经加载的撤销证书
+         * @return 以数组方式导出撤销证书链
+         * 
+         * 
+         * 
+         */
+        dump(): any[];
+
+        /**
+         * 
+         * @brief 清空已经加载的撤销证书
+         * 
+         * 
+         * 
+         */
+        clear(): void;
+    }
+
+    interface X509Cert extends FibJS.Object {
+        new(): X509Cert;
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 获取证书的版本
+         * 
+         * @readonly
+         * @type Integer
+         */
+        version: Readonly<number>;
+
+        /**
+         *
+         *
+         * @type {string}
+         * @memberof X509Cert
+         */
+        serial: Readonly<string>
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 获取证书颁发者的可分辨名称
+         * 
+         * @readonly
+         * @type String
+         */
+
+        issuer: Readonly<string>
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 获取证书的主题可分辨名称
+         * 
+         * @readonly
+         * @type String
+         */
+
+        subject: Readonly<string>
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 获取证书的生效时间
+         * 
+         * @readonly
+         * @type Date
+         */
+
+        notBefore: Readonly<Date>
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 获取证书的到期时间
+         * 
+         * @readonly
+         * @type Date
+         */
+
+        notAfter: Readonly<Date>
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 获取证书是否是 ca 证书
+         * 
+         * @readonly
+         * @type Boolean
+         */
+
+        ca: Readonly<boolean>
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 获取证书的 pathlen
+         * 
+         * @readonly
+         * @type Integer
+         */
+
+        pathlen: Readonly<number>
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 获取证书的使用范围
+         * 
+         * 结果为全部或部分以下内容：digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment, keyAgreement, keyCertSign, cRLSign
+         * 
+         * 
+         * @readonly
+         * @type String
+         */
+
+        usage: Readonly<string>
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 获取证书的 Netscape 证书类型
+         * 
+         * 结果为全部或部分以下内容：client, server, email, objsign, reserved, sslCA, emailCA, objCA
+         * 
+         * 
+         * @readonly
+         * @type String
+         */
+
+        type: Readonly<string>
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 获取证书的公钥
+         * 
+         * @readonly
+         * @type PKey
+         */
+
+        publicKey: Readonly<PKey>
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 获取证书链中得下一个证书
+         * 
+         * @readonly
+         * @type X509Cert
+         */
+
+        next: Readonly<X509Cert>;
+
+        /**
+         * 
+         * @brief 加载一个 DER 格式的证书，可多次调用
+         * @param derCert DER 格式的证书
+         * 
+         * 
+         * 
+         */
+        load(derCert: Buffer): void;
+
+        /**
+         * 
+         * @brief 加载一个 CRT/PEM/TXT 格式的证书，可多次调用
+         * 
+         * load 加载 mozilla 的 certdata,txt， 可于 http://hg.mozilla.org/releases/mozilla-release/raw-file/default/security/nss/lib/ckfw/builtins/certdata.txt 下载使用
+         * @param txtCert PEM 格式的证书
+         * 
+         * 
+         * 
+         */
+        load(txtCert: string): void;
+
+        /**
+         * 
+         * @brief 加载一个 CRT/PEM/DER/TXT 格式的证书，可多次调用
+         * 
+         * loadFile 加载 mozilla 的 certdata,txt， 可于 http://hg.mozilla.org/releases/mozilla-release/raw-file/default/security/nss/lib/ckfw/builtins/certdata.txt 下载使用
+         * @param filename 证书文件名
+         * 
+         * 
+         * 
+         */
+        loadFile(filename: string): void;
+
+        /**
+         * 
+         * @brief 加载自带的缺省根证书
+         * 此证书内容源自：http://hg.mozilla.org/releases/mozilla-release/raw-file/default/security/nss/lib/ckfw/builtins/certdata.txt
+         * 
+         * 
+         */
+        loadRootCerts(): void;
+
+        /**
+         * 
+         * @brief 使用当前证书链验证给定的证书
+         * @param cert 给定需要验证的证书
+         * @return 如果验证成功则返回 True
+         * 
+         * 
+         * @async
+         */
+        verify(cert: X509Cert): boolean;
+
+        /**
+         * 
+         * @brief 导出已经加载的证书
+         * @return 以数组方式导出证书链
+         * 
+         * 
+         * 
+         */
+        dump(): any[];
+
+        /**
+         * 
+         * @brief 清空已经加载的证书
+         * 
+         * 
+         */
+        clear(): void;
+    }
+
+    /**
+     *@example
+     * RSA 私钥：
+     *   {
+     *       "kty": "RSA",
+     *       "n": "0m5lvKpWqy9JS7tV2HIPqHCYHLquSuxIC3F8strIQLJKO3rZmTT96KTnhsOfBO7Y1bI7mnT0PB3_vcHd9ekWMEoZJQw7MuB8KeM_Wn54-elJr5DNLk5bMppSGxX7ZnumiXGG51_X3Yp-_EbGtDG80GxXXix7Mucyo7K25uE0uW8=",
+     *       "e": "AQAB",
+     *       "d": "agN2O9NxMHL1MTMi75WfL9Pxvl-KWXKqZSF6mjzAsF9iKI8euyHIXYFepzU8kual1RsjDhCnzvWqFvZplW8lXqrHf_P-rS_9Y4gBUw6pjnI_DnFIRwWHRvrUHHSCfWOdTCIKdOTkgLZuGFuhEY3RMIW0WSYejjLtftwy0RVxAzk=",
+     *       "p": "6a4G1qmfwWmn1biigN7IVFlkbLf9oVe6g7rOmHxI-hn1GRxKDSVuAUrmR1IhuAnca9M0y7SD-7TUs6wjOxWxaw==",
+     *       "q": "5ofkxFKdPBD0CQHMb9q13AMHUVe0rJ-hSjqqIBrmqApUOneyAcMV76M0QyIQnI2p3POa4Qu_7XChDwRVl7LlDQ==",
+     *       "dp": "2mXGiGwCHl8j-FBWuID-1C6z-BRB3MBEVoeKPOOzxOPruatB3mWEGXsqG7A8SWgV9URxTI2K6P3J6Z7RUpBkvw==",
+     *       "dq": "oagn5vfb5NQqnOpS9xkSsD67cfIj821ZSFlNFYhnuOzNVda7z_qCtnHm4zDPH0lEFXoKYMfBhfqWJpaugttjPQ==",
+     *       "qi": "dqEQgxNmOVFrF4s776hTqeC6oEDila8EvpVb2F2ZvwAOLjCQ66OiAZK1BiYGHqUy0NeqNmtlsLSuBEZQZvqZwg=="
+     *     }
+     * 
+     * RSA 公钥：
+     *  {
+     *       "kty": "RSA",
+     *       "n": "0m5lvKpWqy9JS7tV2HIPqHCYHLquSuxIC3F8strIQLJKO3rZmTT96KTnhsOfBO7Y1bI7mnT0PB3_vcHd9ekWMEoZJQw7MuB8KeM_Wn54-elJr5DNLk5bMppSGxX7ZnumiXGG51_X3Yp-_EbGtDG80GxXXix7Mucyo7K25uE0uW8=",
+     *       "e": "AQAB"
+     *   }
+     * 
+     * EC 私钥：
+     * {
+     *       "kty": "EC",
+     *       "crv": "P-521",
+     *       "x": "ATfNNFuuvlGxrTGoXgyfSAGgRNNDnO3rN3k74urKJdVS14RYhdnSwm91Bm-F1l-T1XKlAY2yRnzG9w1Ukvo8c0wL",
+     *       "y": "ASBHqrruB6kdkEUB3vlW3-UIkk4HtKdUeTwN-7m3j2rgZvYR1ffRAapDvWqKGiBjomqWafxokBkbDI0c95f6f4XU",
+     *       "d": "AfkIbUHXfW41njdpoKuqqKludcoLJS8D_oMEwkj-GVaXFNKccIoF5iKGu2c69kNDjo83R_7wyGlfRczsklkik1ST"
+     *   }
+     * 
+     * EC 公钥：
+     * {
+     *       "kty": "EC",
+     *       "crv": "P-521",
+     *       "x": "ATfNNFuuvlGxrTGoXgyfSAGgRNNDnO3rN3k74urKJdVS14RYhdnSwm91Bm-F1l-T1XKlAY2yRnzG9w1Ukvo8c0wL",
+     *       "y": "ASBHqrruB6kdkEUB3vlW3-UIkk4HtKdUeTwN-7m3j2rgZvYR1ffRAapDvWqKGiBjomqWafxokBkbDI0c95f6f4XU"
+     *   }
+     *
+     * @interface PKey
+     */
+    interface PKey {
+        new(): PKey;
+        /**
+         * @param DerKey DER 格式的密钥;
+         * @param password 解密密码
+         */
+        new(DerKey: Buffer, password: string): PKey;
+
+        /**
+         * 通过 PEM 格式的密钥构造 PKey
+         * @param PEM 格式的密钥
+         * @param password, 解密密码
+         */
+        new(pemKey: string, password: string): PKey;
+
+        /**
+         * 
+         * @param json 
+         * @example
+         *
+         */
+        new(jsonKey: Object): PKey;
+
+        /**
+         *返回当前算法名称
+         *
+         * @type {Readonly<string>}
+         * @memberof PKey
+         */
+        name: Readonly<string>;
+
+        /**
+         *返回当前密钥的公钥
+         *
+         * @type {Readonly<PKey>}
+         * @memberof PKey
+         */
+        publicKey: Readonly<PKey>;
+
+        /**
+         *生成一个 RSA 私钥
+         * 
+         * @param {Integer} size 指定 RSA 密钥长度，bit 为单位
+         * @memberof PKey
+         */
+        genRsaKey(size: Integer): Value;
+
+        /**
+         *生成一个 EC 私钥
+         *
+         * @param {string} [cure]  指定预置椭圆曲线
+         * @memberof PKey
+         */
+        genEcKey(cure?: keyof PKeyCurve): Value;
+
+        /**
+         *查询当前密钥是否为私钥
+         *
+         * @returns {boolean} , 为 True 表示为私钥
+         * @memberof PKey
+         */
+        isPrivate(): boolean;
+
+        /**
+         *复制当前密钥
+         *
+         * @returns {PKey} 当前密钥的复制对象
+         * @memberof PKey
+         */
+        clone(): PKey;
+
+        /**
+         *加载一个 DER 格式的密钥
+         *
+         * @param {Buffer} DerKey DER 格式的密钥
+         * @param {string} password  解密密码
+         * @memberof PKey
+         */
+        importKey(DerKey: Buffer, password?: string): void;
+
+        /**
+         *加载一个 PEM 格式的密钥
+         *
+         * @param {string} pemKey PEM 格式的密钥
+         * @param {string} [password] 解密密码
+         * @memberof PKey
+         */
+        importKey(pemKey: string, password?: string): void;
+
+        /**
+       * 
+       * @brief 加载一个 JSON 格式的密钥
+       * 
+       * jsonKey 的格式支持以下四种，RSA 私钥：
+       * @example
+       * ```JavaScript
+       * {
+       * "kty": "RSA",
+       * "n": "0m5lvKpWqy9JS7tV2HIPqHCYHLquSuxIC3F8strIQLJKO3rZmTT96KTnhsOfBO7Y1bI7mnT0PB3_vcHd9ekWMEoZJQw7MuB8KeM_Wn54-elJr5DNLk5bMppSGxX7ZnumiXGG51_X3Yp-_EbGtDG80GxXXix7Mucyo7K25uE0uW8=",
+       * "e": "AQAB",
+       * "d": "agN2O9NxMHL1MTMi75WfL9Pxvl-KWXKqZSF6mjzAsF9iKI8euyHIXYFepzU8kual1RsjDhCnzvWqFvZplW8lXqrHf_P-rS_9Y4gBUw6pjnI_DnFIRwWHRvrUHHSCfWOdTCIKdOTkgLZuGFuhEY3RMIW0WSYejjLtftwy0RVxAzk=",
+       * "p": "6a4G1qmfwWmn1biigN7IVFlkbLf9oVe6g7rOmHxI-hn1GRxKDSVuAUrmR1IhuAnca9M0y7SD-7TUs6wjOxWxaw==",
+       * "q": "5ofkxFKdPBD0CQHMb9q13AMHUVe0rJ-hSjqqIBrmqApUOneyAcMV76M0QyIQnI2p3POa4Qu_7XChDwRVl7LlDQ==",
+       * "dp": "2mXGiGwCHl8j-FBWuID-1C6z-BRB3MBEVoeKPOOzxOPruatB3mWEGXsqG7A8SWgV9URxTI2K6P3J6Z7RUpBkvw==",
+       * "dq": "oagn5vfb5NQqnOpS9xkSsD67cfIj821ZSFlNFYhnuOzNVda7z_qCtnHm4zDPH0lEFXoKYMfBhfqWJpaugttjPQ==",
+       * "qi": "dqEQgxNmOVFrF4s776hTqeC6oEDila8EvpVb2F2ZvwAOLjCQ66OiAZK1BiYGHqUy0NeqNmtlsLSuBEZQZvqZwg=="
+       * }
+       * ```
+       * RSA 公钥：
+       * ```JavaScript
+       * {
+       * "kty": "RSA",
+       * "n": "0m5lvKpWqy9JS7tV2HIPqHCYHLquSuxIC3F8strIQLJKO3rZmTT96KTnhsOfBO7Y1bI7mnT0PB3_vcHd9ekWMEoZJQw7MuB8KeM_Wn54-elJr5DNLk5bMppSGxX7ZnumiXGG51_X3Yp-_EbGtDG80GxXXix7Mucyo7K25uE0uW8=",
+       * "e": "AQAB"
+       * }
+       * ```
+       * EC 私钥：
+       * ```JavaScript
+       * {
+       * "kty": "EC",
+       * "crv": "P-521",
+       * "x": "ATfNNFuuvlGxrTGoXgyfSAGgRNNDnO3rN3k74urKJdVS14RYhdnSwm91Bm-F1l-T1XKlAY2yRnzG9w1Ukvo8c0wL",
+       * "y": "ASBHqrruB6kdkEUB3vlW3-UIkk4HtKdUeTwN-7m3j2rgZvYR1ffRAapDvWqKGiBjomqWafxokBkbDI0c95f6f4XU",
+       * "d": "AfkIbUHXfW41njdpoKuqqKludcoLJS8D_oMEwkj-GVaXFNKccIoF5iKGu2c69kNDjo83R_7wyGlfRczsklkik1ST"
+       * }
+       * ```
+       * EC 公钥：
+       * ```JavaScript
+       * {
+       * "kty": "EC",
+       * "crv": "P-521",
+       * "x": "ATfNNFuuvlGxrTGoXgyfSAGgRNNDnO3rN3k74urKJdVS14RYhdnSwm91Bm-F1l-T1XKlAY2yRnzG9w1Ukvo8c0wL",
+       * "y": "ASBHqrruB6kdkEUB3vlW3-UIkk4HtKdUeTwN-7m3j2rgZvYR1ffRAapDvWqKGiBjomqWafxokBkbDI0c95f6f4XU"
+       * }
+       * ```
+       * @param jsonKey JSON 格式的密钥
+       * 
+       * 
+       * 
+       */
+        importKey(jsonKey: Object): void;
+
+        /**
+         *加载一个 PEM/DER 格式的密钥文件
+         *
+         * @param {string} filename 密钥文件名
+         * @param {string} [password] 解密密码
+         * @memberof PKey
+         */
+        importFile(filename: string, password?: string): void;
+
+        /**
+         * 
+         * @brief 返回当前 key 的 PEM 格式编码
+         * @return 当前 key 的 PEM 格式编码
+         * 
+         * 
+         * 
+         */
+        exportPem(): string;
+
+        /**
+         * 
+         * @brief 返回当前 key 的 DER 格式编码
+         * @return 当前 key 的 DER 格式编码
+         * 
+         * 
+         * 
+         */
+        exportDer(): Buffer;
+
+        /**
+         * 
+         * @brief 返回当前 key 的 DER 格式编码
+         * @return 当前 key 的 DER 格式编码
+         * 
+         * 
+         * 
+         */
+        exportJson(): Object;
+
+        /**
+         * 
+         * @brief 使用当前算法密码公钥加密数据
+         * @param data 指定要加密的数据
+         * @return 返回加密后的数据
+         * 
+         * 
+         * @async
+         */
+        encrypt(data: Buffer): Buffer;
+
+        /**
+         * 
+         * @brief 使用当前算法密码私钥解密数据
+         * @param data 指定要解密的数据
+         * @return 返回解密后的数据
+         * 
+         * 
+         * @async
+         */
+        decrypt(data: Buffer): Buffer;
+
+        /**
+         * 
+         * @brief 使用当前算法密码私钥签名数据
+         * @param data 指定要签名的数据
+         * @param alg 指定要签名的算法, 默认0. 支持算法: 0=NONE,1=MD2,2=MD4,3=MD5,4=SHA1,5=SHA224,6=SHA256,7=SHA384,8=SHA512,9=RIPEMD160
+         * @return 返回签名后的数据
+         * 
+         * 
+         * @async
+         */
+        sign(data: Buffer, alg?: number/** = 0*/): Buffer;
+
+        /**
+         * 
+         * @brief 使用当前算法密码公钥验证数据
+         * @param data 指定要验证的数据
+         * @param sign 指定要验证的签名
+         * @param alg 指定要签名的算法, 默认0. 支持算法: 0=NONE,1=MD2,2=MD4,3=MD5,4=SHA1,5=SHA224,6=SHA256,7=SHA384,8=SHA512,9=RIPEMD160
+         * @return 返回验证后的结果
+         * 
+         * 
+         * @async
+         */
+        verify(data: Buffer, sign: Buffer, alg?: number/** = 0*/): boolean;
+    }
+
+    /**
+     * 对称加密算法对象
+     */
+    interface Cipher extends FibJS.Object {
+        /**
+         * Cipher 构造函数，仅用于 ARC4 初始化
+         * @param {Integer} provider 指定加密算法
+         * @param {Buffer} key 指定加密解密密码
+         */
+        new(provider: Integer, key: Buffer): Cipher;
+        /**
+         * Cipher 构造函数
+         * @param {Integer} provider 指定加密算法
+         * @param {Integer} mode 指定分组密码工作模式
+         * @param {Buffer} key 指定加密解密密码
+         */
+        new(provider: Integer, mode: Integer, key: Buffer): Cipher;
+        /**
+        * Cipher 构造函数
+        * @param {Integer} provider 指定加密算法
+        * @param {Integer} mode 指定分组密码工作模式
+        * @param {Buffer} key 指定加密解密密码
+        * @param {Buffer} iv 指定初始向量
+        */
+        new(provider: Integer, mode: Integer, key: Buffer, iv: Buffer): Cipher;
+
+        /**
+         *返回当前算法名称
+         *
+         * @type {Readonly<string>}
+         * @memberof Cipher
+         */
+        name: Readonly<string>;
+
+        /**
+         *  返回当前算法密码长度，以位为单位
+         *
+         * @type {Readonly<Integer>}
+         * @memberof Cipher
+         */
+        keySize: Readonly<Integer>;
+
+        /**
+         *返回当前算法初始向量长度，以字节为单位
+         *
+         * @type {Readonly<Integer>}
+         * @memberof Cipher
+         */
+        ivSize: Readonly<Integer>;
+
+        /**
+         *返回当前算法数据块长度，以字节为单位
+         *
+         * @type {Readonly<Integer>}
+         * @memberof Cipher
+         */
+        blockSize: Readonly<Integer>;
+
+        /**
+         *使用填充模式
+         *
+         * @param {Integer} mode 指定填充模式，缺省为 PADDING_PKCS7
+         * @memberof Cipher
+         */
+        paddingMode(mode: Integer): void;
+
+        /**
+         *使用当前算法密码加密数据
+         *
+         * @param {Buffer} data 指定要加密的数据
+         * @returns 返回加密后的数据
+         * @memberof Cipher
+         */
+        encrypt(data: Buffer): Buffer;
+
+        /**
+         *使用当前算法密码解密数据
+         *
+         * @param {Buffer} data 指定要解密的数据
+         * @returns {Buffer} , 返回解密后的数据
+         * @memberof Cipher
+         */
+        decrypt(data: Buffer): Buffer;
+    }
+}
+//#endregion
+
+//#region======================================================db=========================================================
+declare module "db" {
+
+    interface DbConnection {
+        /**
+ * class prop 
+ *
+ * 
+ * @brief 查询当前连接数据库类型
+ * 
+ * @readonly
+ * @type String
+ */
+
+        type: Readonly<string>
+
+
+
+        /**
+         * 
+         * @brief 关闭当前数据库连接
+         * 
+         * @async
+         */
+        close(): void;
+
+        /**
+         * 
+         * @brief 在当前数据库连接上启动一个事务
+         * 
+         * @async
+         */
+        begin(): void;
+
+        /**
+         * 
+         * @brief 提交当前数据库连接上的事务
+         * 
+         * @async
+         */
+        commit(): void;
+
+        /**
+         * 
+         * @brief 回滚当前数据库连接上的事务
+         * 
+         * @async
+         */
+        rollback(): void;
+
+        /**
+         * 
+         * @brief 进入事务执行一个函数，并根据函数执行情况提交或者回滚
+         * func 执行有三种结果：
+         * * 函数正常返回，包括运行结束和主动 return，此时事务将自动提交
+         * * 函数返回 false，此时事务将回滚
+         * * 函数运行错误，事务自动回滚
+         * 
+         * @param func 以事务方式执行的函数
+         * @return 返回事务是否提交，正常 commit 时返回 true, rollback 时返回 false，如果事务出错则抛出错误
+         * 
+         * 
+         * 
+         */
+        trans(func: Function): boolean;
+
+        /**
+         * 
+         * @brief 执行一个 sql 命令，并返回执行结果，可根据参数格式化字符串
+         * 
+         * @param sql 格式化字符串，可选参数用 ? 指定。例如：'SELECT FROM TEST WHERE [id]=?'
+         * @param args 可选参数列表
+         * @return 返回包含结果记录的数组，如果请求是 UPDATE 或者 INSERT，返回结果还会包含 affected 和 insertId，mssql 不支持 insertId。
+         * 
+         * 
+         * @async
+         */
+        execute(sql: string, ...args: any[]): any[];
+
+        /**
+         * 
+         * @brief 格式化一个 sql 命令，并返回格式化结果
+         * 
+         * @param sql 格式化字符串，可选参数用 ? 指定。例如：'SELECT FROM TEST WHERE [id]=?'
+         * @param args 可选参数列表
+         * @return 返回格式化之后的 sql 命令
+         * 
+         * 
+         * 
+         */
+        format(sql: string, ...args: any[]): string;
+    }
+
+    interface MySQL extends DbConnection {
+        /**
+	 * class prop 
+	 *
+	 * 
+	 * @brief 数据库连接接收缓存尺寸
+	 * 
+	 * 
+	 * @type Integer
+	 */
+
+        rxBufferSize: number
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 数据库连接发送缓存尺寸
+         * 
+         * 
+         * @type Integer
+         */
+
+        txBufferSize: number
+
+
+
+        /**
+         * 
+         * @brief 选择当前数据库连接的缺省数据库
+         * @param dbName 指定数据库名
+         * 
+         * 
+         * @async
+         */
+        use(dbName: string): void;
+    }
+
+    interface MSSQL extends DbConnection {
+
+        /**
+         * 
+         * @brief 选择当前数据库连接的缺省数据库
+         * @param dbName 指定数据库名
+         * 
+         * 
+         * @async
+         */
+        use(dbName: string): void;
+    }
+
+    interface SQLite extends DbConnection {
+        /**
+	 * class prop 
+	 *
+	 * 
+	 * @brief 当前数据库文件名
+	 * 
+	 * @readonly
+	 * @type String
+	 */
+
+        fileName: Readonly<string>
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 查询和设置数据库超时时间，以毫秒为单位
+         * 
+         * 
+         * @type Integer
+         */
+
+        timeout: number
+
+
+
+        /**
+         * 
+         * @brief 备份当前数据库到新文件
+         * @param fileName 指定备份的数据库文件名
+         * 
+         * @async
+         */
+        backup(fileName: string): void;
+    }
+
+    interface LevelDB {
+
+
+        /**
+         * 
+         * @brief 检查数据库内是否存在指定键值的数据
+         * @param key 指定要检查的键值
+         * @return 返回键值是否存在
+         * 
+         * 
+         * @async
+         */
+        has(key: Buffer): boolean;
+
+        /**
+         * 
+         * @brief 查询指定键值的值
+         * @param key 指定要查询的键值
+         * @return 返回键值所对应的值，若不存在，则返回 null
+         * 
+         * 
+         * @async
+         */
+        get(key: Buffer): Buffer;
+
+        /**
+         * 
+         * @brief 查询一组指定键值的值
+         * @param keys 指定要查询的键值数组
+         * @return 返回包含键值得数组
+         * 
+         * 
+         * 
+         */
+        mget(keys: any[]): any[];
+
+        /**
+         * 
+         * @brief 设定一个键值数据，键值不存在则插入新数据
+         * @param key 指定要设定的键值
+         * @param value 指定要设定的数据
+         * 
+         * 
+         * @async
+         */
+        set(key: Buffer, value: Buffer): void;
+
+        /**
+         * 
+         * @brief 设定一组键值数据，键值不存在则插入新数据
+         * @param map 指定要设定的键值数据字典
+         * 
+         * 
+         * 
+         */
+        mset(map: Object): void;
+
+        /**
+         * 
+         * @brief 删除一组指定键值的值
+         * @param keys 指定要删除的键值数组
+         * 
+         * 
+         * 
+         */
+        mremove(keys: any[]): void;
+
+        /**
+         * 
+         * @brief 删除指定键值的全部值
+         * @param key 指定要删除的键值
+         * 
+         * 
+         * @async
+         */
+        remove(key: Buffer): void;
+
+        /**
+         * 
+         * @brief 枚举数据库中所有的键值对
+         * 
+         * 回调函数有两个参数，(value, key)
+         * 
+         * ```JavaScript
+         * var db = require("db");
+         * var test = new db.openLevelDB("test.db");
+         * 
+         * test.forEach(function(value, key){
+         * ...
+         * });
+         * ```
+         * @param func 枚举回调函数
+         * 
+         * 
+         * 
+         */
+        forEach(func: Function): void;
+
+        /**
+         * 
+         * @brief 枚举数据库中键值在 from 和 to 之间的键值对
+         * 
+         * 回调函数有两个参数，(value, key)
+         * 
+         * ```JavaScript
+         * var db = require("db");
+         * var test = new db.openLevelDB("test.db");
+         * 
+         * test.between("aaa", "bbb", function(value, key){
+         * ...
+         * });
+         * ```
+         * @param from 枚举的最小键值，枚举时包含此键值
+         * @param to 枚举的最大键值，枚举时不包含此键值
+         * @param func 枚举回调函数
+         * 
+         * 
+         * 
+         */
+        between(from: Buffer, to: Buffer, func: Function): void;
+
+        /**
+         * 
+         * @brief 在当前数据库上开启一个事务
+         * @return 返回一个开启的事务对象
+         * 
+         * 
+         */
+        begin(): LevelDB;
+
+        /**
+         * 
+         * @brief 提交当前事务
+         * 
+         * 
+         */
+        commit(): void;
+
+        /**
+         * 
+         * @brief 关闭当前数据库连接或事务
+         * 
+         * @async
+         */
+        close(): void;
+    }
+
+    interface MongoCursor {
+        /** 
+        * @brief 指定返回结果时跳过的记录数
+        * @param num 记录数
+        * @return 返回游标对象本身便于链式调用
+        * 
+        * 
+        * @async
+        */
+        skip(num: number): MongoCursor;
+
+        /**
+         * 
+         * @brief 指定返回结果的最大记录数
+         * @param size 记录数
+         * @return 返回游标对象本身便于链式调用
+         * 
+         * 
+         * @async
+         */
+        limit(size: number): MongoCursor;
+
+        /**
+         * 
+         * @brief 设定返回结果的排序
+         * @param opts 指定排序条件
+         * @return 返回游标对象本身便于链式调用
+         * 
+         * 
+         * 
+         */
+        sort(opts: Object): MongoCursor;
+
+        /**
+         * 
+         * @brief 查询当前游标是否有下一条记录
+         * @return 有记录则返回 true
+         * 
+         * 
+         * 
+         */
+        hasNext(): boolean;
+
+        /**
+         * 
+         * @brief 返回当前游标的下一条记录
+         * @return 记录对象，无记录则返回 null
+         * 
+         * 
+         * 
+         */
+        next(): Object;
+
+        /**
+         * 
+         * @brief 查询游标的记录总数
+         * @param applySkipLimit 指定是否查询 skip 和 limit 后的记录数，缺省为 false，查询全部记录数
+         * @return 返回记录总数
+         * 
+         * 
+         * 
+         */
+        count(applySkipLimit?: boolean/** = false*/): number;
+
+        /**
+         * 
+         * @brief 查询游标的记录总数，相当于 count(true)
+         * @return 返回记录总数
+         * 
+         * 
+         * 
+         */
+        size(): number;
+
+        /**
+         * 
+         * @brief 遍历全部记录并回调处理函数
+         * @param func 指定处理函数
+         * 
+         * 
+         * 
+         */
+        forEach(func: Function): void;
+
+        /**
+         * 
+         * @brief 遍历处理全部记录，并返回处理结果
+         * @param func 指定处理函数
+         * @return 返回处理结果数组
+         * 
+         * 
+         * 
+         */
+        map(func: Function): any[];
+
+        /**
+         * 
+         * @brief 返回当前游标全部记录的数组
+         * @return 返回包含全部数据的 Javascript 数组
+         * 
+         * 
+         * 
+         */
+        toArray(): any[];
+
+        /**
+         * 
+         * @brief 修改 mongodb 服务器缺省索引策略，使用指定的索引进行查询
+         * @param opts 指定强制使用的索引
+         * @return 返回游标对象本身便于链式调用
+         * 
+         * 
+         * 
+         */
+        hint(opts: Object): MongoCursor;
+    }
+
+    interface MongoCollection {
+        /**
+	 * 
+	 * @brief 根据给定的查询条件和返回字段设定，建立游标对象
+	 * @param query 指定查询条件的对象
+	 * @param projection 指定返回字段的对象
+	 * @return 返回游标对象
+	 * 
+	 * 
+	 * 
+	 */
+        find(query?: Object/** = v8::Object::New(isolate)*/, projection?: Object/** = v8::Object::New(isolate)*/): MongoCursor;
+
+        /**
+         * 
+         * @brief 根据给定的查询条件和返回字段设定，查询一条结果
+         * @param query 指定查询条件的对象
+         * @param projection 指定返回字段的对象
+         * @return 返回第一条结果
+         * 
+         * 
+         * 
+         */
+        findOne(query?: Object/** = v8::Object::New(isolate)*/, projection?: Object/** = v8::Object::New(isolate)*/): Object;
+
+        /**
+         * 
+         * @brief 查询并修改
+         * @param query 指定查询条件，修改数据
+         * @return 返回修改前的结果及其他信息
+         * 
+         * 
+         * 
+         */
+        findAndModify(query: Object): Object;
+
+        /**
+         * 
+         * @brief 插入一组数据
+         * @param documents 指定要插入的数据数组
+         * 
+         * 
+         * 
+         */
+        insert(documents: any[]): void;
+
+        /**
+         * 
+         * @brief 插入一条数据
+         * @param document 指定要插入的数据
+         * 
+         * 
+         * 
+         */
+        insert(document: Object): void;
+
+        /**
+         * 
+         * @brief 保存一条数据，若数据包含 _id 字段，则为更新，否则为插入
+         * @param document 指定要保存的数据
+         * 
+         * 
+         * 
+         */
+        save(document: Object): void;
+
+        /**
+         * 
+         * @brief 根据给定的查询条件更新数据
+         * @param query 指定查询条件的对象
+         * @param document 指定要更新的数据
+         * @param upsert 数据不存在时，插入一条新数据，缺省为 false，不插入
+         * @param multi 当符合条件的数据多于一条时，更新所有数据，缺省为 false，只更新第一条
+         * 
+         * 
+         * 
+         */
+        update(query: Object, document: Object, upsert?: boolean/** = false*/, multi?: boolean/** = false*/): void;
+
+        /**
+         * 
+         * @brief 根据给定的查询条件更新数据
+         * @param query 指定查询条件的对象
+         * @param document 指定要更新的数据
+         * @param options 以对象字段传递的 upsert 和 multi 选项
+         * 
+         * 
+         * 
+         */
+        update(query: Object, document: Object, options: Object): void;
+
+        /**
+         * 
+         * @brief 根据给定的查询条件删除数据
+         * @param query 指定查询条件的对象
+         * 
+         * 
+         * 
+         */
+        remove(query: Object): void;
+
+        /**
+         * 
+         * @brief 执行数据库命令
+         * @param cmd 给定命令对象
+         * @return 返回命令返回结果
+         * 
+         * 
+         * 
+         */
+        runCommand(cmd: Object): Object;
+
+        /**
+         * 
+         * @brief 执行数据库命令
+         * @param cmd 给定命令名称
+         * @param arg 给定命令参数选项
+         * @return 返回命令返回结果
+         * 
+         * 
+         * 
+         */
+        runCommand(cmd: string, arg?: Object/** = v8::Object::New(isolate)*/): Object;
+
+        /**
+         * 
+         * @brief 删除当前集合
+         * 
+         * 
+         */
+        drop(): void;
+
+        /**
+         * 
+         * @brief 在当前集合上创建索引
+         * @param keys 给定索引字段、顺序和方向
+         * @param options 给定索引的选项，唯一索引等
+         * 
+         * 
+         * 
+         */
+        ensureIndex(keys: Object, options?: Object/** = v8::Object::New(isolate)*/): void;
+
+        /**
+         * 
+         * @brief 重建当前集合的索引
+         * @return 返回命令执行结果
+         * 
+         * 
+         * 
+         */
+        reIndex(): Object;
+
+        /**
+         * 
+         * @brief 删除当前集合指定名称的索引
+         * @param name 给定要删除的索引名称
+         * @return 返回命令执行结果
+         * 
+         * 
+         * 
+         */
+        dropIndex(name: string): Object;
+
+        /**
+         * 
+         * @brief 删除当前集合全部索引
+         * @return 返回命令执行结果
+         * 
+         * 
+         * 
+         */
+        dropIndexes(): Object;
+
+        /**
+         * 
+         * @brief 查询当前集合全部索引
+         * @return 返回包含索引的结果集
+         * 
+         * 
+         * 
+         */
+        getIndexes(): MongoCursor;
+
+        /**
+         * 
+         * @brief 获取当前集合子命名空间的集合对象
+         * @param name 子命名空间名称
+         * @return 返回新集合对象
+         * 
+         * 
+         * 
+         */
+        getCollection(name: string): MongoCollection;
+    }
+
+    interface MongoID extends FibJS.Object { }
+
+    interface MongoDB extends DbConnection {
+
+
+        /**
+         * 
+         * @brief 获取指定集合访问对象
+         * @param name 指定集合的名称
+         * @return 返回指定的集合对象
+         * 
+         * 
+         * 
+         */
+        getCollection(name: string): MongoCollection;
+
+        /**
+         * 
+         * @brief 指定一个 MongoDB 数据库命令
+         * @param cmd 指定命令和参数的字典对象
+         * @return 返回命令执行结果
+         * 
+         * 
+         * 
+         */
+        runCommand(cmd: Object): Object;
+
+        /**
+         * 
+         * @brief 指定一个简单的 MongoDB 数据库命令
+         * @param cmd 指定命令名
+         * @param arg 指定命令参数
+         * @return 返回命令执行结果
+         * 
+         * 
+         * 
+         */
+        runCommand(cmd: string, arg: any): Object;
+
+        /**
+         * 
+         * @brief 生成一个 mongodb _objectid 对象
+         * @param hexStr 初始化 16 进制字符串，缺省生成新的 id
+         * @return 新 _objectid 对象
+         * 
+         * 
+         * 
+         */
+        oid(hexStr?: string/** = ""*/): MongoID;
+
+        /**
+         * 
+         * @brief 关闭当前数据库连接
+         * 
+         * @async
+         */
+        close(): void;
+    }
+
+    interface RedisSortedSet {
+        /**
+	 * 
+	 * @brief 将一个或多个 member 元素及其 score 值加入到有序集当中
+	 * @param sms 指定要添加的 member/score 对象
+	 * @return 被成功添加的新成员的数量，不包括那些被更新的、已经存在的成员
+	 * 
+	 * 
+	 */
+        add(sms: Object): number;
+
+        /**
+         * 
+         * @brief 将一个或多个 member 元素及其 score 值加入到有序集当中
+         * @param sms 指定要添加的 member/score 列表
+         * @return 被成功添加的新成员的数量，不包括那些被更新的、已经存在的成员
+         * 
+         * 
+         */
+        add(...sms: any[]): number;
+
+        /**
+         * 
+         * @brief 返回有序集中，成员 member 的 score 值
+         * @param member 指定要查询的 member
+         * @return member 成员的 score 值，以字符串形式表示
+         * 
+         * 
+         */
+        score(member: Buffer): Buffer;
+
+        /**
+         * 
+         * @brief 为有序集的成员 member 的 score 值加上增量 num
+         * @param member 指定要修改的 member
+         * @param num 指定要加上的数值
+         * @return member 成员的新 score 值，以字符串形式表示
+         * 
+         * 
+         */
+        incr(member: Buffer, num?: number/** = 1*/): Buffer;
+
+        /**
+         * 
+         * @brief 移除有序集中的一个或多个 member 元素
+         * @param members 指定要移除的元素数组
+         * @return 被成功移除的元素的数量，不包括被忽略的元素
+         * 
+         * 
+         */
+        remove(members: any[]): number;
+
+        /**
+         * 
+         * @brief 移除有序集中的一个或多个 member 元素
+         * @param members 指定要移除的元素列表
+         * @return 被成功移除的元素的数量，不包括被忽略的元素
+         * 
+         * 
+         */
+        remove(...members: any[]): number;
+
+        /**
+         * 
+         * @brief 返回有序集中元素的数量
+         * @return 返回有序集的长度
+         * 
+         * 
+         */
+        len(): number;
+
+        /**
+         * 
+         * @brief 返回有序集中， score 值在 min 和 max 之间(默认包括 score 值等于 min 或 max )的成员的数量
+         * @param min 指定统计的最小 score
+         * @param max 指定统计的最大 score
+         * @return score 值在 min 和 max 之间的成员的数量
+         * 
+         * 
+         */
+        count(min: number, max: number): number;
+
+        /**
+         * 
+         * @brief 返回有序集中，指定区间内的成员，成员的位置按 score 值递增(从小到大)来排序
+         * @param start 指定查询的起始下标，0 表示第一个元素，-1 表示最后一个元素
+         * @param stop 指定查询的结束下标，0 表示第一个元素，-1 表示最后一个元素
+         * @param withScores 指定是否在结果中包含 score
+         * @return 指定区间内，带有 score 值(可选)的有序集成员的列表
+         * 
+         * 
+         */
+        range(start: number, stop: number, withScores?: boolean/** = false*/): any[];
+
+        /**
+         * 
+         * @brief 返回有序集中，指定区间内的成员，成员的位置按 score 值递减(从大到小)来排序
+         * @param start 指定查询的起始下标，0 表示第一个元素，-1 表示最后一个元素
+         * @param stop 指定查询的结束下标，0 表示第一个元素，-1 表示最后一个元素
+         * @param withScores 指定是否在结果中包含 score
+         * @return 指定区间内，带有 score 值(可选)的有序集成员的列表
+         * 
+         * 
+         */
+        rangeRev(start: number, stop: number, withScores?: boolean/** = false*/): any[];
+
+        /**
+         * 
+         * @brief 有序集中成员 member 的排名。其中有序集成员按 score 值递增(从小到大)顺序排列
+         * @param member 指定要查询的 member
+         * @return member 如果 member 是有序集 key 的成员，返回 member 的排名。如果 member 不是有序集 key 的成员，返回 nil
+         * 
+         * 
+         */
+        rank(member: Buffer): number;
+
+        /**
+         * 
+         * @brief 有序集中成员 member 的排名。其中有序集成员按 score 值递减(从大到小)顺序排列
+         * @param member 指定要查询的 member
+         * @return member 如果 member 是有序集 key 的成员，返回 member 的排名。如果 member 不是有序集 key 的成员，返回 nil
+         * 
+         * 
+         */
+        rankRev(member: Buffer): number;
+    }
+
+    interface RedisSet {
+
+
+        /**
+         * 
+         * @brief 将一个或多个 member 元素加入到集合 key 当中，已经存在于集合的 member 元素将被忽略
+         * @param members 指定要添加的元素数组
+         * @return 被添加到集合中的新元素的数量，不包括被忽略的元素
+         * 
+         * 
+         */
+        add(members: any[]): number;
+
+        /**
+         * 
+         * @brief 同时将多个 field-value (域-值)对设置到哈希表中，此命令会覆盖哈希表中已存在的域
+         * @param members 指定要添加的元素列表
+         * @return 被添加到集合中的新元素的数量，不包括被忽略的元素
+         * 
+         * 
+         */
+        add(...members: any[]): number;
+
+        /**
+         * 
+         * @brief 移除集合中的一个或多个 member 元素
+         * @param members 指定要移除的元素数组
+         * @return 被成功移除的元素的数量，不包括被忽略的元素
+         * 
+         * 
+         */
+        remove(members: any[]): number;
+
+        /**
+         * 
+         * @brief 移除集合中的一个或多个 member 元素
+         * @param members 指定要移除的元素列表
+         * @return 被成功移除的元素的数量，不包括被忽略的元素
+         * 
+         * 
+         */
+        remove(...members: any[]): number;
+
+        /**
+         * 
+         * @brief 返回集合中元素的数量
+         * @return 返回集合的长度
+         * 
+         * 
+         */
+        len(): number;
+
+        /**
+         * 
+         * @brief 判断 member 元素是否集合的成员
+         * @param member 指定检查的 member
+         * @return 如果 member 元素是集合的成员，返回 true
+         * 
+         * 
+         */
+        exists(member: Buffer): boolean;
+
+        /**
+         * 
+         * @brief 返回集合中的所有成员
+         * @return 集合中所有成员的列表
+         * 
+         * 
+         */
+        members(): any[];
+
+        /**
+         * 
+         * @brief 移除并返回集合中的一个随机元素
+         * @return 被移除的随机元素。当集合是空集时，返回 null
+         * 
+         * 
+         */
+        pop(): Buffer;
+
+        /**
+         * 
+         * @brief 从集合中获取随机的一个元素
+         * @return 返回一个元素；如果集合为空，返回 null
+         * 
+         * 
+         */
+        randMember(): any;
+
+        /**
+         * 
+         * @brief 从集合中获取随机的若干元素
+         * @param count 指定返回的元素个数。正数，返回一个包含 count 个元素的数组；负数，返回一个数组，数组中的元素可能会重复出现多次，而数组的长度为 count 的绝对值
+         * @return 返回一个列表；如果集合为空，返回空列表
+         * 
+         * 
+         */
+        randMember(count: number): any;
+    }
+
+    interface RedisList {
+
+        /**
+         * 
+         * @brief 将一个或多个值 value 插入到列表的表头
+         * @param values 指定要插入的数据
+         * @return 插入后，列表的长度
+         * 
+         * 
+         */
+        push(values: any[]): number;
+
+        /**
+         * 
+         * @brief 将一个或多个值 value 插入到列表的表头
+         * @param values 指定要插入的数据
+         * @return 插入后，列表的长度
+         * 
+         * 
+         */
+        push(...values: any[]): number;
+
+        /**
+         * 
+         * @brief 移除并返回列表 key 的头元素
+         * @return 列表的头元素，如果列表为空则返回 null
+         * 
+         * 
+         */
+        pop(): Buffer;
+
+        /**
+         * 
+         * @brief 将一个或多个值 value 插入到列表的表尾(最右边)
+         * @param values 指定要插入的数据
+         * @return 插入后，列表的长度
+         * 
+         * 
+         */
+        rpush(values: any[]): number;
+
+        /**
+         * 
+         * @brief 将一个或多个值 value 插入到列表的表尾(最右边)
+         * @param values 指定要插入的数据
+         * @return 插入后，列表的长度
+         * 
+         * 
+         */
+        rpush(...values: any[]): number;
+
+        /**
+         * 
+         * @brief 移除并返回列表 key 的表尾(最右边)元素
+         * @return 列表的头元素，如果列表为空则返回 null
+         * 
+         * 
+         */
+        rpop(): Buffer;
+
+        /**
+         * 
+         * @brief 将列表下标为 index 的元素的值设置为 value
+         * @param index 指定要修改的下标
+         * @param value 指定要修改的数据
+         * 
+         * 
+         */
+        set(index: number, value: Buffer): void;
+
+        /**
+         * 
+         * @brief 返回列表中，下标为 index 的元素
+         * @param index 指定要查询的下标
+         * @return 列表中下标为 index 的元素
+         * 
+         * 
+         */
+        get(index: number): Buffer;
+
+        /**
+         * 
+         * @brief 将值 value 插入到列表当中，位于值 pivot 之前
+         * @param pivot 指定插入时查找的数据
+         * @param value 指定要插入的数据
+         * @return 插入后，列表的长度
+         * 
+         * 
+         */
+        insertBefore(pivot: Buffer, value: Buffer): number;
+
+        /**
+         * 
+         * @brief 将值 value 插入到列表当中，位于值 pivot 之后
+         * @param pivot 指定插入时查找的数据
+         * @param value 指定要插入的数据
+         * @return 插入后，列表的长度
+         * 
+         * 
+         */
+        insertAfter(pivot: Buffer, value: Buffer): number;
+
+        /**
+         * 
+         * @brief 根据参数 count 的值，移除列表中与参数 value 相等的元素
+         * @param count 指定删除的元素数量
+         * @param value 指定要删除的数值
+         * @return 被移除元素的数量
+         * 
+         * 
+         */
+        remove(count: number, value: Buffer): number;
+
+        /**
+         * 
+         * @brief 对一个列表进行修剪(trim)，就是说，让列表只保留指定区间内的元素，不在指定区间之内的元素都将被删除
+         * @param start 指定修剪的起始下标，0 表示第一个元素，-1 表示最后一个元素
+         * @param stop 指定修剪的结束下标，0 表示第一个元素，-1 表示最后一个元素
+         * 
+         * 
+         */
+        trim(start: number, stop: number): void;
+
+        /**
+         * 
+         * @brief 返回列表的长度
+         * @return 返回列表的长度
+         * 
+         * 
+         */
+        len(): number;
+
+        /**
+         * 
+         * @brief 返回列表中指定区间内的元素，区间以偏移量 start 和 stop 指定，包含 start 和 stop 的元素
+         * @param start 指定查询的起始下标，0 表示第一个元素，-1 表示最后一个元素
+         * @param stop 指定查询的结束下标，0 表示第一个元素，-1 表示最后一个元素
+         * @return 包含指定区间内的元素的数组
+         * 
+         * 
+         */
+        range(start: number, stop: number): any[];
+    }
+
+    interface RedisHash {
+
+
+
+        /**
+         * 
+         * @brief 将哈希表中的域 field 的值设为 value，如果域 field 已经存在于哈希表中，旧值将被覆盖
+         * @param field 指定要修改的 field
+         * @param value 指定要修改的数据
+         * 
+         * 
+         */
+        set(field: Buffer, value: Buffer): void;
+
+        /**
+         * 
+         * @brief 将哈希表中的域 field 的值设置为 value ，当且仅当域 field 不存在。若域 field 已经存在，该操作无效
+         * @param field 指定要修改的 field
+         * @param value 指定要修改的数据
+         * 
+         * 
+         */
+        setNX(field: Buffer, value: Buffer): void;
+
+        /**
+         * 
+         * @brief 同时将多个 field-value (域-值)对设置到哈希表中，此命令会覆盖哈希表中已存在的域
+         * @param kvs 指定要设置的 field/value 对象
+         * 
+         * 
+         */
+        mset(kvs: Object): void;
+
+        /**
+         * 
+         * @brief 同时将多个 field-value (域-值)对设置到哈希表中，此命令会覆盖哈希表中已存在的域
+         * @param kvs 指定要设置的 field/value 列表
+         * 
+         * 
+         */
+        mset(...kvs: any[]): void;
+
+        /**
+         * 
+         * @brief 返回哈希表中给定域 field 的值
+         * @param field 指定要查询的 field
+         * @return 给定域的值，当给定域不存在或是给定 key 不存在时，返回 null
+         * 
+         * 
+         */
+        get(field: Buffer): Buffer;
+
+        /**
+         * 
+         * @brief 返回哈希表中，一个或多个给定域的值
+         * @param fields 指定要查询的域数组
+         * @return 一个包含所有给定域的值的列表
+         * 
+         * 
+         */
+        mget(fields: any[]): any[];
+
+        /**
+         * 
+         * @brief 返回哈希表中，一个或多个给定域的值
+         * @param fields 指定要查询的域列表
+         * @return 一个包含所有给定域的值的列表
+         * 
+         * 
+         */
+        mget(...fields: any[]): any[];
+
+        /**
+         * 
+         * @brief 将域所储存的值加上增量
+         * @param field 指定要修改的域
+         * @param num 指定要加上的数值
+         * @return 加上 num 之后，域的值
+         * 
+         * 
+         */
+        incr(field: Buffer, num?: number/** = 1*/): number;
+
+        /**
+         * 
+         * @brief 返回哈希表中，所有的域和值
+         * @return 返回一个包含哈希表中所有域的列表
+         * 
+         * 
+         */
+        getAll(): any[];
+
+        /**
+         * 
+         * @brief 返回哈希表中的所有域
+         * @return 返回值里，紧跟每个域名(field name)之后是域的值(value)，所以返回值的长度是哈希表大小的两倍
+         * 
+         * 
+         */
+        keys(): any[];
+
+        /**
+         * 
+         * @brief 返回哈希表中域的数量
+         * @return 返回哈希表中域的数量
+         * 
+         * 
+         */
+        len(): number;
+
+        /**
+         * 
+         * @brief 查看哈希表中，给定域 field 是否存在
+         * @param field 指定要查询的 field
+         * @return 如果哈希表含有给定域，返回 true，如果哈希表不含有给定域，或 key 不存在，返回 false
+         * 
+         * 
+         */
+        exists(field: Buffer): boolean;
+
+        /**
+         * 
+         * @brief 删除哈希表中的一个或多个指定域，不存在的域将被忽略
+         * @param fields 指定要删除的域数组
+         * @return 被删除域的数量
+         * 
+         * 
+         */
+        del(fields: any[]): number;
+
+        /**
+         * 
+         * @brief 删除哈希表中的一个或多个指定域，不存在的域将被忽略
+         * @param fields 指定要删除的域列表
+         * @return 被删除域的数量
+         * 
+         * 
+         */
+        del(...fields: any[]): number;
+    }
+
+    interface Redis {
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 查询和设置错误处理函数，当 sub 出现错误或者网络中断时回调，当回调发生后，本对象的一切 sub 都将中止
+         * 
+         * 
+         * 
+         * @type Function
+         */
+
+        onsuberror: Function
+
+
+
+        /**
+         * 
+         * @brief redis 基础命令方法
+         * @param cmd 指定发送的命令
+         * @param args 指定发送的参数
+         * @return 返回服务器返回的结果
+         * 
+         * 
+         */
+        command(cmd: string, ...args: any[]): any;
+
+        /**
+         * 
+         * @brief 将字符串值 value 关联到 key，如果 key 已经持有其他值， SET 就覆写旧值，无视类型
+         * @param key 指定要关联的 key
+         * @param value 指定要关联的数据
+         * @param ttl 以毫秒为单位为 key 设置生存时间；如果 ttl 为 0 ，那么不设置生存时间
+         * 
+         * 
+         */
+        set(key: Buffer, value: Buffer, ttl?: number/** = 0*/): void;
+
+        /**
+         * 
+         * @brief 将 key 的值设为 value ，当且仅当 key 不存在。若给定的 key 已经存在，则 SETNX 不做任何动作。
+         * @param key 指定要关联的 key
+         * @param value 指定要关联的数据
+         * @param ttl 以毫秒为单位为 key 设置生存时间；如果 ttl 为 0 ，那么不设置生存时间
+         * 
+         * 
+         */
+        setNX(key: Buffer, value: Buffer, ttl?: number/** = 0*/): void;
+
+        /**
+         * 
+         * @brief 将 key 的值设为 value，只在键已经存在时，才对键进行设置操作。
+         * @param key 指定要关联的 key
+         * @param value 指定要关联的数据
+         * @param ttl 以毫秒为单位为 key 设置生存时间；如果 ttl 为 0 ，那么不设置生存时间
+         * 
+         * 
+         */
+        setXX(key: Buffer, value: Buffer, ttl?: number/** = 0*/): void;
+
+        /**
+         * 
+         * @brief 同时设置一个或多个 key-value 对。如果某个给定 key 已经存在，那么 MSET 会用新值覆盖原来的旧值
+         * @param kvs 指定要设置的 key/value 对象
+         * 
+         * 
+         */
+        mset(kvs: Object): void;
+
+        /**
+         * 
+         * @brief 同时设置一个或多个 key-value 对。如果某个给定 key 已经存在，那么 MSET 会用新值覆盖原来的旧值
+         * @param kvs 指定要设置的 key/value 列表
+         * 
+         * 
+         */
+        mset(...kvs: any[]): void;
+
+        /**
+         * 
+         * @brief 同时设置一个或多个 key-value 对，当且仅当所有给定 key 都不存在
+         * @param kvs 指定要设置的 key/value 对象
+         * 
+         * 
+         */
+        msetNX(kvs: Object): void;
+
+        /**
+         * 
+         * @brief 同时设置一个或多个 key-value 对，当且仅当所有给定 key 都不存在
+         * @param kvs 指定要设置的 key/value 列表
+         * 
+         * 
+         */
+        msetNX(...kvs: any[]): void;
+
+        /**
+         * 
+         * @brief 如果 key 已经存在并且是一个字符串，append 命令将 value 追加到 key 原来的值的末尾。如果 key 不存在，append 就简单地将给定 key 设为 value
+         * @param key 指定要追加的 key
+         * @param value 指定要追加的数据
+         * @return 追加 value 之后， key 中字符串的长度
+         * 
+         * 
+         */
+        append(key: Buffer, value: Buffer): number;
+
+        /**
+         * 
+         * @brief 用 value 参数覆写给定 key 所储存的字符串值，从偏移量 offset 开始
+         * @param key 指定要修改的 key
+         * @param offset 指定修改的字节偏移
+         * @param value 指定要覆盖的数据
+         * @return 被修改之后，字符串的长度
+         * 
+         * 
+         */
+        setRange(key: Buffer, offset: number, value: Buffer): number;
+
+        /**
+         * 
+         * @brief 返回 key 中字符串值的子字符串，字符串的截取范围由 start 和 end 两个偏移量决定(包括 start 和 end 在内)
+         * @param key 指定要查询的 key
+         * @param start 指定查询的起始字节偏移
+         * @param end 指定查询的结束字节偏移
+         * @return 截取得出的子字符串
+         * 
+         * 
+         */
+        getRange(key: Buffer, start: number, end: number): Buffer;
+
+        /**
+         * 
+         * @brief 返回 key 所储存的字符串值的长度。当 key 储存的不是字符串值时，返回一个错误
+         * @param key 指定要计算的 key
+         * @return 字符串值的长度。当 key 不存在时，返回 0
+         * 
+         * 
+         */
+        strlen(key: Buffer): number;
+
+        /**
+         * 
+         * @brief 计算给定字符串中，被设置为 1 的比特位的数量
+         * @param key 指定要计算的 key
+         * @param start 指定要计算的起始字节，可以使用负数值，-1 表示最后一个字节，而 -2 表示倒数第二个字节，以此类推
+         * @param end 指定要计算的结束字节，可以使用负数值，-1 表示最后一个字节，而 -2 表示倒数第二个字节，以此类推
+         * @return 被设置为 1 的位的数量
+         * 
+         * 
+         */
+        bitcount(key: Buffer, start?: number/** = 0*/, end?: number/** = -1*/): number;
+
+        /**
+         * 
+         * @brief 返回 key 所关联的字符串值，如果 key 不存在那么返回特殊值 Null
+         * @param key 指定要关联的 key
+         * @return 当 key 不存在时，返回 Null ，否则，返回 key 的值
+         * 
+         * 
+         */
+        get(key: Buffer): Buffer;
+
+        /**
+         * 
+         * @brief 返回所有(一个或多个)给定 key 的值。如果给定的 key 里面，有某个 key 不存在，那么这个 key 返回特殊值 nil 。
+         * @param keys 指定要查询的 key 数组
+         * @return 一个包含所有给定 key 的值的列表
+         * 
+         * 
+         */
+        mget(keys: any[]): any[];
+
+        /**
+         * 
+         * @brief 返回所有(一个或多个)给定 key 的值。如果给定的 key 里面，有某个 key 不存在，那么这个 key 返回特殊值 nil 。
+         * @param keys 指定要查询的 key 列表
+         * @return 一个包含所有给定 key 的值的列表
+         * 
+         * 
+         */
+        mget(...keys: any[]): any[];
+
+        /**
+         * 
+         * @brief 将给定 key 的值设为 value ，并返回 key 的旧值(old value)
+         * @param key 指定要查询修改的 key
+         * @param value 指定修改的数值
+         * @return 返回给定 key 的旧值
+         * 
+         * 
+         */
+        getset(key: Buffer, value: Buffer): Buffer;
+
+        /**
+         * 
+         * @brief 将 key 所储存的值减去减量
+         * @param key 指定要修改的 key
+         * @param num 指定要减去的数值
+         * @return 减去 num 之后，key 的值
+         * 
+         * 
+         */
+        decr(key: Buffer, num?: number/** = 1*/): number;
+
+        /**
+         * 
+         * @brief 将 key 所储存的值加上增量
+         * @param key 指定要修改的 key
+         * @param num 指定要加上的数值
+         * @return 加上 num 之后，key 的值
+         * 
+         * 
+         */
+        incr(key: Buffer, num?: number/** = 1*/): number;
+
+        /**
+         * 
+         * @brief 对 key 所储存的字符串值，设置或清除指定偏移量上的位(bit)
+         * @param key 指定要修改的 key
+         * @param offset 指定修改的位偏移
+         * @param value 指定设置或清除的参数，可以是 0 也可以是 1
+         * @return 指定偏移量原来储存的位
+         * 
+         * 
+         */
+        setBit(key: Buffer, offset: number, value: number): number;
+
+        /**
+         * 
+         * @brief 对 key 所储存的字符串值，获取指定偏移量上的位(bit)
+         * @param key 指定要查询的 key
+         * @param offset 指定查询的位偏移
+         * @return 字符串值指定偏移量上的位(bit)
+         * 
+         * 
+         */
+        getBit(key: Buffer, offset: number): number;
+
+        /**
+         * 
+         * @brief 检查给定 key 是否存在
+         * @param key 指定要关联的 key
+         * @return 若 key 存在，返回 True，否则返回 False
+         * 
+         * 
+         */
+        exists(key: Buffer): boolean;
+
+        /**
+         * 
+         * @brief 返回 key 所储存的值的类型
+         * @param key 指定要查询的 key
+         * @return 返回 key 所储存的值的类型，可能的值为 none(key不存在) string(字符串) list(列表) set(集合) zset(有序集) hash(哈希表)
+         * 
+         * 
+         */
+        type(key: Buffer): string;
+
+        /**
+         * 
+         * @brief 查找所有符合给定模式 pattern 的 key
+         * @param pattern 指定查询模式
+         * @return 符合给定模式的 key 列表
+         * 
+         * 
+         */
+        keys(pattern: string): any[];
+
+        /**
+         * 
+         * @brief 删除给定的一个或多个 key，不存在的 key 会被忽略
+         * @param keys 指定要删除的 key 数组
+         * @return 被删除 key 的数量
+         * 
+         * 
+         */
+        del(keys: any[]): number;
+
+        /**
+         * 
+         * @brief 删除给定的一个或多个 key，不存在的 key 会被忽略
+         * @param keys 指定要删除的 key 列表
+         * @return 被删除 key 的数量
+         * 
+         * 
+         */
+        del(...keys: any[]): number;
+
+        /**
+         * 
+         * @brief 为给定 key 设置生存时间，当 key 过期时，它会被自动删除
+         * @param key 指定要设定的 key
+         * @param ttl 以毫秒为单位为 key 设置生存时间
+         * @return 若 key 存在，返回 True，否则返回 False
+         * 
+         * 
+         */
+        expire(key: Buffer, ttl: number): boolean;
+
+        /**
+         * 
+         * @brief 返回给定 key 的剩余生存时间
+         * @param key 指定要查询的 key
+         * @return 以毫秒为单位，返回 key 的剩余生存时间，当 key 不存在时，返回 -2，当 key 存在但没有设置剩余生存时间时，返回 -1
+         * 
+         * 
+         */
+        ttl(key: Buffer): number;
+
+        /**
+         * 
+         * @brief 移除给定 key 的生存时间，将这个 key 从『易失的』(带生存时间 key )转换成『持久的』(一个不带生存时间、永不过期的 key)
+         * @param key 指定要设定的 key
+         * @return 若 key 存在，返回 True，否则返回 False
+         * 
+         * 
+         */
+        persist(key: Buffer): boolean;
+
+        /**
+         * 
+         * @brief 将 key 改名为 newkey，当 key 和 newkey 相同，或者 key 不存在时，返回一个错误
+         * @param key 指定要改名的 key
+         * @param newkey 指定要改名的目的 key
+         * 
+         * 
+         */
+        rename(key: Buffer, newkey: Buffer): void;
+
+        /**
+         * 
+         * @brief 当且仅当 newkey 不存在时，将 key 改名为 newkey，当 key 不存在时，返回一个错误
+         * @param key 指定要改名的 key
+         * @param newkey 指定要改名的目的 key
+         * @return 修改成功时，返回 True，如果 newkey 已经存在，返回 False
+         * 
+         * 
+         */
+        renameNX(key: Buffer, newkey: Buffer): boolean;
+
+        /**
+         * 
+         * @brief 订阅给定的一个频道的信息，当消息发生时自动调用 func，func 包含两个参数，依次为 channel 和 message，同一频道同一函数只会回调一次
+         * @param channel 指定订阅的频道名称
+         * @param func 指定回调函数
+         * 
+         * 
+         * 
+         */
+        sub(channel: Buffer, func: Function): void;
+
+        /**
+         * 
+         * @brief 订阅给定的一组频道的信息，当消息发生时自动调用相应的回调函数，同一频道同一函数只会回调一次
+         * @param map 指定频道映射关系，对象属性名称将作为频道名称，属性的值将作为回调函数
+         * 
+         * 
+         * 
+         */
+        sub(map: Object): void;
+
+        /**
+         * 
+         * @brief 退订给定的频道的全部回调
+         * @param channel 指定退订的频道名称
+         * 
+         * 
+         * 
+         */
+        unsub(channel: Buffer): void;
+
+        /**
+         * 
+         * @brief 退订给定的频道的指定回调函数
+         * @param channel 指定退订的频道名称
+         * @param func 指定退订的回调函数
+         * 
+         * 
+         * 
+         */
+        unsub(channel: Buffer, func: Function): void;
+
+        /**
+         * 
+         * @brief 退订一组给定的频道的全部回调
+         * @param channels 指定退订的频道数组
+         * 
+         * 
+         * 
+         */
+        unsub(channels: any[]): void;
+
+        /**
+         * 
+         * @brief 退订给定的一组频道的指定回调函数
+         * @param map 指定频道映射关系，对象属性名称将作为频道名称，属性的值将作为回调函数
+         * 
+         * 
+         * 
+         */
+        unsub(map: Object): void;
+
+        /**
+         * 
+         * @brief 按照模板订阅一组频道的信息，当消息发生时自动调用 func，func 包含三个参数，依次为 channel，message 和 pattern，同一模板同一函数只会回调一次
+         * @param pattern 指定订阅的频道模板
+         * @param func 指定回调函数
+         * 
+         * 
+         * 
+         */
+        psub(pattern: string, func: Function): void;
+
+        /**
+         * 
+         * @brief 订阅给定的一组频道模板的信息，当消息发生时自动调用相应的 func，同一频道同一函数只会回调一次
+         * @param map 指定频道映射关系，对象属性名称将作为频道模板，属性的值将作为回调函数
+         * 
+         * 
+         * 
+         */
+        psub(map: Object): void;
+
+        /**
+         * 
+         * @brief 退订给定模板的频道的全部回调
+         * @param pattern 指定退订的频道模板
+         * 
+         * 
+         * 
+         */
+        unpsub(pattern: string): void;
+
+        /**
+         * 
+         * @brief 退订给定模板的频道的指定回调函数
+         * @param pattern 指定退订的频道模板
+         * @param func 指定退订的回调函数
+         * 
+         * 
+         * 
+         */
+        unpsub(pattern: string, func: Function): void;
+
+        /**
+         * 
+         * @brief 退订一组给定模板的频道的全部回调
+         * @param patterns 指定发布的频道模板数组
+         * 
+         * 
+         * 
+         */
+        unpsub(patterns: any[]): void;
+
+        /**
+         * 
+         * @brief 退订一组模板的频道的指定回调函数
+         * @param map 指定频道映射关系，对象属性名称将作为频道模板，属性的值将作为回调函数
+         * 
+         * 
+         * 
+         */
+        unpsub(map: Object): void;
+
+        /**
+         * 
+         * @brief 将信息 message 发送到指定的频道 channel
+         * @param channel 指定发布的频道
+         * @param message 指定发布的消息
+         * @return 接收此消息的客户端数量
+         * 
+         * 
+         * 
+         */
+        pub(channel: Buffer, message: Buffer): number;
+
+        /**
+         * 
+         * @brief 获取指定 key 的 Hash 对象，此对象为包含指定 key 的客户端，只有调用其方法才会操作数据库
+         * @param key 指定要获取的 key
+         * @return 返回包含指定 key 的 Hash 对象
+         * 
+         * 
+         */
+        getHash(key: Buffer): RedisHash;
+
+        /**
+         * 
+         * @brief 获取指定 key 的 List 对象，此对象为包含指定 key 的客户端，只有调用其方法才会操作数据库
+         * @param key 指定要获取的 key
+         * @return 返回包含指定 key 的 List 对象
+         * 
+         * 
+         */
+        getList(key: Buffer): RedisList;
+
+        /**
+         * 
+         * @brief 获取指定 key 的 Set 对象，此对象为包含指定 key 的客户端，只有调用其方法才会操作数据库
+         * @param key 指定要获取的 key
+         * @return 返回包含指定 key 的 Set 对象
+         * 
+         * 
+         */
+        getSet(key: Buffer): RedisSet;
+
+        /**
+         * 
+         * @brief 获取指定 key 的 SortedSet 对象，此对象为包含指定 key 的客户端，只有调用其方法才会操作数据库
+         * @param key 指定要获取的 key
+         * @return 返回包含指定 key 的 SortedSet 对象
+         * 
+         * 
+         */
+        getSortedSet(key: Buffer): RedisSortedSet;
+
+        /**
+         * 
+         * @brief 序列化给定 key ，并返回被序列化的值，使用 restore 命令可以将这个值反序列化为 Redis 键
+         * @param key 指定要序列化的 key
+         * @return 返回序列化之后的值，如果 key 不存在，那么返回 null
+         * 
+         * 
+         */
+        dump(key: Buffer): Buffer;
+
+        /**
+         * 
+         * @brief 反序列化给定的序列化值，并将它和给定的 key 关联
+         * @param key 指定要反序列化的 key
+         * @param data 指定要反序列化的数据
+         * @param ttl 以毫秒为单位为 key 设置生存时间；如果 ttl 为 0 ，那么不设置生存时间
+         * 
+         * 
+         */
+        restore(key: Buffer, data: Buffer, ttl?: number/** = 0*/): void;
+
+        /**
+         * 
+         * @brief 关闭当前数据库连接或事务
+         * 
+         * 
+         */
+        close(): void;
+    }
+
+    /**
+     * 
+     * @brief 打开一个数据库，此方法为通用入口，根据提供的 connString 不同调用不同的引擎
+     * @param connString 数据库描述，如：mysql://user:pass\@host/db
+     * @return 返回数据库连接对象
+     * 
+     * 
+     * @async
+     */
+    export function open(connString: string): FibJS.Object;
+
+    /**
+     * 
+     * @brief 打开一个 mysql 数据库
+     * @param connString 数据库描述，如：mysql://user:pass\@host/db
+     * @return 返回数据库连接对象
+     * 
+     * 
+     * @async
+     */
+    export function openMySQL(connString: string): MySQL;
+
+    /**
+     * 
+     * @brief 打开一个 mysql 数据库
+     * @param connString 数据库描述，如：mssql://user:pass\@host/db
+     * @return 返回数据库连接对象
+     * 
+     * 
+     * @async
+     */
+    export function openMSSQL(connString: string): MSSQL;
+
+    /**
+     * 
+     * @brief 打开一个 sqlite 数据库
+     * @param connString 数据库描述，如：sqlite:test.db 或者 test.db
+     * @return 返回数据库连接对象
+     * 
+     * 
+     * @async
+     */
+    export function openSQLite(connString: string): SQLite;
+
+    /**
+     * 
+     * @brief 打开一个 mongodb 数据库
+     * @param connString 数据库描述
+     * @return 返回数据库连接对象
+     * 
+     * 
+     * @async
+     */
+    export function openMongoDB(connString: string): MongoDB;
+
+    /**
+     * 
+     * @brief 打开一个 leveldb 数据库
+     * @param connString 数据库描述，如：level:test.db 或者 test.db
+     * @return 返回数据库对象
+     * 
+     * 
+     * @async
+     */
+    export function openLevelDB(connString: string): LevelDB;
+
+    /**
+     * 
+     * @brief 打开一个 Redis 数据库
+     * @param connString 数据库描述，如：redis://server:port 或者 "server"
+     * @return 返回数据库连接对象
+     * 
+     * 
+     * @async
+     */
+    export function openRedis(connString: string): Redis;
+
+    /**
+     * 
+     * @brief 格式化一个 sql 命令，并返回格式化结果
+     * 
+     * @param sql 格式化字符串，可选参数用 ? 指定。例如：'SELECT FROM TEST WHERE [id]=?'
+     * @param args 可选参数列表
+     * @return 返回格式化之后的 sql 命令
+     * 
+     * 
+     * 
+     */
+    export function format(sql: string, ...args: any[]): string;
+
+    /**
+     * 
+     * @brief 格式化一个 mysql 命令，并返回格式化结果
+     * 
+     * @param sql 格式化字符串，可选参数用 ? 指定。例如：'SELECT FROM TEST WHERE [id]=?'
+     * @param args 可选参数列表
+     * @return 返回格式化之后的 sql 命令
+     * 
+     * 
+     * 
+     */
+    export function formatMySQL(sql: string, ...args: any[]): string;
+
+    /**
+     * 
+     * @brief 格式化一个 mssql 命令，并返回格式化结果
+     * 
+     * @param sql 格式化字符串，可选参数用 ? 指定。例如：'SELECT FROM TEST WHERE [id]=?'
+     * @param args 可选参数列表
+     * @return 返回格式化之后的 sql 命令
+     * 
+     * 
+     * 
+     */
+    export function formatMSSQL(sql: string, ...args: any[]): string;
+
+    /**
+     * 
+     * @brief 将字符串编码为 SQL 安全编码字符串
+     * @param str 要编码的字符串
+     * @param mysql 指定 mysql 编码，缺省为 false
+     * @return 返回编码后的字符串
+     * 
+     * 
+     * 
+     */
+    export function escape(str: string, mysql?: boolean/** = false*/): string;
+}
+//#endregion==============================================================================================================
+
 //#region===================================================coroutine========================================================
 declare module "coroutine" {
     export var Lock: Lock;
@@ -2734,22 +5793,22 @@ declare module "coroutine" {
     /**
      * 返回当前正在运行的全部 fiber 数组
      */
-    export const fibers: Array<FibJS.Fiber>;
+    export var fibers: ReadonlyArray<FibJS.Fiber>;
 
     /**
      * 查询和设置空闲 Fiber 数量，服务器抖动较大时可适度增加空闲 Fiber 数量。缺省为 256
      */
-    export const spareFibers: Integer;
+    export var spareFibers: Readonly<Integer>;
 
     /**
      * 查询当前 vm 编号
      */
-    export const vmid: Integer;
+    export var vmid: Readonly<Integer>;
 
     /**
      * 修改和查询本 vm 的输出级别，用以过滤输出信息，缺省为 console.NOTSET，全部输出
      */
-    export const loglevel: Integer;
+    export var loglevel: Readonly<Integer>;
 
     /**
      *不同于操作系统的锁，纤程锁是纯逻辑实现，加锁与解锁负荷很小
