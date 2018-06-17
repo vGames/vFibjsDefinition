@@ -5714,6 +5714,1954 @@ declare module "db" {
 }
 //#endregion==============================================================================================================
 
+declare module "dns" {
+
+    /**
+     * 
+     * @brief 查询给定的主机名的地址
+     * @param name 指定主机名
+     * @return 返回查询的 ip 字符串数组
+     * 
+     * 
+     * @async
+     */
+    export function resolve(name: string): any[];
+
+    /**
+     * 
+     * @brief 查询给定的主机名的地址
+     * @param name 指定主机名
+     * @return 返回查询的 ip 字符串
+     * 
+     * 
+     * @async
+     */
+    export function lookup(name: string): string;
+}
+
+declare module "fs" {
+
+    interface BufferedStream {
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 查询创建缓存对象时的流对象
+         * 
+         * @readonly
+         * @type Stream
+         */
+
+        stream: FibJS.Stream
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 查询和设置当前对象处理文本时的字符集，缺省为 utf-8
+         * 
+         * 
+         * @type String
+         */
+
+        charset: string
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 查询和设置行结尾标识，缺省时，posix:\"\\n\"；windows:\"\\r\\n\"
+         * 
+         * 
+         * @type String
+         */
+
+        EOL: string
+
+        /**
+         * 
+         * @brief BufferedStream 构造函数
+         * @param stm BufferedStream 的二进制基础流对象
+         * 
+         * 
+         * 
+         */
+        constructor(stm: FibJS.Stream);
+
+        /**
+         * 
+         * @brief 读取指定字符的文本
+         * @param size 指定读取的文本字符个数，以 utf8 或者指定的编码字节数为准
+         * @return 返回读取的文本字符串，若无数据可读，或者连接中断，则返回 null
+         * 
+         * 
+         * @async
+         */
+        readText(size: number): string;
+
+        /**
+         * 
+         * @brief 读取一行文本，行结尾标识基于 EOL 属性的设置，缺省时，posix:\"\\n\"；windows:\"\\r\\n\"
+         * @param maxlen 指定此次读取的最大字符串，以 utf8 编码字节数为准，缺省不限制字符数
+         * @return 返回读取的文本字符串，若无数据可读，或者连接中断，则返回 null
+         * 
+         * 
+         * @async
+         */
+        readLine(maxlen?: number/** = -1*/): string;
+
+        /**
+         * 
+         * @brief 以数组方式读取一组文本行，行结尾标识基于 EOL 属性的设置，缺省时，posix:\"\\n\"；windows:\"\\r\\n\"
+         * @param maxlines 指定此次读取的最大行数，缺省读取全部文本行
+         * @return 返回读取的文本行数组，若无数据可读，或者连接中断，空数组
+         * 
+         * 
+         * 
+         */
+        readLines(maxlines?: number/** = -1*/): any[];
+
+        /**
+         * 
+         * @brief 读取一个文本字符串，以指定的字节为结尾
+         * @param mk 指定结尾的字符串
+         * @param maxlen 指定此次读取的最大字符串，以 utf8 编码字节数为准，缺省不限制字符数
+         * @return 返回读取的文本字符串，若无数据可读，或者连接中断，则返回 null
+         * 
+         * 
+         * @async
+         */
+        readUntil(mk: string, maxlen?: number/** = -1*/): string;
+
+        /**
+         * 
+         * @brief 写入一个字符串
+         * @param txt 指定写入的字符串
+         * 
+         * 
+         * @async
+         */
+        writeText(txt: string): void;
+
+        /**
+         * 
+         * @brief 写入一个字符串，并写入换行符
+         * @param txt 指定写入的字符串
+         * 
+         * 
+         * @async
+         */
+        writeLine(txt: string): void;
+    }
+
+    interface SeekableStream {
+
+
+        /**
+         * 
+         * @brief 移动文件当前操作位置
+         * @param offset 指定新的位置
+         * @param whence 指定位置基准，允许的值为：SEEK_SET, SEEK_CUR, SEEK_END
+         * 
+         * 
+         * 
+         */
+        seek(offset: number, whence: number): void;
+
+        /**
+         * 
+         * @brief 查询流当前位置
+         * @return 返回流当前位置
+         * 
+         * 
+         * 
+         */
+        tell(): number;
+
+        /**
+         * 
+         * @brief 移动当前位置到流开头
+         * 
+         * 
+         */
+        rewind(): void;
+
+        /**
+         * 
+         * @brief 查询流尺寸
+         * @return 返回流尺寸
+         * 
+         * 
+         * 
+         */
+        size(): number;
+
+        /**
+         * 
+         * @brief 从流内读取剩余的全部数据
+         * @return 返回从流内读取的数据，若无数据可读，或者连接中断，则返回 null
+         * 
+         * 
+         * @async
+         */
+        readAll(): Buffer;
+
+        /**
+         * 
+         * @brief 修改文件尺寸，如果新尺寸小于原尺寸，则文件被截断
+         * @param bytes 新的文件尺寸
+         * 
+         * 
+         * @async
+         */
+        truncate(bytes: number): void;
+
+        /**
+         * 
+         * @brief 查询文件是否到结尾
+         * @return 返回 True 表示结尾
+         * 
+         * 
+         * 
+         */
+        eof(): boolean;
+
+        /**
+         * 
+         * @brief 查询当前文件的基础信息
+         * @return 返回 Stat 对象描述文件信息
+         * 
+         * 
+         * @async
+         */
+        stat(): Stat;
+    }
+
+
+    interface Stat {
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 文件名称
+         * 
+         * @readonly
+         * @type String
+         */
+
+        name: string
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 文件尺寸
+         * 
+         * @readonly
+         * @type Long
+         */
+
+        size: number
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 文件权限，Windows 不支持此属性
+         * 
+         * @readonly
+         * @type Integer
+         */
+
+        mode: number
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 文件最后修改时间
+         * 
+         * @readonly
+         * @type Date
+         */
+
+        mtime: Date
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 文件最后访问时间
+         * 
+         * @readonly
+         * @type Date
+         */
+
+        atime: Date
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 文件创建时间
+         * 
+         * @readonly
+         * @type Date
+         */
+
+        ctime: Date
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 文件拥有者的id
+         * 
+         * @readonly
+         * @type Integer
+         */
+
+        uid: number
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 文件所属的组id
+         * 
+         * @readonly
+         * @type Integer
+         */
+
+        gid: number
+
+        /**
+         * 
+         * @brief 查询文件是否有写入权限
+         * @return 为 true 则有写入权限
+         * 
+         * 
+         * 
+         */
+        isWritable(): boolean;
+
+        /**
+         * 
+         * @brief 查询文件是否有读权限
+         * @return 为 true 则有读权限
+         * 
+         * 
+         * 
+         */
+        isReadable(): boolean;
+
+        /**
+         * 
+         * @brief 查询文件是否有执行权限
+         * @return 为 true 则有执行权限
+         * 
+         * 
+         * 
+         */
+        isExecutable(): boolean;
+
+        /**
+         * 
+         * @brief 查询文件是否隐藏
+         * @return 为 true 则隐藏
+         * 
+         * 
+         * 
+         */
+        isHidden(): boolean;
+
+        /**
+         * 
+         * @brief 查询文件是否是目录
+         * @return 为 true 则是目录
+         * 
+         * 
+         * 
+         */
+        isDirectory(): boolean;
+
+        /**
+         * 
+         * @brief 查询文件是否是文件
+         * @return 为 true 则是文件
+         * 
+         * 
+         * 
+         */
+        isFile(): boolean;
+
+        /**
+         * 
+         * @brief 查询文件是否是符号链接
+         * @return 为 true 则是符号链接
+         * 
+         * 
+         * 
+         */
+        isSymbolicLink(): boolean;
+
+        /**
+         * 
+         * @brief 查询文件是否是内存文件
+         * @return 为 true 则是内存文件
+         * 
+         * 
+         * 
+         */
+        isMemory(): boolean;
+
+        /**
+         * 
+         * @brief 查询文件是否是 Socket
+         * @return 为 true 则是 Socket
+         * 
+         * 
+         * 
+         */
+        isSocket(): boolean;
+    }
+
+    /**
+		 * 
+		 * @brief seek 方式常量，移动到绝对位置
+		 * 
+		 * 
+		 */
+    export const SEEK_SET = 0;
+
+    /**
+     * 
+     * @brief seek 方式常量，移动到当前位置的相对位置
+     * 
+     * 
+     */
+    export const SEEK_CUR = 1;
+
+    /**
+     * 
+     * @brief seek 方式常量，移动到文件结尾的相对位置
+     * 
+     * 
+     */
+    export const SEEK_END = 2;
+
+    /**
+     * 
+     * @brief 查询指定的文件或目录是否存在
+     * @param path 指定要查询的路径
+     * @return 返回 True 表示文件或目录存在
+     * 
+     * 
+     * @async
+     */
+    export function exists(path: string): boolean;
+
+    /**
+     * 
+     * @brief 查询用户对指定的文件的权限
+     * @param path 指定要查询的路径
+     * @param mode 指定查询的权限,默认为文件是否存在
+     * 
+     * 
+     * @async
+     */
+    export function access(path: string, mode?: number/** = 0*/): void;
+
+    /**
+     * 
+     * @brief 创建硬链接文件, windows 下不支持此方法
+     * @param oldPath 源文件
+     * @param newPath 将要被创建的文件
+     * 
+     * 
+     * @async
+     */
+    export function link(oldPath: string, newPath: string): void;
+
+    /**
+     * 
+     * @brief 删除指定的文件
+     * @param path 指定要删除的路径
+     * 
+     * 
+     * @async
+     */
+    export function unlink(path: string): void;
+
+    /**
+     * 
+     * @brief 创建一个目录
+     * @param path 指定要创建的目录名
+     * @param mode 指定文件权限，Windows 忽略此参数
+     * 
+     * 
+     * @async
+     */
+    export function mkdir(path: string, mode?: number/** = 0777*/): void;
+
+    /**
+     * 
+     * @brief 删除一个目录
+     * @param path 指定要删除的目录名
+     * 
+     * 
+     * @async
+     */
+    export function rmdir(path: string): void;
+
+    /**
+     * 
+     * @brief 重新命名一个文件
+     * @param from 指定更名的文件
+     * @param to 指定要修改的新文件名
+     * 
+     * 
+     * @async
+     */
+    export function rename(from: string, to: string): void;
+
+    /**
+     * 
+     * @brief 复制一个文件
+     * @param from 指定更名的文件
+     * @param to 指定要修改的新文件名
+     * 
+     * 
+     * @async
+     */
+    export function copy(from: string, to: string): void;
+
+    /**
+     * 
+     * @brief 设置指定文件的访问权限，Windows 不支持此方法
+     * @param path 指定操作的文件
+     * @param mode 指定设定的访问权限
+     * 
+     * 
+     * @async
+     */
+    export function chmod(path: string, mode: number): void;
+
+    /**
+     * 
+     * @brief 设置指定文件的访问权限，若文件是软连接则不改变指向文件的权限，只在macOS、BSD 系列平台上可用
+     * @param path 指定操作的文件
+     * @param mode 指定设定的访问权限
+     * 
+     * 
+     * @async
+     */
+    export function lchmod(path: string, mode: number): void;
+
+    /**
+     * 
+     * @brief 设置指定文件的拥有者，Windows 不支持此方法
+     * @param path 指定设置的文件
+     * @param uid 文件拥有者用户id
+     * @param gid 文件拥有者组id
+     * 
+     * 
+     * @async
+     */
+    export function chown(path: string, uid: number, gid: number): void;
+
+    /**
+     * 
+     * @brief 设置指定文件的拥有者，如果指定的文件是软连接则不会改变其指向文件的拥有者，Windows 不支持此方法
+     * @param path 指定设置的文件
+     * @param uid 文件拥有者用户id
+     * @param gid 文件拥有者组id
+     * 
+     * 
+     * @async
+     */
+    export function lchown(path: string, uid: number, gid: number): void;
+
+    /**
+     * 
+     * @brief 查询指定文件的基础信息
+     * @param path 指定查询的文件
+     * @return 返回文件的基础信息
+     * 
+     * 
+     * @async
+     */
+    export function stat(path: string): Stat;
+
+    /**
+     * 
+     * @brief 查询指定文件的基础信息, 和stat不同的是, 当path是一个软连接的时候，返回的将是这个软连接的信息而不是指向的文件的信息
+     * @param path 指定查询的文件
+     * @return 返回文件的基础信息
+     * 
+     * 
+     * @async
+     */
+    export function lstat(path: string): Stat;
+
+    /**
+     * 
+     * @brief 读取指定的软连接文件, windows 下不支持此方法
+     * @param path 指定读取的软连接文件
+     * @return 返回软连接指向的文件名
+     * 
+     * 
+     * @async
+     */
+    export function readlink(path: string): string;
+
+    /**
+     * 
+     * @brief 返回指定路径的绝对路径，如果指定路径中包含相对路径也会被展开
+     * @param path 指定读取的路径
+     * @return 返回处理后的绝对路径
+     * 
+     * 
+     * @async
+     */
+    export function realpath(path: string): string;
+
+    /**
+     * 
+     * @brief 创建软连接文件
+     * @param target 目标文件，可以是文件、目录、或不存在的路径
+     * @param linkpath 将被创建的软连接文件
+     * @param type 创建的软连接类型, 可选类型为'file', 'dir', 'junction', 默认为'file', 该参数只在windows上有效，当为'junction'的时候将要创建的目标路径linkpath必须为绝对路径, 而target则会被自动转化为绝对路径。
+     * 
+     * 
+     * @async
+     */
+    export function symlink(target: string, linkpath: string, type?: string/** = "file"*/): void;
+
+    /**
+     * 
+     * @brief 修改文件尺寸,如果指定的长度大于源文件大小则用'\0'填充，否则多于的文件内容将丢失
+     * @param path 指定被修改文件的路径
+     * @param len 指定修改后文件的大小
+     * 
+     * 
+     * @async
+     */
+    export function truncate(path: string, len: number): void;
+
+    /**
+     * 
+     * @brief 根据文件描述符，读取文件内容
+     * @param fd 文件描述符
+     * @param buffer 读取结果写入的 Buffer 对象
+     * @param offset Buffer 写入偏移量， 默认为 0
+     * @param length 文件读取字节数，默认为 0
+     * @param position 文件读取位置，默认为当前文件位置
+     * @return 实际读取的字节数
+     * 
+     * 
+     * @async
+     */
+    export function read(fd: number, buffer: Buffer, offset?: number/** = 0*/, length?: number/** = 0*/, position?: number/** = -1*/): number;
+
+    /**
+     * 
+     * @brief 根据文件描述符，改变文件模式。只在 POSIX 系统有效。
+     * @param fd 文件描述符
+     * @param mode 文件的模式
+     * 
+     * 
+     * @async
+     */
+    export function fchmod(fd: number, mode: number): void;
+
+    /**
+     * 
+     * @brief 根据文件描述符，改变所有者。只在 POSIX 系统有效。
+     * @param fd 文件描述符
+     * @param uid 用户id
+     * @param gid 组id
+     * 
+     * 
+     * @async
+     */
+    export function fchown(fd: number, uid: number, gid: number): void;
+
+    /**
+     * 
+     * @brief 根据文件描述符，同步数据到磁盘
+     * @param fd 文件描述符
+     * 
+     * 
+     * @async
+     */
+    export function fdatasync(fd: number): void;
+
+    /**
+     * 
+     * @brief 根据文件描述符，同步数据到磁盘
+     * @param fd 文件描述符
+     * 
+     * 
+     * @async
+     */
+    export function fsync(fd: number): void;
+
+    /**
+     * 
+     * @brief 读取指定目录的文件信息
+     * @param path 指定查询的目录
+     * @return 返回目录的文件信息数组
+     * 
+     * 
+     * @async
+     */
+    export function readdir(path: string): any[];
+
+    /**
+     * 
+     * @brief 打开文件，用于读取，写入，或者同时读写
+     * 
+     * 参数 flags 支持的方式如下：
+     * - 'r' 只读方式，文件不存在则抛出错误。
+     * - 'r+' 读写方式，文件不存在则抛出错误。
+     * - 'w' 只写方式，文件不存在则自动创建，存在则将被清空。
+     * - 'w+' 读写方式，文件不存在则自动创建。
+     * - 'a' 只写添加方式，文件不存在则自动创建。
+     * - 'a+' 读写添加方式，文件不存在则自动创建。
+     * @param fname 指定文件名
+     * @param flags 指定文件打开方式，缺省为 "r"，只读方式
+     * @return 返回打开的文件对象
+     * 
+     * 
+     * @async
+     */
+    export function openFile(fname: string, flags?: string/** = "r"*/): SeekableStream;
+
+    /**
+     * 
+     * @brief 打开文件描述符
+     * 
+     * 参数 flags 支持的方式如下：
+     * - 'r' 只读方式，文件不存在则抛出错误。
+     * - 'r+' 读写方式，文件不存在则抛出错误。
+     * - 'w' 只写方式，文件不存在则自动创建，存在则将被清空。
+     * - 'w+' 读写方式，文件不存在则自动创建。
+     * - 'a' 只写添加方式，文件不存在则自动创建。
+     * - 'a+' 读写添加方式，文件不存在则自动创建。
+     * @param fname 指定文件名
+     * @param flags 指定文件打开方式，缺省为 "r"，只读方式
+     * @param mode 当创建文件的时候，指定文件的模式，默认 0666
+     * @return 返回打开的文件描述符
+     * 
+     * 
+     * @async
+     */
+    export function open(fname: string, flags?: string/** = "r"*/, mode?: number/** = 0666*/): number;
+
+    /**
+     * 
+     * @brief 关闭文件描述符
+     * @param fd 文件描述符
+     * 
+     * 
+     * @async
+     */
+    export function close(fd: number): void;
+
+    /**
+     * 
+     * @brief 打开文本文件，用于读取，写入，或者同时读写
+     * 
+     * 参数 flags 支持的方式如下：
+     * - 'r' 只读方式，文件不存在则抛出错误。
+     * - 'r+' 读写方式，文件不存在则抛出错误。
+     * - 'w' 只写方式，文件不存在则自动创建，存在则将被清空。
+     * - 'w+' 读写方式，文件不存在则自动创建。
+     * - 'a' 只写添加方式，文件不存在则自动创建。
+     * - 'a+' 读写添加方式，文件不存在则自动创建。
+     * @param fname 指定文件名
+     * @param flags 指定文件打开方式，缺省为 "r"，只读方式
+     * @return 返回打开的文件对象
+     * 
+     * 
+     * @async
+     */
+    export function openTextStream(fname: string, flags?: string/** = "r"*/): BufferedStream;
+
+    /**
+     * 
+     * @brief 打开文本文件，并读取内容
+     * @param fname 指定文件名
+     * @return 返回文件文本内容
+     * 
+     * 
+     * @async
+     */
+    export function readTextFile(fname: string): string;
+
+    /**
+     * 
+     * @brief 打开二进制文件，并读取内容
+     * @param fname 指定文件名
+     * @param encoding 指定解码方式，缺省不解码
+     * @return 返回文件文本内容
+     * 
+     * 
+     * @async
+     */
+    export function readFile(fname: string, encoding?: string/** = ""*/): any;
+
+    /**
+     * 
+     * @brief 打开文件，以数组方式读取一组文本行，行结尾标识基于 EOL 属性的设置，缺省时，posix:"\n"；windows:"\r\n"
+     * @param fname 指定文件名
+     * @param maxlines 指定此次读取的最大行数，缺省读取全部文本行
+     * @return 返回读取的文本行数组，若无数据可读，或者连接中断，空数组
+     * 
+     * 
+     * 
+     */
+    export function readLines(fname: string, maxlines?: number/** = -1*/): any[];
+
+    /**
+     * 
+     * @brief 创建文本文件，并写入内容
+     * @param fname 指定文件名
+     * @param txt 指定要写入的字符串
+     * 
+     * 
+     * @async
+     */
+    export function writeTextFile(fname: string, txt: string): void;
+
+    /**
+     * 
+     * @brief 创建二进制文件，并写入内容
+     * @param fname 指定文件名
+     * @param data 指定要写入的二进制数据
+     * 
+     * 
+     * @async
+     */
+    export function writeFile(fname: string, data: Buffer): void;
+
+    /**
+     * 
+     * @brief 创建二进制文件，并写入内容
+     * @param fname 指定文件名
+     * @param data 指定要写入的二进制数据
+     * 
+     * 
+     * @async
+     */
+    export function appendFile(fname: string, data: Buffer): void;
+}
+
+declare module "gd" {
+    import { SeekableStream } from "fs";
+
+    /**
+        * 
+        * @brief 图像格式常量，标示当前图像来源为未知
+        * 
+        * 
+        */
+    export const NONE = 0;
+
+    /**
+        * 
+        * @brief 图像格式常量，标示当前图像来源为 jpeg 格式数据
+        * 
+        * 
+        */
+    export const JPEG = 1;
+
+    /**
+        * 
+        * @brief 图像格式常量，标示当前图像来源为 gif 格式数据
+        * 
+        * 
+        */
+    export const GIF = 2;
+
+    /**
+        * 
+        * @brief 图像格式常量，标示当前图像来源为 png 格式数据
+        * 
+        * 
+        */
+    export const PNG = 3;
+
+    /**
+        * 
+        * @brief 图像格式常量，标示当前图像来源为 tiff 格式数据
+        * 
+        * 
+        */
+    export const TIFF = 4;
+
+    /**
+        * 
+        * @brief 图像格式常量，标示当前图像来源为 bmp 格式数据
+        * 
+        * 
+        */
+    export const BMP = 5;
+
+    /**
+        * 
+        * @brief 图像格式常量，标示当前图像来源为 webp 格式数据
+        * 
+        * 
+        */
+    export const WEBP = 6;
+
+    /**
+        * 
+        * @brief 图像类型常量，标示当前图像为真彩色图像
+        * 
+        * 
+        */
+    export const TRUECOLOR = 0;
+
+    /**
+        * 
+        * @brief 图像类型常量，标示当前图像为调色板图像
+        * 
+        * 
+        */
+    export const PALETTE = 1;
+
+    /**
+        * 
+        * @brief 扇形绘制样式，绘制一条连接开始和结束点的圆弧
+        * 
+        * 
+        */
+    export const ARC = 0;
+
+    /**
+        * 
+        * @brief 扇形绘制样式，绘制一条连接原点，开始和结束点的直线
+        * 
+        * 
+        */
+    export const CHORD = 1;
+
+    /**
+        * 
+        * @brief 扇形绘制样式，绘制不填充的扇形
+        * 
+        * 
+        */
+    export const NOFILL = 2;
+
+    /**
+        * 
+        * @brief 扇形绘制样式，绘制一条连接起点和终点的弧和连接原点的直线
+        * 
+        * 
+        */
+    export const EDGED = 4;
+
+    /**
+        * 
+        * @brief 镜像方向，横向做镜像处理
+        * 
+        * 
+        */
+    export const HORIZONTAL = 1;
+
+    /**
+        * 
+        * @brief 镜像方向，纵向做镜像处理
+        * 
+        * 
+        */
+    export const VERTICAL = 2;
+
+    /**
+        * 
+        * @brief 镜像方向，横向和纵向都做镜像处理
+        * 
+        * 
+        */
+    export const BOTH = 3;
+
+    /**
+        * 
+        * @brief 旋转方向，向左旋转
+        * 
+        * 
+        */
+    export const LEFT = 1;
+
+    /**
+        * 
+        * @brief 旋转方向，向右旋转
+        * 
+        * 
+        */
+    export const RIGHT = 2;
+
+    /**
+        * 
+        * @brief 滤波器类型：用平均移除法来达到轮廓效果
+        * 
+        * 
+        */
+    export const MEAN_REMOVAL = 0;
+
+    /**
+        * 
+        * @brief 滤波器类型：用边缘检测来突出图像的边缘
+        * 
+        * 
+        */
+    export const EDGEDETECT = 1;
+
+    /**
+        * 
+        * @brief 滤波器类型：使图像浮雕化
+        * 
+        * 
+        */
+    export const EMBOSS = 2;
+
+    /**
+        * 
+        * @brief 滤波器类型：模糊图像
+        * 
+        * 
+        */
+    export const SELECTIVE_BLUR = 3;
+
+    /**
+        * 
+        * @brief 滤波器类型：用高斯算法模糊图像
+        * 
+        * 
+        */
+    export const GAUSSIAN_BLUR = 4;
+
+    /**
+        * 
+        * @brief 滤波器类型：将图像中所有颜色反转
+        * 
+        * 
+        */
+    export const NEGATE = 5;
+
+    /**
+        * 
+        * @brief 滤波器类型：将图像转换为灰度图
+        * 
+        * 
+        */
+    export const GRAYSCALE = 6;
+
+    /**
+        * 
+        * @brief 滤波器类型：使图像更柔滑，用arg1设定柔滑级别
+        * 
+        * 
+        */
+    export const SMOOTH = 7;
+
+    /**
+        * 
+        * @brief 滤波器类型：改变图像的亮度，用arg1设定亮度级别，取值范围是-255~255
+        * 
+        * 
+        */
+    export const BRIGHTNESS = 8;
+
+    /**
+        * 
+        * @brief 滤波器类型：改变图像的对比度，用arg1设定对比度级别，取值范围是0~100
+        * 
+        * 
+        */
+    export const CONTRAST = 9;
+
+    /**
+        * 
+        * @brief 滤波器类型：改变图像的色调，用arg1、arg2、arg3分别指定red、blue、green，每种颜色范围是0~255，arg4为透明度，取值返回是0~127
+        * 
+        * 
+        */
+    export const COLORIZE = 10;
+
+    /**
+        * 
+        * @brief 创建一个新图像
+        * @param width 指定图像宽度
+        * @param height 指定图像高度
+        * @param color 指定图像类型，允许值为 gd.TRUECOLOR 或 gd.PALETTE
+        * @return 返回创建成功的图像对象
+        * 
+        * 
+        * @async
+        */
+    export function create(width: number, height: number, color?: number/** = undefined*/): Image;
+
+    /**
+        * 
+        * @brief 从格式数据中解码图像
+        * @param data 给定解码的图像数据
+        * @return 返回解码成功的图像对象
+        * 
+        * 
+        * @async
+        */
+    export function load(data: Buffer): Image;
+
+    /**
+        * 
+        * @brief 从流对象中解码图像
+        * @param stm 给定图像数据所在的流对象
+        * @return 返回解码成功的图像对象
+        * 
+        * 
+        * @async
+        */
+    export function load(stm: SeekableStream): Image;
+
+    /**
+        * 
+        * @brief 从指定文件中解码图像
+        * @param fname 指定文件名
+        * @return 返回解码成功的图像对象
+        * 
+        * 
+        * @async
+        */
+    export function load(fname: string): Image;
+
+    /**
+        * 
+        * @brief 通过 rgb 颜色分量生成组合颜色
+        * @param red 红色分量，范围为 0-255
+        * @param green 绿色分量，范围为 0-255
+        * @param blue 蓝色分量，范围为 0-255
+        * @return 返回组合颜色
+        * 
+        * 
+        * 
+        */
+    export function rgb(red: number, green: number, blue: number): number;
+
+    /**
+        * 
+        * @brief 通过 rgba 颜色分量生成组合颜色
+        * @param red 红色分量，范围为 0-255
+        * @param green 绿色分量，范围为 0-255
+        * @param blue 蓝色分量，范围为 0-255
+        * @param alpha 透明分量，范围为 0.0-1.0
+        * @return 返回组合颜色
+        * 
+        * 
+        * 
+        */
+    export function rgba(red: number, green: number, blue: number, alpha: number): number;
+
+    /**
+        * 
+        * @brief 通过 hsl 颜色分量生成组合颜色
+        * @param hue 色相分量，范围为 0-360
+        * @param saturation 饱和度分量，范围为 0.0-1.0
+        * @param lightness 亮度分量，范围为 0.0-1.0
+        * @return 返回组合颜色
+        * 
+        * 
+        * 
+        */
+    export function hsl(hue: number, saturation: number, lightness: number): number;
+
+    /**
+        * 
+        * @brief 通过 hsla 颜色分量生成组合颜色
+        * @param hue 色相分量，范围为 0-360
+        * @param saturation 饱和度分量，范围为 0.0-1.0
+        * @param lightness 亮度分量，范围为 0.0-1.0
+        * @param alpha 透明分量，范围为 0.0-1.0
+        * @return 返回组合颜色
+        * 
+        * 
+        * 
+        */
+    export function hsla(hue: number, saturation: number, lightness: number, alpha: number): number;
+
+    /**
+        * 
+        * @brief 通过 hsb 颜色分量生成组合颜色
+        * @param hue 色相分量，范围为 0-360
+        * @param saturation 饱和度分量，范围为 0.0-1.0
+        * @param brightness 明亮程度分量，范围为 0.0-1.0
+        * @return 返回组合颜色
+        * 
+        * 
+        * 
+        */
+    export function hsb(hue: number, saturation: number, brightness: number): number;
+
+    /**
+        * 
+        * @brief 通过 hsba 颜色分量生成组合颜色
+        * @param hue 色相分量，范围为 0-360
+        * @param saturation 饱和度分量，范围为 0.0-1.0
+        * @param brightness 明亮程度分量，范围为 0.0-1.0
+        * @param alpha 透明分量，范围为 0.0-1.0
+        * @return 返回组合颜色
+        * 
+        * 
+        * 
+        */
+    export function hsba(hue: number, saturation: number, brightness: number, alpha: number): number;
+
+    /**
+        * 
+        * @brief 通过字符串生成组合颜色
+        * @param color 指定颜色的字符串，如："#ff0000", "ff0000", "#f00", "f00"
+        * @return 返回组合颜色
+        * 
+        * 
+        * 
+        */
+    export function color(color: string): number;
+
+    interface Image {
+
+        /**
+            * 
+            * @brief 按照指定的格式返回图像数据
+            * @param format 指定返回数据的格式，允许值为 gd.PNG, gd.JPEG, gd.GIF, gd.BMP, gd.WEBP, 缺省为 gd.PNG
+            * @param quality 当格式为 gd.JPEG 或 gd.WEBP 时用于指定压缩质量，缺省为 85，其他格式忽略此参数
+            * @return 返回格式化的数据
+            * 
+            * 
+            * @async
+            */
+        getData(format?: number/** = undefined*/, quality?: number/** = 85*/): Buffer;
+
+        /**
+            * 
+            * @brief 按照指定的格式将图像数据存入流对象
+            * @param stm 指定要存入的流对象
+            * @param format 指定返回数据的格式，允许值为 gd.PNG, gd.JPEG, gd.GIF, gd.BMP, gd.WEBP, 缺省为 gd.PNG
+            * @param quality 当格式为 gd.JPEG 或 gd.WEBP 时用于指定压缩质量，缺省为 85，其他格式忽略此参数
+            * 
+            * 
+            * @async
+            */
+        save(stm: FibJS.Stream, format?: number/** = undefined*/, quality?: number/** = 85*/): void;
+
+        /**
+            * 
+            * @brief 按照指定的格式将图像数据存入指定文件，文件将被强制覆盖
+            * @param fname 指定文件名
+            * @param format 指定返回数据的格式，允许值为 gd.PNG, gd.JPEG, gd.GIF, gd.BMP, gd.WEBP, 缺省为 gd.PNG
+            * @param quality 当格式为 gd.JPEG 时用于指定压缩质量，缺省为 85，其他格式忽略此参数
+            * 
+            * 
+            * @async
+            */
+        save(fname: string, format?: number/** = undefined*/, quality?: number/** = 85*/): void;
+
+        /**
+            * 
+            * @brief 为指定的颜色申请一个颜色号，对于 gd.PALETTE 图像，颜色号为调色板索引，对于 gd.TRUECOLOR 图像，颜色号为 rgb 编码数值
+            * @param red 红色分量，范围为 0-255
+            * @param green 绿色分量，范围为 0-255
+            * @param blue 蓝色分量，范围为 0-255
+            * @return 返回颜色号，不成功返回 -1
+            * 
+            * 
+            * 
+            */
+        colorAllocate(red: number, green: number, blue: number): number;
+
+        /**
+            * 
+            * @brief 为指定的颜色申请一个颜色号，对于 gd.PALETTE 图像，颜色号为调色板索引，对于 gd.TRUECOLOR 图像，颜色号为 rgb 编码数值
+            * @param color 组合颜色值，可由 gd.color, gb.rgb, gd.rgba 等函数生成
+            * @return 返回颜色号，不成功返回 -1
+            * 
+            * 
+            * 
+            */
+        colorAllocate(color: number): number;
+
+        /**
+            * 
+            * @brief 为指定的颜色及透明申请一个颜色号，对于 gd.PALETTE 图像，颜色号为调色板索引，对于 gd.TRUECOLOR 图像，颜色号为 rgba 编码数值
+            * @param red 红色分量，范围为 0-255
+            * @param green 绿色分量，范围为 0-255
+            * @param blue 蓝色分量，范围为 0-255
+            * @param alpha 透明分量，范围为 0-1.0
+            * @return 返回颜色号，不成功返回 -1
+            * 
+            * 
+            * 
+            */
+        colorAllocateAlpha(red: number, green: number, blue: number, alpha: number): number;
+
+        /**
+            * 
+            * @brief 为指定的颜色及透明申请一个颜色号，对于 gd.PALETTE 图像，颜色号为调色板索引，对于 gd.TRUECOLOR 图像，颜色号为 rgba 编码数值
+            * @param color 组合颜色值，可由 gd.color, gb.rgb, gd.rgba 等函数生成
+            * @return 返回颜色号，不成功返回 -1
+            * 
+            * 
+            * 
+            */
+        colorAllocateAlpha(color: number): number;
+
+        /**
+            * 
+            * @brief 为指定的颜色查找一个最接近的颜色号，对于 gd.PALETTE 图像，颜色号为调色板索引，对于 gd.TRUECOLOR 图像，颜色号为 rgb 编码数值
+            * @param red 红色分量，范围为 0-255
+            * @param green 绿色分量，范围为 0-255
+            * @param blue 蓝色分量，范围为 0-255
+            * @return 返回颜色号，不成功返回 -1
+            * 
+            * 
+            * 
+            */
+        colorClosest(red: number, green: number, blue: number): number;
+
+        /**
+            * 
+            * @brief 为指定的颜色查找一个最接近的颜色号，对于 gd.PALETTE 图像，颜色号为调色板索引，对于 gd.TRUECOLOR 图像，颜色号为 rgb 编码数值
+            * @param color 组合颜色值，可由 gd.color, gb.rgb, gd.rgba 等函数生成
+            * @return 返回颜色号，不成功返回 -1
+            * 
+            * 
+            * 
+            */
+        colorClosest(color: number): number;
+
+        /**
+            * 
+            * @brief 为指定的颜色查找一个最接近的颜色号，此方法使用 Hue/White/Black 计算查找最接近颜色，对于 gd.PALETTE 图像，颜色号为调色板索引，对于 gd.TRUECOLOR 图像，颜色号为 rgb 编码数值
+            * @param red 红色分量，范围为 0-255
+            * @param green 绿色分量，范围为 0-255
+            * @param blue 蓝色分量，范围为 0-255
+            * @return 返回颜色号，不成功返回 -1
+            * 
+            * 
+            * 
+            */
+        colorClosestHWB(red: number, green: number, blue: number): number;
+
+        /**
+            * 
+            * @brief 为指定的颜色查找一个最接近的颜色号，此方法使用 Hue/White/Black 计算查找最接近颜色，对于 gd.PALETTE 图像，颜色号为调色板索引，对于 gd.TRUECOLOR 图像，颜色号为 rgb 编码数值
+            * @param color 组合颜色值，可由 gd.color, gb.rgb, gd.rgba 等函数生成
+            * @return 返回颜色号，不成功返回 -1
+            * 
+            * 
+            * 
+            */
+        colorClosestHWB(color: number): number;
+
+        /**
+            * 
+            * @brief 为指定的颜色及透明查找一个最接近的颜色号，对于 gd.PALETTE 图像，颜色号为调色板索引，对于 gd.TRUECOLOR 图像，颜色号为 rgba 编码数值
+            * @param red 红色分量，范围为 0-255
+            * @param green 绿色分量，范围为 0-255
+            * @param blue 蓝色分量，范围为 0-255
+            * @param alpha 透明分量，范围为 0-1.0
+            * @return 返回颜色号，不成功返回 -1
+            * 
+            * 
+            * 
+            */
+        colorClosestAlpha(red: number, green: number, blue: number, alpha: number): number;
+
+        /**
+            * 
+            * @brief 为指定的颜色及透明查找一个最接近的颜色号，对于 gd.PALETTE 图像，颜色号为调色板索引，对于 gd.TRUECOLOR 图像，颜色号为 rgba 编码数值
+            * @param color 组合颜色值，可由 gd.color, gb.rgb, gd.rgba 等函数生成
+            * @return 返回颜色号，不成功返回 -1
+            * 
+            * 
+            * 
+            */
+        colorClosestAlpha(color: number): number;
+
+        /**
+            * 
+            * @brief 查找指定的颜色对应的颜色号，对于 gd.PALETTE 图像，颜色号为调色板索引，对于 gd.TRUECOLOR 图像，颜色号为 rgb 编码数值
+            * @param red 红色分量，范围为 0-255
+            * @param green 绿色分量，范围为 0-255
+            * @param blue 蓝色分量，范围为 0-255
+            * @return 返回颜色号，不成功返回 -1
+            * 
+            * 
+            * 
+            */
+        colorExact(red: number, green: number, blue: number): number;
+
+        /**
+            * 
+            * @brief 查找指定的颜色对应的颜色号，对于 gd.PALETTE 图像，颜色号为调色板索引，对于 gd.TRUECOLOR 图像，颜色号为 rgb 编码数值
+            * @param color 组合颜色值，可由 gd.color, gb.rgb, gd.rgba 等函数生成
+            * @return 返回颜色号，不成功返回 -1
+            * 
+            * 
+            * 
+            */
+        colorExact(color: number): number;
+
+        /**
+            * 
+            * @brief 查找指定的颜色及透明对应的颜色号，对于 gd.PALETTE 图像，颜色号为调色板索引，对于 gd.TRUECOLOR 图像，颜色号为 rgba 编码数值
+            * @param red 红色分量，范围为 0-255
+            * @param green 绿色分量，范围为 0-255
+            * @param blue 蓝色分量，范围为 0-255
+            * @param alpha 透明分量，范围为 0-1.0
+            * @return 返回颜色号，不成功返回 -1
+            * 
+            * 
+            * 
+            */
+        colorExactAlpha(red: number, green: number, blue: number, alpha: number): number;
+
+        /**
+            * 
+            * @brief 查找指定的颜色及透明对应的颜色号，对于 gd.PALETTE 图像，颜色号为调色板索引，对于 gd.TRUECOLOR 图像，颜色号为 rgba 编码数值
+            * @param color 组合颜色值，可由 gd.color, gb.rgb, gd.rgba 等函数生成
+            * @return 返回颜色号，不成功返回 -1
+            * 
+            * 
+            * 
+            */
+        colorExactAlpha(color: number): number;
+
+        /**
+            * 
+            * @brief 查找指定的颜色对应的颜色号，如果颜色不存在，则为其申请一个新颜色号，对于 gd.PALETTE 图像，颜色号为调色板索引，对于 gd.TRUECOLOR 图像，颜色号为 rgb 编码数值
+            * @param red 红色分量，范围为 0-255
+            * @param green 绿色分量，范围为 0-255
+            * @param blue 蓝色分量，范围为 0-255
+            * @return 返回颜色号，不成功返回 -1
+            * 
+            * 
+            * 
+            */
+        colorResolve(red: number, green: number, blue: number): number;
+
+        /**
+            * 
+            * @brief 查找指定的颜色对应的颜色号，如果颜色不存在，则为其申请一个新颜色号，对于 gd.PALETTE 图像，颜色号为调色板索引，对于 gd.TRUECOLOR 图像，颜色号为 rgb 编码数值
+            * @param color 组合颜色值，可由 gd.color, gb.rgb, gd.rgba 等函数生成
+            * @return 返回颜色号，不成功返回 -1
+            * 
+            * 
+            * 
+            */
+        colorResolve(color: number): number;
+
+        /**
+            * 
+            * @brief 查找指定的颜色及透明对应的颜色号，如果颜色不存在，则为其申请一个新颜色号，对于 gd.PALETTE 图像，颜色号为调色板索引，对于 gd.TRUECOLOR 图像，颜色号为 rgba 编码数值
+            * @param red 红色分量，范围为 0-255
+            * @param green 绿色分量，范围为 0-255
+            * @param blue 蓝色分量，范围为 0-255
+            * @param alpha 透明分量，范围为 0-1.0
+            * @return 返回颜色号，不成功返回 -1
+            * 
+            * 
+            * 
+            */
+        colorResolveAlpha(red: number, green: number, blue: number, alpha: number): number;
+
+        /**
+            * 
+            * @brief 查找指定的颜色及透明对应的颜色号，如果颜色不存在，则为其申请一个新颜色号，对于 gd.PALETTE 图像，颜色号为调色板索引，对于 gd.TRUECOLOR 图像，颜色号为 rgba 编码数值
+            * @param color 组合颜色值，可由 gd.color, gb.rgb, gd.rgba 等函数生成
+            * @return 返回颜色号，不成功返回 -1
+            * 
+            * 
+            * 
+            */
+        colorResolveAlpha(color: number): number;
+
+        /**
+            * 
+            * @brief 释放指定的颜色号，释放的颜色号将会被再次申请后替换
+            * @param color 指定要释放的颜色号
+            * 
+            * 
+            * 
+            */
+        colorDeallocate(color: number): void;
+
+        /**
+            * 
+            * @brief 设定绘图的剪切窗口，设定后，所有的绘制将被剪切在窗口内部
+            * @param x1 剪切窗口的左上 x 坐标
+            * @param y1 剪切窗口的左上 y 坐标
+            * @param x2 剪切窗口的右下 x 坐标
+            * @param y2 剪切窗口的右下 y 坐标
+            * 
+            * 
+            * 
+            */
+        clip(x1: number, y1: number, x2: number, y2: number): void;
+
+        /**
+            * 
+            * @brief 查询指定位置点的颜色
+            * @param x 指定查询的 x 坐标
+            * @param y 指定查询的 y 坐标
+            * @return 返回指定点的颜色号
+            * 
+            * 
+            * 
+            */
+        getPixel(x: number, y: number): number;
+
+        /**
+            * 
+            * @brief 查询指定位置点的真彩色颜色
+            * @param x 指定查询的 x 坐标
+            * @param y 指定查询的 y 坐标
+            * @return 返回指定点的颜色号
+            * 
+            * 
+            * 
+            */
+        getTrueColorPixel(x: number, y: number): number;
+
+        /**
+            * 
+            * @brief 在指定位置画一个点
+            * @param x 指定画点的 x 坐标
+            * @param y 指定画点的 y 坐标
+            * @param color 指定画点的颜色号
+            * 
+            * 
+            * 
+            */
+        setPixel(x: number, y: number, color: number): void;
+
+        /**
+            * 
+            * @brief 设定画线的宽度，line, rectangle, arc 等方法画线时缺省宽度为一个像素，可使用此方法改变线的宽度
+            * @param thickness 画线的宽度
+            * 
+            * 
+            * 
+            */
+        setThickness(thickness: number): void;
+
+        /**
+            * 
+            * @brief 在指定的位置画一条线
+            * @param x1 指定画线的起始 x 坐标
+            * @param y1 指定画线的起始 y 坐标
+            * @param x2 指定画线的结束 x 坐标
+            * @param y2 指定画线的结束 y 坐标
+            * @param color 指定画线的颜色号
+            * 
+            * 
+            * 
+            */
+        line(x1: number, y1: number, x2: number, y2: number, color: number): void;
+
+        /**
+            * 
+            * @brief 在指定的位置画一个矩形
+            * @param x1 指定左上角 x 坐标
+            * @param y1 指定左上角 y 坐标
+            * @param x2 指定右下角 x 坐标
+            * @param y2 指定右下角 y 坐标
+            * @param color 指定矩形的颜色号
+            * 
+            * 
+            * 
+            */
+        rectangle(x1: number, y1: number, x2: number, y2: number, color: number): void;
+
+        /**
+            * 
+            * @brief 在指定的位置画一个填充的矩形
+            * @param x1 指定左上角 x 坐标
+            * @param y1 指定左上角 y 坐标
+            * @param x2 指定右下角 x 坐标
+            * @param y2 指定右下角 y 坐标
+            * @param color 指定矩形的颜色号
+            * 
+            * 
+            * 
+            */
+        filledRectangle(x1: number, y1: number, x2: number, y2: number, color: number): void;
+
+        /**
+            * 
+            * @brief 根据给定的点绘制一个多边形
+            * @param points 包含多边形点的数组，如 [[1, 1], [1, 10], [10, 15], [10, 20]]
+            * @param color 指定矩形的颜色号
+            * 
+            * 
+            * 
+            */
+        polygon(points: any[], color: number): void;
+
+        /**
+            * 
+            * @brief 根据给定的点绘制一个开放多边形
+            * @param points 包含多边形点的数组，如 [[1, 1], [1, 10], [10, 15], [10, 20]]
+            * @param color 指定矩形的颜色号
+            * 
+            * 
+            * 
+            */
+        openPolygon(points: any[], color: number): void;
+
+        /**
+            * 
+            * @brief 根据给定的点绘制一个填充多边形
+            * @param points 包含多边形点的数组，如 [[1, 1], [1, 10], [10, 15], [10, 20]]
+            * @param color 指定矩形的颜色号
+            * 
+            * 
+            * 
+            */
+        filledPolygon(points: any[], color: number): void;
+
+        /**
+            * 
+            * @brief 画一个椭圆
+            * @param x 椭圆中心的 x 坐标
+            * @param y 椭圆中心的 y 坐标
+            * @param width 椭圆的宽度
+            * @param height 椭圆的高度
+            * @param color 指定矩形的颜色号
+            * 
+            * 
+            * 
+            */
+        ellipse(x: number, y: number, width: number, height: number, color: number): void;
+
+        /**
+            * 
+            * @brief 画一个填充的椭圆
+            * @param x 椭圆中心的 x 坐标
+            * @param y 椭圆中心的 y 坐标
+            * @param width 椭圆的宽度
+            * @param height 椭圆的高度
+            * @param color 指定矩形的颜色号
+            * 
+            * 
+            * 
+            */
+        filledEllipse(x: number, y: number, width: number, height: number, color: number): void;
+
+        /**
+            * 
+            * @brief 画一个扇形
+            * @param x 扇形中心的 x 坐标
+            * @param y 扇形中心的 y 坐标
+            * @param width 扇形所在椭圆的宽度
+            * @param height 扇形所在椭圆的高度
+            * @param start 扇形开始的角度，范围为 0-360
+            * @param end 扇形结束的角度，范围为 0-360
+            * @param color 指定矩形的颜色号
+            * 
+            * 
+            * 
+            */
+        arc(x: number, y: number, width: number, height: number, start: number, end: number, color: number): void;
+
+        /**
+            * 
+            * @brief 画一个填充扇形
+            * @param x 扇形中心的 x 坐标
+            * @param y 扇形中心的 y 坐标
+            * @param width 扇形所在椭圆的宽度
+            * @param height 扇形所在椭圆的高度
+            * @param start 扇形开始的角度，范围为 0-360
+            * @param end 扇形结束的角度，范围为 0-360
+            * @param color 指定矩形的颜色号
+            * @param style 指定扇形的样式，允许的值有 gd.ARC, gd.CHORD, gd.NOFILL, gd.EDGED 及其组合
+            * 
+            * 
+            * 
+            */
+        filledArc(x: number, y: number, width: number, height: number, start: number, end: number, color: number, style?: number/** = undefined*/): void;
+
+        /**
+            * 
+            * @brief 从指定的点开始填充封闭区域
+            * @param x 开始填充的 x 坐标
+            * @param y 开始填充的 y 坐标
+            * @param color 指定填充的颜色号
+            * 
+            * 
+            * 
+            */
+        fill(x: number, y: number, color: number): void;
+
+        /**
+            * 
+            * @brief 从指定的点开始在指定颜色的边框内填充封闭区域
+            * @param x 开始填充的 x 坐标
+            * @param y 开始填充的 y 坐标
+            * @param borderColor 指定边框的颜色号
+            * @param color 指定填充的颜色号
+            * 
+            * 
+            * 
+            */
+        fillToBorder(x: number, y: number, borderColor: number, color: number): void;
+
+        /**
+            * 
+            * @brief 替换图像中指定的颜色为新颜色
+            * @param src 指定要替换的颜色
+            * @param dst 指定新颜色
+            * 
+            * 
+            * @async
+            */
+        colorReplace(src: number, dst: number): void;
+
+        /**
+            * 
+            * @brief 复制当前图像为一个新图像
+            * @return 返回复制的新图像对象
+            * 
+            * 
+            * @async
+            */
+        clone(): Image;
+
+        /**
+            * 
+            * @brief 根据图像拉伸生成一个新尺寸的图像
+            * @param width 指定拉伸的宽度
+            * @param height 指定拉伸的高度
+            * @return 返回新图像对象
+            * 
+            * 
+            * @async
+            */
+        resample(width: number, height: number): Image;
+
+        /**
+            * 
+            * @brief 剪切图像的一部分为一个新的图像
+            * @param x 剪切窗口的左上 x 坐标
+            * @param y 剪切窗口的左上 y 坐标
+            * @param width 剪切窗口的宽度
+            * @param height 剪切窗口的高度
+            * @return 返回剪切出的图像
+            * 
+            * 
+            * @async
+            */
+        crop(x: number, y: number, width: number, height: number): Image;
+
+        /**
+            * 
+            * @brief 镜像当前图像
+            * @param dir 镜像方向，允许值为 gd.BOTH,gd.HORIZONTAL, gd.VERTICAL, 缺省为 gd.HORIZONTAL
+            * 
+            * 
+            * @async
+            */
+        flip(dir?: number/** = undefined*/): void;
+
+        /**
+            * 
+            * @brief 旋转当前图像
+            * @param dir 旋转方向，允许值为 gd.LEFT, gd.RIGHT
+            * 
+            * 
+            * @async
+            */
+        rotate(dir: number): void;
+
+        /**
+            * 
+            * @brief 转换当前图像类型
+            * @param color 指定图像类型，允许值为 gd.TRUECOLOR 或 gd.PALETTE
+            * 
+            * 
+            * @async
+            */
+        convert(color?: number/** = undefined*/): void;
+
+        /**
+            * 
+            * @brief 从一个图像中复制一个区域到指定的位置
+            * @param source 源图像对象
+            * @param dstX 指定复制目标的 x 坐标
+            * @param dstY 指定复制目标的 y 坐标
+            * @param srcX 指定复制源左上角的 x 坐标
+            * @param srcY 指定复制源左上角的 y 坐标
+            * @param width 指定复制的宽度
+            * @param height 指定复制的高度
+            * 
+            * 
+            * @async
+            */
+        copy(source: Image, dstX: number, dstY: number, srcX: number, srcY: number, width: number, height: number): void;
+
+        /**
+            * 
+            * @brief 从一个图像中复制一个区域覆盖到指定的位置
+            * @param source 源图像对象
+            * @param dstX 指定复制目标的 x 坐标
+            * @param dstY 指定复制目标的 y 坐标
+            * @param srcX 指定复制源左上角的 x 坐标
+            * @param srcY 指定复制源左上角的 y 坐标
+            * @param width 指定复制的宽度
+            * @param height 指定复制的高度
+            * @param percent 指定覆盖的透明度
+            * 
+            * 
+            * @async
+            */
+        copyMerge(source: Image, dstX: number, dstY: number, srcX: number, srcY: number, width: number, height: number, percent: number): void;
+
+        /**
+            * 
+            * @brief 从一个图像中复制一个区域的灰度覆盖到指定的位置
+            * @param source 源图像对象
+            * @param dstX 指定复制目标的 x 坐标
+            * @param dstY 指定复制目标的 y 坐标
+            * @param srcX 指定复制源左上角的 x 坐标
+            * @param srcY 指定复制源左上角的 y 坐标
+            * @param width 指定复制的宽度
+            * @param height 指定复制的高度
+            * @param percent 指定覆盖的透明度
+            * 
+            * 
+            * @async
+            */
+        copyMergeGray(source: Image, dstX: number, dstY: number, srcX: number, srcY: number, width: number, height: number, percent: number): void;
+
+        /**
+            * 
+            * @brief 将一个图像中的一个区域拉伸后复制到指定的位置
+            * @param source 源图像对象
+            * @param dstX 指定复制目标的 x 坐标
+            * @param dstY 指定复制目标的 y 坐标
+            * @param srcX 指定复制源左上角的 x 坐标
+            * @param srcY 指定复制源左上角的 y 坐标
+            * @param dstW 指定复制的拉伸宽度
+            * @param dstH 指定复制的拉伸高度
+            * @param srcW 指定复制的源宽度
+            * @param srcH 指定复制的源高度
+            * 
+            * 
+            * @async
+            */
+        copyResized(source: Image, dstX: number, dstY: number, srcX: number, srcY: number, dstW: number, dstH: number, srcW: number, srcH: number): void;
+
+        /**
+            * 
+            * @brief 将一个图像中的一个区域拉伸后复制到指定的位置，不同与 copyResized，此方法拉伸时会对图像进行抖动
+            * @param source 源图像对象
+            * @param dstX 指定复制目标的 x 坐标
+            * @param dstY 指定复制目标的 y 坐标
+            * @param srcX 指定复制源左上角的 x 坐标
+            * @param srcY 指定复制源左上角的 y 坐标
+            * @param dstW 指定复制的拉伸宽度
+            * @param dstH 指定复制的拉伸高度
+            * @param srcW 指定复制的源宽度
+            * @param srcH 指定复制的源高度
+            * 
+            * 
+            * @async
+            */
+        copyResampled(source: Image, dstX: number, dstY: number, srcX: number, srcY: number, dstW: number, dstH: number, srcW: number, srcH: number): void;
+
+        /**
+            * 
+            * @brief 将一个图像中的一个区域旋转后复制到指定的位置
+            * @param source 源图像对象
+            * @param dstX 指定复制目标的 x 坐标
+            * @param dstY 指定复制目标的 y 坐标
+            * @param srcX 指定复制源左上角的 x 坐标
+            * @param srcY 指定复制源左上角的 y 坐标
+            * @param width 指定复制的宽度
+            * @param height 指定复制的高度
+            * @param angle 指定旋转的角度
+            * 
+            * 
+            * @async
+            */
+        copyRotated(source: Image, dstX: number, dstY: number, srcX: number, srcY: number, width: number, height: number, angle: number): void;
+
+        /**
+            * 
+            * @brief 把过滤器 filterType应用到图像上，根据过滤器类型传入所需参数
+            * 
+            * 参数 filterType 可以为以下数值：
+            * - MEAN_REMOVAL,    用平均移除法来达到轮廓效果
+            * - EDGEDETECT,      用边缘检测来突出图像的边缘
+            * - EMBOSS,          使图像浮雕化
+            * - SELECTIVE_BLUR,  模糊图像
+            * - GAUSSIAN_BLUR,   用高斯算法模糊图像
+            * - NEGATE,          将图像中所有颜色反转
+            * - GRAYSCALE,       将图像转换为灰度图
+            * - SMOOTH,          使图像更柔滑，用arg1设定柔滑级别
+            * - BRIGHTNESS,      改变图像的亮度，用arg1设定亮度级别，取值范围是-255~255
+            * - CONTRAST,        改变图像的对比度，用arg1设定对比度级别，取值范围是0~100
+            * - COLORIZE,        改变图像的色调，用arg1、arg2、arg3分别指定red、blue、green分值，每种颜色范围是0~255，arg4为透明度，取值返回是0~127
+            * @param filterType 过滤器类型
+            * @param arg1 过滤器所需参数: SMOOTH 的平滑级别、BRIGHTNESS 的亮度级别、CONTRAST 的对比度级别、COLORIZE 的 red 分值
+            * @param arg2 过滤器所需参数: COLORIZE 的 green 分值
+            * @param arg3 过滤器所需参数: COLORIZE 的 blue 分值
+            * @param arg4 过滤器所需参数: COLORIZE 的透明度 alpha 分值
+            * 
+            * 
+            * @async
+            */
+        filter(filterType: number, arg1?: number/** = 0*/, arg2?: number/** = 0*/, arg3?: number/** = 0*/, arg4?: number/** = 0*/): void;
+
+        /**
+            * 
+            * @brief 根据给定的矩阵，对当前图像进行仿射
+            * 
+            * 参数 affine 是一个数组：
+            * ```JavaScript
+            * affine = [ a0, a1, b0, b1, a2, b2 ];
+            * x' = a0x + a1y + a2;
+            * y' = b0x + b1y + b2;
+            * ```
+            * @param affine 仿射矩阵，由  6 个 double 类型的数字组成
+            * @param x 可选剪切区域的原点 x 坐标
+            * @param y 可选剪切区域的原点 y 坐标
+            * @param width 可选剪切区域的的宽度
+            * @param height 可选剪切区域的的高度
+            * @return 返回仿射后的图像
+            * 
+            * 
+            * @async
+            */
+        affine(affine: any[], x?: number/** = -1*/, y?: number/** = -1*/, width?: number/** = -1*/, height?: number/** = -1*/): Image;
+
+        /**
+            * 
+            * @brief 对当前图像进行高斯模糊处理
+            * @param radius 模糊半径
+            * 
+            * 
+            * @async
+            */
+        gaussianBlur(radius: number): void;
+    }
+}
+
 //#region===================================================coroutine========================================================
 declare module "coroutine" {
     export var Lock: Lock;
@@ -6043,6 +7991,233 @@ declare module "coroutine" {
 }
 //#endregion
 
+//#region===================================================dgram=========================================================
+declare module "dgram" {
+    export var Socket: DgramSocket;
+
+
+    /**
+     * 
+     * @brief 创建一个 dgram.Socket 对象
+     * 
+     * opts 允许的选项是:
+     * ```JavaScript
+     * {
+     * "type": "udp4" | "udp6",   // 必填
+     * "reuseAddr": true | false, //若设置为 true，socket.bind() 则会重用地址，即时另一个进程已经在其上面绑定了一个套接字。 默认是 false
+     * "recvBufferSize": ###,     // 设置 SO_RCVBUF 套接字值
+     * "sendBufferSize": ###      //设置 SO_RCVBUF 套接字值
+     * }
+     * ```
+     * @param opts
+     * @return 返回创建的 Socket 对象
+     * 
+     * 
+     * 
+     */
+    export function createSocket(opts: {
+        type: string,
+        reuseAddr?: boolean,
+        recvBufferSize?: Value,
+        sendBufferSize?: Value
+    }): DgramSocket;
+
+    /**
+     * 
+     * @brief 创建一个 dgram.Socket 对象
+     * 
+     * opts 允许的选项是:
+     * ```JavaScript
+     * {
+     * "type": "udp4" | "udp6",   // 必填
+     * "reuseAddr": true | false, //若设置为 true，socket.bind() 则会重用地址，即时另一个进程已经在其上面绑定了一个套接字。 默认是 false
+     * "recvBufferSize": ###,     // 设置 SO_RCVBUF 套接字值
+     * "sendBufferSize": ###      //设置 SO_RCVBUF 套接字值
+     * }
+     * ```
+     * @param opts
+     * @param callback 为 'message' 事件添加一个监听器。
+     * @return 返回创建的 Socket 对象
+     * 
+     * 
+     * 
+     */
+    export function createSocket(opts: Object, callback: Function): DgramSocket;
+
+    /**
+     * 
+     * @brief 创建一个 dgram.Socket 对象
+     * @param type 套接字族，'udp4' 或 'udp6'。
+     * @return 返回创建的 Socket 对象
+     * 
+     * 
+     * 
+     */
+    export function createSocket(type: string): DgramSocket;
+
+    /**
+     * 
+     * @brief 创建一个 dgram.Socket 对象
+     * @param type 套接字族，'udp4' 或 'udp6'。
+     * @param callback 为 'message' 事件添加一个监听器。
+     * @return 返回创建的 Socket 对象
+     * 
+     * 
+     * 
+     */
+    export function createSocket(type: string, callback: Function): DgramSocket;
+
+    interface DgramSocket extends FibJS.EventEmitter {
+
+        /**
+         * 
+         * @brief 该方法会令 dgram.Socket 在指定的 `port` 和 `addr` 上监听数据包信息。绑定完成时会触发一个 `listening` 事件。
+         * @param port 指定绑定端口，若 `port` 未指定或为 0，操作系统会尝试绑定一个随机的端口
+         * @param addr 指定绑定地址，若 address 未指定，操作系统会尝试在所有地址上监听。
+         * 
+         * 
+         * @async
+         */
+        bind(port?: number/** = 0*/, addr?: string/** = ""*/): void;
+
+        /**
+         * 
+         * @brief 该方法会令 dgram.Socket 在 `opts` 指定的 `port` 和 `address` 上监听数据包信息。绑定完成时会触发一个 `listening` 事件。
+         * @param opts 指定绑定参数
+         * 
+         * 
+         * @async
+         */
+        bind(opts: Object): void;
+
+        /**
+         * 
+         * @brief 在 socket 上发送一个数据包
+         * @param msg 指定发送的数据
+         * @param port 指定发送的目的端口
+         * @param address 指定发送的目的地址
+         * @return 返回发送尺寸
+         * 
+         * 
+         * @async
+         */
+        send(msg: Buffer, port: number, address?: string/** = ""*/): number;
+
+        /**
+         * 
+         * @brief 在 socket 上发送一个数据包
+         * @param msg 指定发送的数据
+         * @param offset 从指定偏移开始发送
+         * @param length 之发送指定长度
+         * @param port 指定发送的目的端口
+         * @param address 指定发送的目的地址
+         * @return 返回发送尺寸
+         * 
+         * 
+         * @async
+         */
+        send(msg: Buffer, offset: number, length: number, port: number, address?: string/** = ""*/): number;
+
+        /**
+         * 
+         * @brief 返回一个包含 socket 地址信息的对象。对于 UDP socket，该对象将包含 address、family 和 port 属性。
+         * @return 返回对象绑定地址
+         * 
+         * 
+         * 
+         */
+        address(): any;
+
+        /**
+         * 
+         * @brief 关闭当前 socket
+         * 
+         * 
+         */
+        close(): void;
+
+        /**
+         * 
+         * @brief 关闭当前 socket
+         * @param callback 关闭完成后的回调函数，它相当于为 `close` 事件添加了一个监听器
+         * 
+         * 
+         * 
+         */
+        close(callback: Function): void;
+
+        /**
+         * 
+         * @brief 查询 socket 接收缓冲区大小
+         * @return 返回查询结果
+         * 
+         * 
+         * 
+         */
+        getRecvBufferSize(): number;
+
+        /**
+         * 
+         * @brief 查询 socket 发送缓冲区大小
+         * @return 返回查询结果
+         * 
+         * 
+         * 
+         */
+        getSendBufferSize(): number;
+
+        /**
+         * 
+         * @brief 设置 socket 接收缓冲区大小
+         * @param size 指定要设置的尺寸
+         * 
+         * 
+         * 
+         */
+        setRecvBufferSize(size: number): void;
+
+        /**
+         * 
+         * @brief 设置 socket 发送缓冲区大小
+         * @param size 指定要设置的尺寸
+         * 
+         * 
+         * 
+         */
+        setSendBufferSize(size: number): void;
+
+        /**
+         * 
+         * @brief 设置或清除 SO_BROADCAST socket 选项
+         * @param flag 当设置为 true, UDP包会被发送到一个本地接口的广播地址
+         * 
+         * 
+         * 
+         */
+        setBroadcast(flag: boolean): void;
+
+        /**
+         * 
+         * @brief 维持 fibjs 进程不退出，在对象绑定期间阻止 fibjs 进程退出
+         * @return 返回当前对象
+         * 
+         * 
+         * 
+         */
+        ref(): DgramSocket;
+
+        /**
+         * 
+         * @brief 允许 fibjs 进程退出，在对象绑定期间允许 fibjs 进程退出
+         * @return 返回当前对象
+         * 
+         * 
+         * 
+         */
+        unref(): DgramSocket;
+    }
+}
+//#endregion
 
 //#region===================================================events=========================================================
 declare module "events" {
