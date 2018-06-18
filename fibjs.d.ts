@@ -39,6 +39,7 @@ interface NodeRequireFunction {
     (id: string): any;
 }
 declare var require: NodeRequireFunction;
+declare var process: FibJS.Process;
 
 //type placeholder
 type Integer = number;
@@ -743,7 +744,7 @@ declare namespace FibJS {
         isNaN: typeof isNaN;
         parseFloat: typeof parseFloat;
         parseInt: typeof parseInt;
-        // process: Process;
+        process: Process;
         setImmediate: (callback: (...args: any[]) => void, ...args: any[]) => any;
         setInterval: (callback: (...args: any[]) => void, ms: number, ...args: any[]) => FibJS.Timer;
         setTimeout: (callback: (...args: any[]) => void, ms: number, ...args: any[]) => FibJS.Timer;
@@ -752,6 +753,327 @@ declare namespace FibJS {
         argv: Array<any>;
         gc: () => void;
         v8debug?: any;
+    }
+    //SIGINT 在终端运行时，可以被所有平台支持，通常可以通过 CTRL+C 触发。
+    //SIGTERM 当进程被 kill 时触发此信号。Windows 下不支持。
+    type Signals =
+        "SIGINT" | "SIGTERM";
+    type BeforeExitListener = (code: number) => void;
+    type ExitListener = (code: number) => void;
+    type SignalsListener = (signal: Signals) => void;
+    export interface Process extends EventEmitter {
+        /**
+         *返回当前进程的命令行参数
+         *
+         * @type {ReadonlyArray<string>}
+         * @memberof Process
+         */
+        argv: ReadonlyArray<string>;
+
+        /**
+         *返回当前进程的特殊命令行参数，这些参数被 fibjs 用于设置运行环境
+         *
+         * @type {ReadonlyArray<string>}
+         * @memberof Process
+         */
+        execArgv: ReadonlyArray<string>;
+
+        /**
+         *返回 fibjs 版本字符串
+         *
+         * @type {Readonly<string>}
+         * @memberof Process
+         */
+        version:Readonly<string>;
+
+        /**
+         *返回 fibjs 及组件的版本信息
+         *
+         * @type {Readonly<Object>}
+         * @memberof Process
+         */
+        versions:Readonly<Object>;
+
+        /**
+         *查询当前运行执行文件完整路径
+         *
+         * @type {string}
+         * @memberof Process
+         */
+        execPath: string;
+
+        /**
+         *查询当前进程的环境变量
+         *
+         * @type {string}
+         * @memberof Process
+         */
+        env:string;
+
+        /**
+         * 查询当前 cpu 环境
+         *
+         * @type {keyof  'amd64'}
+         * @memberof Process
+         */
+        arch:keyof { 'amd64', 'arm', 'arm64', 'ia32'};
+        platform:keyof { 'darwin', 'freebsd', 'linux',"win32"};
+        stdin:any;
+        stdout:any;
+        stderr:any;
+        exitCode:Integer;
+
+        addListener(event: "beforeExit", listener: BeforeExitListener): this;
+        addListener(event: "exit", listener: BeforeExitListener): this;
+        addListener(event: Signals, listener: SignalsListener): this;
+
+		/**
+			* 
+			* @brief 改变当前的 umask，Windows 不支持此方法
+			* @param mask 指定新的掩码
+			* @return 返回之前的 mask
+			* 
+			* 
+			* 
+			*/
+        umask(mask: number): number;
+
+		/**
+			* 
+			* @brief 改变当前的 umask，Windows 不支持此方法
+			* @param mask 指定新的掩码， 字符串类型八进制(e.g: "0664")
+			* @return 返回之前的 mask
+			* 
+			* 
+			* 
+			*/
+        umask(mask: string): number;
+
+		/**
+			* 
+			* @brief 返回当前的 umask，Windows 不支持此方法
+			* @return 返回当前的 mask 值
+			* 
+			* 
+			* 
+			*/
+        umask(): number;
+
+		/**
+			* 
+			* @brief 返回系统高精度时间，此时间与当前时间无关，仅用于高精度计时
+			* @param diff 用于比较的初始时间
+			* @return 返回计时时间，格式为 [seconds, nanoseconds]
+			* 
+			* 
+			* 
+			*/
+        hrtime(diff?: any[]/** = v8::Array::New(isolate)*/): any[];
+
+		/**
+			* 
+			* @brief 退出当前进程，并返回 exitCode 作为进程结果
+			* 
+			* 
+			*/
+        exit(): void;
+
+		/**
+			* 
+			* @brief 退出当前进程，并返回结果
+			* @param code 返回进程结果
+			* 
+			* 
+			* 
+			*/
+        exit(code: number): void;
+
+		/**
+			* 
+			* @brief 返回操作系统当前工作路径
+			* @return 返回当前系统路径
+			* 
+			* 
+			* 
+			*/
+        cwd(): string;
+
+		/**
+			* 
+			* @brief 修改操作系统当前工作路径
+			* @param directory 指定设定的新路径
+			* 
+			* 
+			* 
+			*/
+        chdir(directory: string): void;
+
+		/**
+			* 
+			* @brief 查询运行环境运行时间，以秒为单位
+			* @return 返回表示时间的数值
+			* 
+			* 
+			* 
+			*/
+        uptime(): number;
+
+		/**
+			* 
+			* @brief 查询当前进程内存使用报告
+			* 
+			* 内存报告生成类似以下结果：
+			* ```JavaScript
+			* {
+			* "rss": 8622080,
+			* "heapTotal": 4083456,
+			* "heapUsed": 1621800
+			* }
+			* ```
+			* 其中：
+			* - rss 返回进程当前占用物理内存大小
+			* - heapTotal 返回 v8 引擎堆内存大小
+			* - heapUsed 返回 v8 引擎正在使用堆内存大小
+			* @return 返回包含内存报告
+			* 
+			* 
+			* 
+			*/
+        memoryUsage(): Object;
+
+		/**
+			* 
+			* @brief 启动一个纤程
+			* @param func 制定纤程执行的函数
+			* @param args 可变参数序列，此序列会在纤程内传递给函数
+			* 
+			* 
+			* 
+			*/
+        nextTick(func: Function, ...args: any[]): void;
+
+		/**
+			* 
+			* @brief 运行指定的命令行，接管进程输入输出流，并返回进程对象
+			* 
+			* opts 支持的选项如下：
+			* ```JavaScript
+			* {
+			* "timeout": 100, // 单位为 ms
+			* "envs": [] // 进程环境变量
+			* }
+			* ```
+			* @param command 指定运行的命令行
+			* @param args 指定运行的参数列表
+			* @param opts 指定运行的选项
+			* @return 返回包含运行结果的进程对象
+			* 
+			* 
+			* 
+			*/
+        open(command: string, args: any[], opts?: Object/** = v8::Object::New(isolate)*/): SubProcess;
+
+		/**
+			* 
+			* @brief 运行指定的命令行，接管进程输入输出流，并返回进程对象
+			* 
+			* opts 支持的选项如下：
+			* ```JavaScript
+			* {
+			* "timeout": 100, // 单位为 ms
+			* "envs": [] // 进程环境变量
+			* }
+			* ```
+			* @param command 指定运行的命令行
+			* @param opts 指定运行的选项
+			* @return 返回包含运行结果的进程对象
+			* 
+			* 
+			* 
+			*/
+        open(command: string, opts?: Object/** = v8::Object::New(isolate)*/): SubProcess;
+
+		/**
+			* 
+			* @brief 运行指定的命令行，并返回进程对象
+			* 
+			* opts 支持的选项如下：
+			* ```JavaScript
+			* {
+			* "timeout": 100, // 单位为 ms
+			* "envs": [] // 进程环境变量
+			* }
+			* ```
+			* @param command 指定运行的命令行
+			* @param args 指定运行的参数列表
+			* @param opts 指定运行的选项
+			* @return 返回包含运行结果的进程对象
+			* 
+			* 
+			* 
+			*/
+        start(command: string, args: any[], opts?: Object/** = v8::Object::New(isolate)*/): SubProcess;
+
+		/**
+			* 
+			* @brief 运行指定的命令行，并返回进程对象
+			* 
+			* opts 支持的选项如下：
+			* ```JavaScript
+			* {
+			* "timeout": 100, // 单位为 ms
+			* "envs": [] // 进程环境变量
+			* }
+			* ```
+			* @param command 指定运行的命令行
+			* @param opts 指定运行的选项
+			* @return 返回包含运行结果的进程对象
+			* 
+			* 
+			* 
+			*/
+        start(command: string, opts?: Object/** = v8::Object::New(isolate)*/): SubProcess;
+
+		/**
+			* 
+			* @brief 运行指定的命令行，并返回进程的结束代码
+			* 
+			* opts 支持的选项如下：
+			* ```JavaScript
+			* {
+			* "timeout": 100, // 单位为 ms
+			* "envs": [] // 进程环境变量
+			* }
+			* ```
+			* @param command 指定运行的命令行
+			* @param args 指定运行的参数列表
+			* @param opts 指定运行的选项
+			* @return 返回命令的运行结果
+			* 
+			* 
+			* 
+			*/
+        run(command: string, args: any[], opts?: Object/** = v8::Object::New(isolate)*/): number;
+
+		/**
+			* 
+			* @brief 运行指定的命令行，并返回进程的结束代码
+			* 
+			* opts 支持的选项如下：
+			* ```JavaScript
+			* {
+			* "timeout": 100, // 单位为 ms
+			* "envs": [] // 进程环境变量
+			* }
+			* ```
+			* @param command 指定运行的命令行
+			* @param opts 指定运行的选项
+			* @return 返回命令的运行结果
+			* 
+			* 
+			* 
+			*/
+        run(command: string, opts?: Object/** = v8::Object::New(isolate)*/): number;
     }
     export interface Timer extends Object {
         /**
@@ -832,6 +1154,153 @@ declare namespace FibJS {
          * @memberof Stream
          */
         copyTo(stm: Stream, bytes?: number): number;
+    }
+    export interface BufferedStream extends Stream {
+
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 查询创建缓存对象时的流对象
+         * 
+         * @readonly
+         * @type Stream
+         */
+
+        stream: FibJS.Stream
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 查询和设置当前对象处理文本时的字符集，缺省为 utf-8
+         * 
+         * 
+         * @type String
+         */
+
+        charset: string
+
+        /**
+         * class prop 
+         *
+         * 
+         * @brief 查询和设置行结尾标识，缺省时，posix:\"\\n\"；windows:\"\\r\\n\"
+         * 
+         * 
+         * @type String
+         */
+
+        EOL: string
+
+        /**
+         * 
+         * @brief BufferedStream 构造函数
+         * @param stm BufferedStream 的二进制基础流对象
+         * 
+         * 
+         * 
+         */
+        new(stm: FibJS.Stream);
+
+        /**
+         * 
+         * @brief 读取指定字符的文本
+         * @param size 指定读取的文本字符个数，以 utf8 或者指定的编码字节数为准
+         * @return 返回读取的文本字符串，若无数据可读，或者连接中断，则返回 null
+         * 
+         * 
+         * @async
+         */
+        readText(size: number): string;
+
+        /**
+         * 
+         * @brief 读取一行文本，行结尾标识基于 EOL 属性的设置，缺省时，posix:\"\\n\"；windows:\"\\r\\n\"
+         * @param maxlen 指定此次读取的最大字符串，以 utf8 编码字节数为准，缺省不限制字符数
+         * @return 返回读取的文本字符串，若无数据可读，或者连接中断，则返回 null
+         * 
+         * 
+         * @async
+         */
+        readLine(maxlen?: number/** = -1*/): string;
+
+        /**
+         * 
+         * @brief 以数组方式读取一组文本行，行结尾标识基于 EOL 属性的设置，缺省时，posix:\"\\n\"；windows:\"\\r\\n\"
+         * @param maxlines 指定此次读取的最大行数，缺省读取全部文本行
+         * @return 返回读取的文本行数组，若无数据可读，或者连接中断，空数组
+         * 
+         * 
+         * 
+         */
+        readLines(maxlines?: number/** = -1*/): any[];
+
+        /**
+         * 
+         * @brief 读取一个文本字符串，以指定的字节为结尾
+         * @param mk 指定结尾的字符串
+         * @param maxlen 指定此次读取的最大字符串，以 utf8 编码字节数为准，缺省不限制字符数
+         * @return 返回读取的文本字符串，若无数据可读，或者连接中断，则返回 null
+         * 
+         * 
+         * @async
+         */
+        readUntil(mk: string, maxlen?: number/** = -1*/): string;
+
+        /**
+         * 
+         * @brief 写入一个字符串
+         * @param txt 指定写入的字符串
+         * 
+         * 
+         * @async
+         */
+        writeText(txt: string): void;
+
+        /**
+         * 
+         * @brief 写入一个字符串，并写入换行符
+         * @param txt 指定写入的字符串
+         * 
+         * 
+         * @async
+         */
+        writeLine(txt: string): void;
+    }
+    export interface SubProcess extends BufferedStream {
+
+        /**
+            * 
+            * @brief 杀掉当前对象指向的进程，并传递信号
+            * @param signal 传递的信号
+            * 
+            * 
+            * 
+            */
+        kill(signal: number): void;
+
+        /**
+            * 
+            * @brief 等待当前对象指向的进程结束，并返回进程结束代码
+            * @return 进程的结束代码
+            * 
+            * 
+            * @async
+            */
+        wait(): number;
+
+        /**
+            * 
+            * @brief 查询当前对象所指向的进程是否存在指定名称的窗口，仅限 windows
+            * @param name 窗口名称
+            * @return 窗口存在则返回窗口的 rect，否则返回 undefined
+            * 
+            * 
+            * 
+            */
+        findWindow(name: string): any;
     }
     /**
      *
@@ -1096,6 +1565,73 @@ declare namespace FibJS {
          * @memberof Fiber
          */
         join(): void;
+    }
+
+    export interface Handler {
+
+        /**
+            * 
+            * @brief 构造一个消息处理器链处理对象
+            * @param hdlrs 处理器数组
+            * 
+            * 
+            * 
+            */
+        constructor(hdlrs: any[]);
+
+        /**
+            * 
+            * @brief 创建一个消息处理器路由对象
+            * @param map 初始化路由参数
+            * 
+            * 
+            * 
+            */
+        constructor(map: Object);
+
+        /**
+            * 
+            * @brief 创建一个 JavaSvript 消息处理器
+            * @param hdlr JavaScript 处理器函数
+            * 
+            * 
+            * 
+            */
+        constructor(hdlr: Function);
+
+        /**
+            * 
+            * @brief 处理一个消息或对象
+            * @param v 指定处理的消息或对象
+            * @return 返回下一步的处理器
+            * 
+            * 
+            * @async
+            */
+        invoke(v: object): Handler;
+    }
+    export interface HandlerEx extends Handler {
+
+        /**
+            * 
+            * @brief 设置错误处理器
+            * 
+            * 使用方式：
+            * ```JavaScript
+            * hdlr.onerror({
+            * "404": function(v)
+            * {
+            * ...
+            * },
+            * "500": new mq.Routing(...)
+            * })
+            * ```
+            * @param hdlrs 指定不同的错误的处理器，key 是错误号，value 是处理器，可以是内置消息处理器，处理函数，链式处理数组，路由对象，详见 mq.Handler
+            * 
+            * 
+            * 
+            */
+        onerror(hdlrs: Object): void;
     }
 }
 
@@ -2639,11 +3175,7 @@ interface Console {
 declare var console: Console;
 
 declare module "process" {
-
-}
-
-declare var process: {
-
+    export = process;
 }
 
 /**
@@ -2657,11 +3189,6 @@ declare function run(fname: string, args: Array<any>): void;
 
 interface PKeyCurve {
     "secp521r1", "brainpoolP512r1", "secp384r1", "brainpoolP384r1", "secp256r1", "secp256k1", "brainpoolP256r1", "secp224r1", "secp224k1", "secp192r1", "secp192k1"
-}
-
-declare enum a {
-    NONE = 0,
-
 }
 
 //#region===================================================crypto==========================================================
@@ -5741,120 +6268,6 @@ declare module "dns" {
 
 declare module "fs" {
 
-    interface BufferedStream {
-
-        /**
-         * class prop 
-         *
-         * 
-         * @brief 查询创建缓存对象时的流对象
-         * 
-         * @readonly
-         * @type Stream
-         */
-
-        stream: FibJS.Stream
-
-        /**
-         * class prop 
-         *
-         * 
-         * @brief 查询和设置当前对象处理文本时的字符集，缺省为 utf-8
-         * 
-         * 
-         * @type String
-         */
-
-        charset: string
-
-        /**
-         * class prop 
-         *
-         * 
-         * @brief 查询和设置行结尾标识，缺省时，posix:\"\\n\"；windows:\"\\r\\n\"
-         * 
-         * 
-         * @type String
-         */
-
-        EOL: string
-
-        /**
-         * 
-         * @brief BufferedStream 构造函数
-         * @param stm BufferedStream 的二进制基础流对象
-         * 
-         * 
-         * 
-         */
-        constructor(stm: FibJS.Stream);
-
-        /**
-         * 
-         * @brief 读取指定字符的文本
-         * @param size 指定读取的文本字符个数，以 utf8 或者指定的编码字节数为准
-         * @return 返回读取的文本字符串，若无数据可读，或者连接中断，则返回 null
-         * 
-         * 
-         * @async
-         */
-        readText(size: number): string;
-
-        /**
-         * 
-         * @brief 读取一行文本，行结尾标识基于 EOL 属性的设置，缺省时，posix:\"\\n\"；windows:\"\\r\\n\"
-         * @param maxlen 指定此次读取的最大字符串，以 utf8 编码字节数为准，缺省不限制字符数
-         * @return 返回读取的文本字符串，若无数据可读，或者连接中断，则返回 null
-         * 
-         * 
-         * @async
-         */
-        readLine(maxlen?: number/** = -1*/): string;
-
-        /**
-         * 
-         * @brief 以数组方式读取一组文本行，行结尾标识基于 EOL 属性的设置，缺省时，posix:\"\\n\"；windows:\"\\r\\n\"
-         * @param maxlines 指定此次读取的最大行数，缺省读取全部文本行
-         * @return 返回读取的文本行数组，若无数据可读，或者连接中断，空数组
-         * 
-         * 
-         * 
-         */
-        readLines(maxlines?: number/** = -1*/): any[];
-
-        /**
-         * 
-         * @brief 读取一个文本字符串，以指定的字节为结尾
-         * @param mk 指定结尾的字符串
-         * @param maxlen 指定此次读取的最大字符串，以 utf8 编码字节数为准，缺省不限制字符数
-         * @return 返回读取的文本字符串，若无数据可读，或者连接中断，则返回 null
-         * 
-         * 
-         * @async
-         */
-        readUntil(mk: string, maxlen?: number/** = -1*/): string;
-
-        /**
-         * 
-         * @brief 写入一个字符串
-         * @param txt 指定写入的字符串
-         * 
-         * 
-         * @async
-         */
-        writeText(txt: string): void;
-
-        /**
-         * 
-         * @brief 写入一个字符串，并写入换行符
-         * @param txt 指定写入的字符串
-         * 
-         * 
-         * @async
-         */
-        writeLine(txt: string): void;
-    }
-
     interface SeekableStream {
 
 
@@ -6126,6 +6539,19 @@ declare module "fs" {
          * 
          */
         isSocket(): boolean;
+    }
+
+    interface File extends SeekableStream{
+            
+        /**
+            * 
+            * @brief 查询当前文件的访问权限，Windows 不支持此方法
+            * @param mode 指定设定的访问权限
+            * 
+            * 
+            * @async
+            */
+        chmod(mode: number): void;
     }
 
     /**
@@ -6439,6 +6865,7 @@ declare module "fs" {
      * @async
      */
     export function openFile(fname: string, flags?: string/** = "r"*/): SeekableStream;
+    export function openFile(fname:string):File;
 
     /**
      * 
@@ -6489,7 +6916,7 @@ declare module "fs" {
      * 
      * @async
      */
-    export function openTextStream(fname: string, flags?: string/** = "r"*/): BufferedStream;
+    export function openTextStream(fname: string, flags?: string/** = "r"*/): FibJS.BufferedStream;
 
     /**
      * 
@@ -6561,7 +6988,7 @@ declare module "fs" {
 }
 
 declare module "gd" {
-    import { SeekableStream } from "fs";
+    import { SeekableStream, Stat } from "fs";
 
     /**
         * 
@@ -7662,6 +8089,2294 @@ declare module "gd" {
     }
 }
 
+declare module "http" {
+    import { TcpServer } from "net";
+    import { X509Cert, PKey } from "crypto";
+
+
+    interface Message {
+
+        /**
+            * 
+            * @brief 消息对象构造函数
+            * 
+            * 
+            */
+        constructor(): Message;
+
+        /**
+            * 
+            * @brief 从流内读取指定大小的数据，此方法为 body 相应方法的别名
+            * @param bytes 指定要读取的数据量，缺省为读取随机大小的数据块，读出的数据尺寸取决于设备
+            * @return 返回从流内读取的数据，若无数据可读，或者连接中断，则返回 null
+            * 
+            * 
+            * @async
+            */
+        read(bytes?: number/** = -1*/): Buffer;
+
+        /**
+            * 
+            * @brief 从流内读取剩余的全部数据，此方法为 body 相应方法的别名
+            * @return 返回从流内读取的数据，若无数据可读，或者连接中断，则返回 null
+            * 
+            * 
+            * @async
+            */
+        readAll(): Buffer;
+
+        /**
+            * 
+            * @brief 写入给定的数据，此方法为 body 相应方法的别名
+            * @param data 给定要写入的数据
+            * 
+            * 
+            * @async
+            */
+        write(data: Buffer): void;
+
+        /**
+            * 
+            * @brief 以 JSON 编码写入给定的数据
+            * @param data 给定要写入的数据
+            * @return 此方法不会返回数据
+            * 
+            * 
+            * 
+            */
+        json(data: any): any;
+
+        /**
+            * 
+            * @brief 以 JSON 编码解析消息中的数据
+            * @return 返回解析的结果
+            * 
+            * 
+            * 
+            */
+        json(): any;
+
+        /**
+            * 
+            * @brief 设置当前消息处理结束，Chain 处理器不再继续后面的事务
+            * 
+            * 
+            */
+        end(): void;
+
+        /**
+            * 
+            * @brief 查询当前消息是否结束
+            * @return 结束则返回 true
+            * 
+            * 
+            * 
+            */
+        isEnded(): boolean;
+
+        /**
+            * 
+            * @brief 清除消息的内容
+            * 
+            * 
+            */
+        clear(): void;
+
+        /**
+            * 
+            * @brief 发送格式化消息到给定的流对象
+            * @param stm 指定接收格式化消息的流对象
+            * 
+            * 
+            * @async
+            */
+        sendTo(stm: FibJS.Stream): void;
+
+        /**
+            * 
+            * @brief 从给定的缓存流对象中读取格式化消息，并解析填充对象
+            * @param stm 指定读取格式化消息的流对象
+            * 
+            * 
+            * @async
+            */
+        readFrom(stm: FibJS.Stream): void;
+    }
+
+    interface HttpMessage extends Message {
+
+        /**
+            * 
+            * @brief 检查是否存在指定键值的消息头
+            * @param name 指定要检查的键值
+            * @return 返回键值是否存在
+            * 
+            * 
+            * 
+            */
+        hasHeader(name: string): boolean;
+
+        /**
+            * 
+            * @brief 查询指定键值的第一个消息头
+            * @param name 指定要查询的键值
+            * @return 返回键值所对应的值，若不存在，则返回 undefined
+            * 
+            * 
+            * 
+            */
+        firstHeader(name: string): any;
+
+        /**
+            * 
+            * @brief 查询指定键值的全部消息头
+            * @param name 指定要查询的键值
+            * @return 返回键值所对应全部值的数组，若数据不存在，则返回 null
+            * 
+            * 
+            * 
+            */
+        allHeader(name: string): any[];
+
+        /**
+            * 
+            * @brief 添加一个消息头，添加数据并不修改已存在的键值的消息头
+            * @param map 指定要添加的键值数据字典
+            * 
+            * 
+            * 
+            */
+        addHeader(map: Object): void;
+
+        /**
+            * 
+            * @brief 添加一个消息头，添加数据并不修改已存在的键值的消息头
+            * @param name 指定要添加的键值
+            * @param value 指定要添加的数据
+            * 
+            * 
+            * 
+            */
+        addHeader(name: string, value: any): void;
+
+        /**
+            * 
+            * @brief 设定一个消息头，设定数据将修改键值所对应的第一个数值，并清除相同键值的其余消息头
+            * @param map 指定要设定的键值数据字典
+            * 
+            * 
+            * 
+            */
+        setHeader(map: Object): void;
+
+        /**
+            * 
+            * @brief 设定一个消息头，设定数据将修改键值所对应的第一个数值，并清除相同键值的其余消息头
+            * @param name 指定要设定的键值
+            * @param value 指定要设定的数据
+            * 
+            * 
+            * 
+            */
+        setHeader(name: string, value: any): void;
+
+        /**
+            * 
+            * @brief 删除指定键值的全部消息头
+            * @param name 指定要删除的键值
+            * 
+            * 
+            * 
+            */
+        removeHeader(name: string): void;
+    }
+
+    interface HttpRequest extends HttpMessage {
+
+        /**
+            * 
+            * @brief HttpRequest 构造函数，创建一个新的 HttpRequest 对象
+            * 
+            * 
+            */
+        constructor(): HttpRequest;
+    }
+
+    interface HttpResponse extends HttpMessage {
+
+        /**
+            * 
+            * @brief HttpResponse 构造函数，创建一个新的 HttpResponse 对象
+            * 
+            * 
+            */
+        constructor();
+
+        /**
+            * 
+            * @brief 设置响应消息的返回状态，返回消息，并添加响应头
+            * @param statusCode 指定响应消息的返回状态
+            * @param statusMessage 指定响应消息的返回消息
+            * @param headers 指定响应消息添加的响应头
+            * 
+            * 
+            * 
+            */
+        writeHead(statusCode: number, statusMessage: string, headers?: Object/** = v8::Object::New(isolate)*/): void;
+
+        /**
+            * 
+            * @brief 设置响应消息的返回状态，返回消息，并添加响应头
+            * @param statusCode 指定响应消息的返回状态
+            * @param headers 指定响应消息添加的响应头
+            * 
+            * 
+            * 
+            */
+        writeHead(statusCode: number, headers?: Object/** = v8::Object::New(isolate)*/): void;
+
+        /**
+            * 
+            * @brief 向 cookies 添加一个 HttpCookie 对象
+            * @param cookie 指定要添加的 HttpCookie 对象
+            * 
+            * 
+            * 
+            */
+        addCookie(cookie: HttpCookie): void;
+
+        /**
+            * 
+            * @brief 发送重定向到客户端
+            * @param url 重定向的地址
+            * 
+            * 
+            * 
+            */
+        redirect(url: string): void;
+
+        /**
+            * 
+            * @brief 仅发送格式化 http 头到给定的流对象
+            * @param stm 指定接收格式化消息的流对象
+            * 
+            * 
+            * @async
+            */
+        sendHeader(stm: FibJS.Stream): void;
+    }
+
+    interface HttpCookie {
+
+        /**
+            * 
+            * @brief HttpCookie 构造函数，创建一个新的 HttpCookie 对象
+            * @param opts 指定创建的 cookie 的属性
+            * 
+            * 
+            * 
+            */
+        constructor(opts?: Object/** = v8::Object::New(isolate)*/);
+
+        /**
+            * 
+            * @brief HttpCookie 构造函数，创建一个新的 HttpCookie 对象
+            * @param name 指定创建的 cookie 名称
+            * @param value 指定创建的 cookie 值
+            * @param opts 指定创建的 cookie 的其它属性
+            * 
+            * 
+            * 
+            */
+        constructor(name: string, value: string, opts?: Object/** = v8::Object::New(isolate)*/);
+
+        /**
+            * 
+            * @brief 解析给定的字符串，填充 cookie 对象
+            * @param header 指定需要解析的 header 字符串
+            * 
+            * 
+            * 
+            */
+        parse(header: string): void;
+
+        /**
+            * 
+            * @brief 检测给定的 url 是否匹配当前设置
+            * @param url 指定测试的 url
+            * @return 匹配成功返回 true
+            * 
+            * 
+            * 
+            */
+        match(url: string): boolean;
+    }
+
+    interface HttpServer extends TcpServer {
+        /**
+                * 
+                * @brief HttpServer 构造函数，在所有本机地址侦听
+                * @param port 指定 http 服务器侦听端口
+                * @param hdlr http 内置消息处理器，处理函数，链式处理数组，路由对象，详见 mq.Handler
+                * 
+                * 
+                * 
+                */
+        new(port: number, hdlr: FibJS.Handler);
+
+        /**
+            * 
+            * @brief HttpServer 构造函数
+            * @param addr 指定 http 服务器侦听地址，为 "" 则在本机所有地址侦听
+            * @param port 指定 http 服务器侦听端口
+            * @param hdlr http 内置消息处理器，处理函数，链式处理数组，路由对象，详见 mq.Handler
+            * 
+            * 
+            * 
+            */
+        constructor(addr: string, port: number, hdlr: FibJS.Handler);
+
+        /**
+            * 
+            * @brief 设置错误处理器
+            * 
+            * 使用方式：
+            * ```JavaScript
+            * hdlr.onerror({
+            * "404": function(v)
+            * {
+            * ...
+            * },
+            * "500": new mq.Routing(...)
+            * })
+            * ```
+            * @param hdlrs 指定不同的错误的处理器，key 是错误号，value 是处理器，可以是内置消息处理器，处理函数，链式处理数组，路由对象，详见 mq.Handler
+            * 
+            * 
+            * 
+            */
+        onerror(hdlrs: Object): void;
+
+        /**
+            * 
+            * @brief 允许跨域请求
+            * @param allowHeaders 指定接受的 http 头字段
+            * 
+            * 
+            * 
+            */
+        enableCrossOrigin(allowHeaders?: string/** = "Content-Type"*/): void;
+
+    }
+
+    interface HttpClient {
+
+        /**
+            * 
+            * @brief HttpClient 构造函数，创建一个新的HttpClient对象
+            * 
+            * 
+            */
+        constructor();
+
+        /**
+            * 
+            * @brief 发送 http 请求到指定的流对象，并返回结果
+            * @param conn 指定处理请求的流对象
+            * @param req 要发送的 HttpRequest 对象
+            * @return 返回服务器响应
+            * 
+            * 
+            * @async
+            */
+        request(conn: FibJS.Stream, req: HttpRequest): HttpResponse;
+
+        /**
+            * 
+            * @brief 请求指定的 url，并返回结果
+            * opts 包含请求的附加选项，支持的内容如下：
+            * ```JavaScript
+            * {
+            * "query": {},
+            * "body": SeekedStream | Buffer | String | {},
+            * "json": {},
+            * "headers": {}
+            * }
+            * ```
+            * 其中 body，json 不得同时出现。缺省为 {}，不包含任何附加信息
+            * @param method 指定 http 请求方法：GET, POST 等
+            * @param url 指定 url，必须是包含主机的完整 url
+            * @param opts 指定附加信息
+            * @return 返回服务器响应
+            * 
+            * 
+            * @async
+            */
+        request(method: string, url: string, opts?: Object/** = v8::Object::New(isolate)*/): HttpResponse;
+
+        /**
+            * 
+            * @brief 用 GET 方法请求指定的 url，并返回结果，等同于 request("GET", ...)
+            * opts 包含请求的附加选项，支持的内容如下：
+            * ```JavaScript
+            * {
+            * "query": {},
+            * "body": SeekedStream | Buffer | String | {},
+            * "json": {},
+            * "headers": {}
+            * }
+            * ```
+            * 其中 body，json 不得同时出现。缺省为 {}，不包含任何附加信息
+            * @param url 指定 url，必须是包含主机的完整 url
+            * @param opts 指定附加信息
+            * @return 返回服务器响应
+            * 
+            * 
+            * @async
+            */
+        get(url: string, opts?: Object/** = v8::Object::New(isolate)*/): HttpResponse;
+
+        /**
+            * 
+            * @brief 用 POST 方法请求指定的 url，并返回结果，等同于 request("POST", ...)
+            * opts 包含请求的附加选项，支持的内容如下：
+            * ```JavaScript
+            * {
+            * "query": {},
+            * "body": SeekedStream | Buffer | String | {},
+            * "json": {},
+            * "headers": {}
+            * }
+            * ```
+            * 其中 body，json 不得同时出现。缺省为 {}，不包含任何附加信息
+            * @param url 指定 url，必须是包含主机的完整 url
+            * @param opts 指定附加信息
+            * @return 返回服务器响应
+            * 
+            * 
+            * @async
+            */
+        post(url: string, opts?: Object/** = v8::Object::New(isolate)*/): HttpResponse;
+
+        /**
+            * 
+            * @brief 用 DELETE 方法请求指定的 url，并返回结果，等同于 request("DELETE", ...)
+            * opts 包含请求的附加选项，支持的内容如下：
+            * ```JavaScript
+            * {
+            * "query": {},
+            * "body": SeekedStream | Buffer | String | {},
+            * "json": {},
+            * "headers": {}
+            * }
+            * ```
+            * 其中 body，json 不得同时出现。缺省为 {}，不包含任何附加信息
+            * @param url 指定 url，必须是包含主机的完整 url
+            * @param opts 指定附加信息
+            * @return 返回服务器响应
+            * 
+            * 
+            * @async
+            */
+        del(url: string, opts?: Object/** = v8::Object::New(isolate)*/): HttpResponse;
+
+        /**
+            * 
+            * @brief 用 PUT 方法请求指定的 url，并返回结果，等同于 request("PUT", ...)
+            * opts 包含请求的附加选项，支持的内容如下：
+            * ```JavaScript
+            * {
+            * "query": {},
+            * "body": SeekedStream | Buffer | String | {},
+            * "json": {},
+            * "headers": {}
+            * }
+            * ```
+            * 其中 body，json 不得同时出现。缺省为 {}，不包含任何附加信息
+            * @param url 指定 url，必须是包含主机的完整 url
+            * @param opts 指定附加信息
+            * @return 返回服务器响应
+            * 
+            * 
+            * @async
+            */
+        put(url: string, opts?: Object/** = v8::Object::New(isolate)*/): HttpResponse;
+
+        /**
+            * 
+            * @brief 用 PATCH 方法请求指定的 url，并返回结果，等同于 request("PATCH", ...)
+            * opts 包含请求的附加选项，支持的内容如下：
+            * ```JavaScript
+            * {
+            * "query": {},
+            * "body": SeekedStream | Buffer | String | {},
+            * "json": {},
+            * "headers": {}
+            * }
+            * ```
+            * 其中 body，json 不得同时出现。缺省为 {}，不包含任何附加信息
+            * @param url 指定 url，必须是包含主机的完整 url
+            * @param opts 指定附加信息
+            * @return 返回服务器响应
+            * 
+            * 
+            * @async
+            */
+        patch(url: string, opts?: Object/** = v8::Object::New(isolate)*/): HttpResponse;
+    }
+
+    interface HttpsServer extends HttpServer {
+
+        /**
+            * 
+            * @brief HttpsServer 构造函数，在所有本机地址侦听
+            * 
+            * certs 格式为：
+            * ```JavaScript
+            * [
+            * {
+            * crt: [X509Cert object],
+            * key: [PKey object]
+            * },
+            * {
+            * crt: [X509Cert object],
+            * key: [PKey object]
+            * }
+            * ]
+            * ```
+            * @param certs 服务器证书列表
+            * @param port 指定 http 服务器侦听端口
+            * @param hdlr http 内置消息处理器，处理函数，链式处理数组，路由对象，详见
+            * 
+            * 
+            * 
+            */
+        new(certs: any[], port: number, hdlr: FibJS.Handler);
+
+        /**
+            * 
+            * @brief HttpsServer 构造函数
+            * 
+            * certs 格式为：
+            * ```JavaScript
+            * [
+            * {
+            * crt: [X509Cert object],
+            * key: [PKey object]
+            * },
+            * {
+            * crt: [X509Cert object],
+            * key: [PKey object]
+            * }
+            * ]
+            * ```
+            * @param certs 服务器证书列表
+            * @param addr 指定 http 服务器侦听地址，为 "" 则在本机所有地址侦听
+            * @param port 指定 http 服务器侦听端口
+            * @param hdlr http 内置消息处理器，处理函数，链式处理数组，路由对象，详见
+            * 
+            * 
+            * 
+            */
+        new(certs: any[], addr: string, port: number, hdlr: FibJS.Handler);
+
+        /**
+            * 
+            * @brief HttpsServer 构造函数，在所有本机地址侦听
+            * @param crt X509Cert 证书，用于客户端验证服务器
+            * @param key PKey 私钥，用于与客户端会话
+            * @param port 指定 http 服务器侦听端口
+            * @param hdlr http 内置消息处理器，处理函数，链式处理数组，路由对象，详见
+            * 
+            * 
+            * 
+            */
+        new(crt: X509Cert, key: PKey, port: number, hdlr: FibJS.Handler);
+
+        /**
+            * 
+            * @brief HttpsServer 构造函数
+            * @param crt X509Cert 证书，用于客户端验证服务器
+            * @param key PKey 私钥，用于与客户端会话
+            * @param addr 指定 http 服务器侦听地址，为 "" 则在本机所有地址侦听
+            * @param port 指定 http 服务器侦听端口
+            * @param hdlr http 内置消息处理器，处理函数，链式处理数组，路由对象，详见
+            * 
+            * 
+            * 
+            */
+        new(crt: X509Cert, key: PKey, addr: string, port: number, hdlr: FibJS.Handler);
+    }
+
+    interface HttpHandler extends FibJS.HandlerEx {
+
+        /**
+            * 
+            * @brief 创建一个 http 协议处理器对象，将流对象的数据转变为 http 消息对象
+            * @param hdlr 内置消息处理器，处理函数，链式处理数组，路由对象，详见 mq.Handler
+            * 
+            * 
+            * 
+            */
+        new(hdlr: FibJS.Handler);
+
+        /**
+            * 
+            * @brief 允许跨域请求
+            * @param allowHeaders 指定接受的 http 头字段
+            * 
+            * 
+            * 
+            */
+        enableCrossOrigin(allowHeaders?: string/** = "Content-Type"*/): void;
+    }
+
+    /**
+        * 
+        * @brief 创建一个 http 请求对象，参见 HttpRequest
+        * 
+        * 
+        */
+    export const Request: HttpRequest;
+
+    /**
+        * 
+        * @brief 创建一个 http 响应对象，参见 HttpResponse
+        * 
+        * 
+        */
+    export const Response: HttpResponse;
+
+    /**
+        * 
+        * @brief 创建一个 http cookie 对象，参见 HttpCookie
+        * 
+        * 
+        */
+    export const Cookie: HttpCookie;
+
+    /**
+        * 
+        * @brief 创建一个 http 服务器，参见 HttpServer
+        * 
+        * 
+        */
+    export const Server: HttpServer;
+
+    /**
+        * 
+        * @brief 创建一个 http 客户端，参见 HttpClient
+        * 
+        * 
+        */
+    export const Client: HttpClient;
+
+    /**
+        * 
+        * @brief 创建一个 https 服务器，参见 HttpsServer
+        * 
+        * 
+        */
+    export const HttpsServer: HttpsServer;
+
+    /**
+        * 
+        * @brief 创建一个 http 协议处理器对象，参见 HttpHandler
+        * 
+        * 
+        */
+    export const Handler: HttpHandler;
+
+
+
+    /**
+        * 
+        * @brief 创建一个 http 静态文件处理器，用以用静态文件响应 http 消息
+        * 
+        * fileHandler 支持 gzip 预压缩，当请求接受 gzip 编码，且相同路径下 filename.ext.gz 文件存在时，将直接返回此文件，
+        * 从而避免重复压缩带来服务器负载。
+        * @param root 文件根路径
+        * @param mimes 扩展 mime 设置
+        * @param autoIndex 是否支持浏览目录文件，缺省为 false，不支持
+        * @return 返回一个静态文件处理器用于处理 http 消息
+        * 
+        * 
+        * 
+        */
+    export function fileHandler(root: string, mimes?: Object/** = v8::Object::New(isolate)*/, autoIndex?: boolean/** = false*/): FibJS.Handler;
+
+    /**
+        * 
+        * @brief 发送 http 请求到指定的流对象，并返回结果
+        * @param conn 指定处理请求的流对象
+        * @param req 要发送的 HttpRequest 对象
+        * @return 返回服务器响应
+        * 
+        * 
+        * @async
+        */
+    export function request(conn: FibJS.Stream, req: HttpRequest): HttpResponse;
+
+    /**
+        * 
+        * @brief 请求指定的 url，并返回结果
+        * opts 包含请求的附加选项，支持的内容如下：
+        * ```JavaScript
+        * {
+        * "query": {},
+        * "body": SeekedStream | Buffer | String | {},
+        * "json": {},
+        * "headers": {}
+        * }
+        * ```
+        * 其中 body，json 不得同时出现。缺省为 {}，不包含任何附加信息
+        * @param method 指定 http 请求方法：GET, POST 等
+        * @param url 指定 url，必须是包含主机的完整 url
+        * @param opts 指定附加信息
+        * @return 返回服务器响应
+        * 
+        * 
+        * @async
+        */
+    export function request(method: string, url: string, opts?: Object/** = v8::Object::New(isolate)*/): HttpResponse;
+
+    /**
+        * 
+        * @brief 用 GET 方法请求指定的 url，并返回结果，等同于 request("GET", ...)
+        * opts 包含请求的附加选项，支持的内容如下：
+        * ```JavaScript
+        * {
+        * "query": {},
+        * "body": SeekedStream | Buffer | String | {},
+        * "json": {},
+        * "headers": {}
+        * }
+        * ```
+        * 其中 body，json 不得同时出现。缺省为 {}，不包含任何附加信息
+        * @param url 指定 url，必须是包含主机的完整 url
+        * @param opts 指定附加信息
+        * @return 返回服务器响应
+        * 
+        * 
+        * @async
+        */
+    export function get(url: string, opts?: Object/** = v8::Object::New(isolate)*/): HttpResponse;
+
+    /**
+        * 
+        * @brief 用 POST 方法请求指定的 url，并返回结果，等同于 request("POST", ...)
+        * opts 包含请求的附加选项，支持的内容如下：
+        * ```JavaScript
+        * {
+        * "query": {},
+        * "body": SeekedStream | Buffer | String | {},
+        * "json": {},
+        * "headers": {}
+        * }
+        * ```
+        * 其中 body，json 不得同时出现。缺省为 {}，不包含任何附加信息
+        * @param url 指定 url，必须是包含主机的完整 url
+        * @param opts 指定附加信息
+        * @return 返回服务器响应
+        * 
+        * 
+        * @async
+        */
+    export function post(url: string, opts?: Object/** = v8::Object::New(isolate)*/): HttpResponse;
+
+    /**
+        * 
+        * @brief 用 DELETE 方法请求指定的 url，并返回结果，等同于 request("DELETE", ...)
+        * opts 包含请求的附加选项，支持的内容如下：
+        * ```JavaScript
+        * {
+        * "query": {},
+        * "body": SeekedStream | Buffer | String | {},
+        * "json": {},
+        * "headers": {}
+        * }
+        * ```
+        * 其中 body，json 不得同时出现。缺省为 {}，不包含任何附加信息
+        * @param url 指定 url，必须是包含主机的完整 url
+        * @param opts 指定附加信息
+        * @return 返回服务器响应
+        * 
+        * 
+        * @async
+        */
+    export function del(url: string, opts?: Object/** = v8::Object::New(isolate)*/): HttpResponse;
+
+    /**
+        * 
+        * @brief 用 PUT 方法请求指定的 url，并返回结果，等同于 request("PUT", ...)
+        * opts 包含请求的附加选项，支持的内容如下：
+        * ```JavaScript
+        * {
+        * "query": {},
+        * "body": SeekedStream | Buffer | String | {},
+        * "json": {},
+        * "headers": {}
+        * }
+        * ```
+        * 其中 body，json 不得同时出现。缺省为 {}，不包含任何附加信息
+        * @param url 指定 url，必须是包含主机的完整 url
+        * @param opts 指定附加信息
+        * @return 返回服务器响应
+        * 
+        * 
+        * @async
+        */
+    export function put(url: string, opts?: Object/** = v8::Object::New(isolate)*/): HttpResponse;
+
+    /**
+        * 
+        * @brief 用 PATCH 方法请求指定的 url，并返回结果，等同于 request("PATCH", ...)
+        * opts 包含请求的附加选项，支持的内容如下：
+        * ```JavaScript
+        * {
+        * "query": {},
+        * "body": SeekedStream | Buffer | String | {},
+        * "json": {},
+        * "headers": {}
+        * }
+        * ```
+        * 其中 body，json 不得同时出现。缺省为 {}，不包含任何附加信息
+        * @param url 指定 url，必须是包含主机的完整 url
+        * @param opts 指定附加信息
+        * @return 返回服务器响应
+        * 
+        * 
+        * @async
+        */
+    export function patch(url: string, opts?: Object/** = v8::Object::New(isolate)*/): HttpResponse;
+}
+
+declare module "io" {
+    import { Stat } from "fs";
+    interface SeekableStream extends FibJS.Stream {
+
+        /**
+            * 
+            * @brief 移动文件当前操作位置
+            * @param offset 指定新的位置
+            * @param whence 指定位置基准，允许的值为：SEEK_SET, SEEK_CUR, SEEK_END
+            * 
+            * 
+            * 
+            */
+        seek(offset: number, whence: number): void;
+
+        /**
+            * 
+            * @brief 查询流当前位置
+            * @return 返回流当前位置
+            * 
+            * 
+            * 
+            */
+        tell(): number;
+
+        /**
+            * 
+            * @brief 移动当前位置到流开头
+            * 
+            * 
+            */
+        rewind(): void;
+
+        /**
+            * 
+            * @brief 查询流尺寸
+            * @return 返回流尺寸
+            * 
+            * 
+            * 
+            */
+        size(): number;
+
+        /**
+            * 
+            * @brief 从流内读取剩余的全部数据
+            * @return 返回从流内读取的数据，若无数据可读，或者连接中断，则返回 null
+            * 
+            * 
+            * @async
+            */
+        readAll(): Buffer;
+
+        /**
+            * 
+            * @brief 修改文件尺寸，如果新尺寸小于原尺寸，则文件被截断
+            * @param bytes 新的文件尺寸
+            * 
+            * 
+            * @async
+            */
+        truncate(bytes: number): void;
+
+        /**
+            * 
+            * @brief 查询文件是否到结尾
+            * @return 返回 True 表示结尾
+            * 
+            * 
+            * 
+            */
+        eof(): boolean;
+
+        /**
+            * 
+            * @brief 查询当前文件的基础信息
+            * @return 返回 Stat 对象描述文件信息
+            * 
+            * 
+            * @async
+            */
+        stat(): Stat;
+    }
+
+    interface MemoryStream extends SeekableStream {
+
+        /**
+            * 
+            * @brief MemoryStream 构造函数
+            * 
+            * 
+            */
+        new();
+
+        /**
+            * 
+            * @brief 强制设定内存流对象的最后更新时间
+            * @param d 指定要设定的时间
+            * 
+            * 
+            * 
+            */
+        setTime(d: Date): void;
+
+        /**
+            * 
+            * @brief 创建当前内存流的一个只读副本
+            * @return 返回只读的内存流对象
+            * 
+            * 
+            * 
+            */
+        clone(): MemoryStream;
+
+        /**
+            * 
+            * @brief 清空内存文件数据，复位指针
+            * 
+            * 
+            */
+        clear(): void;
+    }
+
+    interface BufferedStream extends FibJS.Stream {
+
+        /**
+            * 
+            * @brief BufferedStream 构造函数
+            * @param stm BufferedStream 的二进制基础流对象
+            * 
+            * 
+            * 
+            */
+        new(stm: FibJS.Stream);
+
+        /**
+            * 
+            * @brief 读取指定字符的文本
+            * @param size 指定读取的文本字符个数，以 utf8 或者指定的编码字节数为准
+            * @return 返回读取的文本字符串，若无数据可读，或者连接中断，则返回 null
+            * 
+            * 
+            * @async
+            */
+        readText(size: number): string;
+
+        /**
+            * 
+            * @brief 读取一行文本，行结尾标识基于 EOL 属性的设置，缺省时，posix:\"\\n\"；windows:\"\\r\\n\"
+            * @param maxlen 指定此次读取的最大字符串，以 utf8 编码字节数为准，缺省不限制字符数
+            * @return 返回读取的文本字符串，若无数据可读，或者连接中断，则返回 null
+            * 
+            * 
+            * @async
+            */
+        readLine(maxlen?: number/** = -1*/): string;
+
+        /**
+            * 
+            * @brief 以数组方式读取一组文本行，行结尾标识基于 EOL 属性的设置，缺省时，posix:\"\\n\"；windows:\"\\r\\n\"
+            * @param maxlines 指定此次读取的最大行数，缺省读取全部文本行
+            * @return 返回读取的文本行数组，若无数据可读，或者连接中断，空数组
+            * 
+            * 
+            * 
+            */
+        readLines(maxlines?: number/** = -1*/): any[];
+
+        /**
+            * 
+            * @brief 读取一个文本字符串，以指定的字节为结尾
+            * @param mk 指定结尾的字符串
+            * @param maxlen 指定此次读取的最大字符串，以 utf8 编码字节数为准，缺省不限制字符数
+            * @return 返回读取的文本字符串，若无数据可读，或者连接中断，则返回 null
+            * 
+            * 
+            * @async
+            */
+        readUntil(mk: string, maxlen?: number/** = -1*/): string;
+
+        /**
+            * 
+            * @brief 写入一个字符串
+            * @param txt 指定写入的字符串
+            * 
+            * 
+            * @async
+            */
+        writeText(txt: string): void;
+
+        /**
+            * 
+            * @brief 写入一个字符串，并写入换行符
+            * @param txt 指定写入的字符串
+            * 
+            * 
+            * @async
+            */
+        writeLine(txt: string): void;
+    }
+    /**
+        * 
+        * @brief 创建一个内存流对象，参见 MemoryStream
+        * 
+        * 
+        */
+    export const MemoryStream: MemoryStream;
+
+    /**
+        * 
+        * @brief 创建一个缓存流读取对象，参见 BufferedStream
+        * 
+        * 
+        */
+    export const BufferedStream: BufferedStream;
+
+
+
+    /**
+        * 
+        * @brief 复制流数据到目标流中
+        * @param from 源流对象
+        * @param to 目标流对象
+        * @param bytes 复制的字节数
+        * @return 返回复制的字节数
+        * 
+        * 
+        * @async
+        */
+    export function copyStream(from: FibJS.Stream, to: FibJS.Stream, bytes?: number/** = -1*/): number;
+
+    /**
+        * 
+        * @brief 双向复制流数据，直到流中无数据，或者流被关闭
+        * @param stm1 流对象一
+        * @param stm2 流对象二
+        * 
+        * 
+        * @async
+        */
+    export function bridge(stm1: FibJS.Stream, stm2: FibJS.Stream): void;
+}
+
+declare module "mq" {
+    import { Message, HttpHandler } from "http";
+
+    interface Chain extends FibJS.Handler {
+
+        /**
+            * 
+            * @brief 构造一个消息处理器链处理对象
+            * @param hdlrs 处理器数组
+            * 
+            * 
+            * 
+            */
+        new(hdlrs: any[]);
+
+        /**
+            * 
+            * @brief 添加处理器数组
+            * @param hdlrs 处理器数组
+            * 
+            * 
+            * 
+            */
+        append(hdlrs: any[]): void;
+
+        /**
+            * 
+            * @brief 添加处理器
+            * @param hdlr 内置消息处理器，处理函数，链式处理数组，路由对象，详见 mq.Handler
+            * 
+            * 
+            * 
+            */
+        append(hdlr: FibJS.Handler): void;
+    }
+
+    interface Routing extends FibJS.Handler {
+
+        /**
+            * 
+            * @brief 创建一个消息处理器路由对象
+            * @param map 初始化路由参数
+            * 
+            * 
+            * 
+            */
+        new(map?: Object/** = v8::Object::New(isolate)*/);
+
+        /**
+            * 
+            * @brief 创建一个消息处理器路由对象
+            * @param method 指定 http 请求方法，"*" 接受所有方法
+            * @param map 初始化路由参数
+            * 
+            * 
+            * 
+            */
+        new(method: string, map: Object);
+
+        /**
+            * 
+            * @brief 从已有路由对象中添加规则，添加后原路由将被清空
+            * @param route 已经初始化的路由对象
+            * @return 返回路由对象本身
+            * 
+            * 
+            * 
+            */
+        append(route: Routing): Routing;
+
+        /**
+            * 
+            * @brief 添加一组路由规则
+            * @param map 路由参数
+            * @return 返回路由对象本身
+            * 
+            * 
+            * 
+            */
+        append(map: Object): Routing;
+
+        /**
+            * 
+            * @brief 添加一条路由规则
+            * @param pattern 消息匹配格式
+            * @param hdlr 内置消息处理器，处理函数，链式处理数组，路由对象，详见 mq.Handler
+            * @return 返回路由对象本身
+            * 
+            * 
+            * 
+            */
+        append(pattern: string, hdlr: FibJS.Handler): Routing;
+
+        /**
+            * 
+            * @brief 添加一条路由规则
+            * @param method 指定 http 请求方法，"*" 接受所有方法
+            * @param pattern 消息匹配格式
+            * @param hdlr 内置消息处理器，处理函数，链式处理数组，路由对象，详见 mq.Handler
+            * @return 返回路由对象本身
+            * 
+            * 
+            * 
+            */
+        append(method: string, pattern: string, hdlr: FibJS.Handler): Routing;
+
+        /**
+            * 
+            * @brief 添加一组接受所有 http 方法路由规则
+            * @param map 路由参数
+            * @return 返回路由对象本身
+            * 
+            * 
+            * 
+            */
+        all(map: Object): Routing;
+
+        /**
+            * 
+            * @brief 添加一条接受所有 http 方法路由规则
+            * @param pattern 消息匹配格式
+            * @param hdlr 内置消息处理器，处理函数，链式处理数组，路由对象，详见 mq.Handler
+            * @return 返回路由对象本身
+            * 
+            * 
+            * 
+            */
+        all(pattern: string, hdlr: FibJS.Handler): Routing;
+
+        /**
+            * 
+            * @brief 添加一组 GET 方法路由规则
+            * @param map 路由参数
+            * @return 返回路由对象本身
+            * 
+            * 
+            * 
+            */
+        get(map: Object): Routing;
+
+        /**
+            * 
+            * @brief 添加一条接受 http GET 方法路由规则
+            * @param pattern 消息匹配格式
+            * @param hdlr 内置消息处理器，处理函数，链式处理数组，路由对象，详见 mq.Handler
+            * @return 返回路由对象本身
+            * 
+            * 
+            * 
+            */
+        get(pattern: string, hdlr: FibJS.Handler): Routing;
+
+        /**
+            * 
+            * @brief 添加一组接受 http POST 方法路由规则
+            * @param map 路由参数
+            * @return 返回路由对象本身
+            * 
+            * 
+            * 
+            */
+        post(map: Object): Routing;
+
+        /**
+            * 
+            * @brief 添加一条接受 http POST 方法路由规则
+            * @param pattern 消息匹配格式
+            * @param hdlr 内置消息处理器，处理函数，链式处理数组，路由对象，详见 mq.Handler
+            * @return 返回路由对象本身
+            * 
+            * 
+            * 
+            */
+        post(pattern: string, hdlr: FibJS.Handler): Routing;
+
+        /**
+            * 
+            * @brief 添加一组接受 http DELETE 方法路由规则
+            * @param map 路由参数
+            * @return 返回路由对象本身
+            * 
+            * 
+            * 
+            */
+        del(map: Object): Routing;
+
+        /**
+            * 
+            * @brief 添加一条接受 http DELETE 方法路由规则
+            * @param pattern 消息匹配格式
+            * @param hdlr 内置消息处理器，处理函数，链式处理数组，路由对象，详见 mq.Handler
+            * @return 返回路由对象本身
+            * 
+            * 
+            * 
+            */
+        del(pattern: string, hdlr: FibJS.Handler): Routing;
+
+        /**
+            * 
+            * @brief 添加一组 PUT 方法路由规则
+            * @param map 路由参数
+            * @return 返回路由对象本身
+            * 
+            * 
+            * 
+            */
+        put(map: Object): Routing;
+
+        /**
+            * 
+            * @brief 添加一条接受 http PUT 方法路由规则
+            * @param pattern 消息匹配格式
+            * @param hdlr 内置消息处理器，处理函数，链式处理数组，路由对象，详见 mq.Handler
+            * @return 返回路由对象本身
+            * 
+            * 
+            * 
+            */
+        put(pattern: string, hdlr: FibJS.Handler): Routing;
+
+        /**
+            * 
+            * @brief 添加一组 PATCH 方法路由规则
+            * @param map 路由参数
+            * @return 返回路由对象本身
+            * 
+            * 
+            * 
+            */
+        patch(map: Object): Routing;
+
+        /**
+            * 
+            * @brief 添加一条接受 http PATCH 方法路由规则
+            * @param pattern 消息匹配格式
+            * @param hdlr 内置消息处理器，处理函数，链式处理数组，路由对象，详见 mq.Handler
+            * @return 返回路由对象本身
+            * 
+            * 
+            * 
+            */
+        patch(pattern: string, hdlr: FibJS.Handler): Routing;
+
+        /**
+            * 
+            * @brief 添加一组 FIND 方法路由规则
+            * @param map 路由参数
+            * @return 返回路由对象本身
+            * 
+            * 
+            * 
+            */
+        find(map: Object): Routing;
+
+        /**
+            * 
+            * @brief 添加一条接受 http FIND 方法路由规则
+            * @param pattern 消息匹配格式
+            * @param hdlr 内置消息处理器，处理函数，链式处理数组，路由对象，详见 mq.Handler
+            * @return 返回路由对象本身
+            * 
+            * 
+            * 
+            */
+        find(pattern: string, hdlr: FibJS.Handler): Routing;
+    }
+
+
+    /**
+        * 
+        * @brief 创建一个消息对象，参见 Message
+        * 
+        * 
+        */
+    export const Message: Message;
+
+    /**
+        * 
+        * @brief 创建一个 http 协议处理器对象，参见 HttpHandler
+        * 
+        * 
+        */
+    export const HttpHandler: HttpHandler;
+
+    /**
+        * 
+        * @brief 创建一个消息处理器对象，传递值内置处理器则直接返回
+        * 
+        * hdlr 接受内置消息处理器，处理函数，链式处理数组，路由对象：
+        * - Function javascript 函数，将使用此函数进行处理
+        * - Handler 内置处理器，将使用此处理器进行处理
+        * - 链式处理数组，等同于返回 new mq.Chain(hdlr)，参见 Chain
+        * - 路由对象，等同于返回 new mq.Routing(hdlr)，参见 Routing
+        * 
+        * 消息处理函数语法如下：
+        * ```JavaScript
+        * function func(v){
+        * }
+        * ```
+        * 参数 v 为正在处理的消息，返回结果允许有四种:
+        * - Function javascript 函数，将使用此函数进行下一阶段处理
+        * - Handler 内置处理器，将使用此处理器进行下一阶段处理
+        * - 链式处理数组，等同于 new mq.Chain(v)，参见 Chain
+        * - 路由对象，等同于 new mq.Routing(v)，参见 Routing
+        * 
+        * 无返回或者其他的返回结果将结束消息处理。
+        * @param hdlr 内置消息处理器，处理函数，链式处理数组，路由对象
+        * @return 返回封装了处理函数的处理器
+        * 
+        * 
+        * 
+        */
+    export const Handler: FibJS.Handler;
+
+    /**
+        * 
+        * @brief 创建一个消息处理器链处理对象，参见 Chain
+        * 
+        * 
+        */
+    export const Chain: Chain;
+
+    /**
+        * 
+        * @brief 创建一个消息处理器路由对象，参见 Routing
+        * 
+        * 
+        */
+    export const Routing: Routing;
+
+
+
+    /**
+        * 
+        * @brief 创建一个空处理器对象，次处理对象不做任何处理直接返回
+        * @return 返回空处理函数
+        * 
+        * 
+        * 
+        */
+    export function nullHandler(): FibJS.Handler;
+
+    /**
+        * 
+        * @brief 使用给定的处理器处理一个消息或对象
+        * 
+        * 不同于处理器的 invoke 方法，此方法将循环调用每个处理器的返回处理器，直到处理器返回 null 为止。
+        * @param hdlr 指定使用的处理器
+        * @param v 指定要处理的消息或对象
+        * 
+        * 
+        * @async
+        */
+    export function invoke(hdlr: FibJS.Handler, v: object): void;
+}
+
+declare module "os" {
+
+    export class Service extends FibJS.EventEmitter {
+
+        /**
+            * 
+            * @brief 系统服务管理对象构造函数
+            * @param name 服务名称
+            * @param worker 服务运行函数
+            * @param event 服务事件处理
+            * 
+            * 
+            * 
+            */
+        new(name: string, worker: Function, event?: Object/** = v8::Object::New(isolate)*/);
+
+        /**
+            * 
+            * @brief 开始运行服务实体
+            * 
+            * @async
+            */
+        run(): void;
+
+        /**
+            * 
+            * @brief 安装服务到系统
+            * @param name 服务名称
+            * @param cmd 服务命令行
+            * @param displayName 服务显示名称
+            * @param description 服务描述信息
+            * 
+            * 
+            * 
+            */
+        static install(name: string, cmd: string, displayName?: string/** = ""*/, description?: string/** = ""*/): void;
+
+        /**
+            * 
+            * @brief 从系统中卸载服务
+            * @param name 服务名称
+            * 
+            * 
+            * 
+            */
+        static remove(name: string): void;
+
+        /**
+            * 
+            * @brief 启动服务
+            * @param name 服务名称
+            * 
+            * 
+            * 
+            */
+        static start(name: string): void;
+
+        /**
+            * 
+            * @brief 停止服务
+            * @param name 服务名称
+            * 
+            * 
+            * 
+            */
+        static stop(name: string): void;
+
+        /**
+            * 
+            * @brief 重启服务
+            * @param name 服务名称
+            * 
+            * 
+            * 
+            */
+        static restart(name: string): void;
+
+        /**
+            * 
+            * @brief 检测服务是否安装
+            * @param name 服务名称
+            * @return 服务安装返回 True
+            * 
+            * 
+            * 
+            */
+        static isInstalled(name: string): boolean;
+
+        /**
+            * 
+            * @brief 检测服务是否运行
+            * @param name 服务名称
+            * @return 服务运行返回 True
+            * 
+            * 
+            * 
+            */
+        static isRunning(name: string): boolean;
+    }
+
+    /**
+        * 
+        * @brief 查询当前运行环境主机名
+        * @return 返回主机名
+        * 
+        * 
+        * 
+        */
+    export function hostname(): string;
+
+    /**
+        * 
+        * @brief 查询当前 CPU 的字节顺序
+        * @return 返回字节顺序
+        * 
+        * 
+        * 
+        */
+    export function endianness(): string;
+
+    /**
+        * 
+        * @brief 查询当前运行环境操作系统名称
+        * @return 返回系统名称
+        * 
+        * 
+        * 
+        */
+    export function type(): string;
+
+    /**
+        * 
+        * @brief 查询当前运行环境操作系统版本
+        * @return 返回版本信息
+        * 
+        * 
+        * 
+        */
+    export function release(): string;
+
+    /**
+        * 
+        * @brief 查询当前用户目录
+        * @return 返回目录字符串
+        * 
+        * 
+        * 
+        */
+    export function homedir(): string;
+
+    /**
+        * 
+        * @brief 查询当前 cpu 环境
+        * @return 返回 cpu 类型，可能的结果为 'amd64', 'arm', 'arm64', 'ia32'
+        * 
+        * 
+        * 
+        */
+    export function arch(): string;
+
+    /**
+        * 
+        * @brief 查询运行环境运行时间，以秒为单位
+        * @return 返回表示时间的数值
+        * 
+        * 
+        * 
+        */
+    export function uptime(): number;
+
+    /**
+        * 
+        * @brief 查询运行环境 1分钟，5分钟，15分钟平均负载
+        * @return 返回包含三个负载数据的数组
+        * 
+        * 
+        * 
+        */
+    export function loadavg(): any[];
+
+    /**
+        * 
+        * @brief 查询运行环境总内存，以字节为单位
+        * @return 返回内存数据
+        * 
+        * 
+        * 
+        */
+    export function totalmem(): number;
+
+    /**
+        * 
+        * @brief 查询运行环境可用内存，以字节为单位
+        * @return 返回内存数据
+        * 
+        * 
+        * 
+        */
+    export function freemem(): number;
+
+    /**
+        * 
+        * @brief 查询当前运行环境 cpu 个数和参数
+        * @return 返回包含 cpu 参数的数组，每一项对应一个 cpu
+        * 
+        * 
+        * 
+        */
+    export function cpus(): any[];
+
+    /**
+        * 
+        * @brief 查询当前运行环境 cpu 个数
+        * @return 返回 cpu 个数
+        * 
+        * 
+        * 
+        */
+    export function cpuNumbers(): number;
+
+    /**
+        * 
+        * @brief 查询当前运行环境临时文件目录
+        * @return 返回临时文件目录
+        * 
+        * 
+        * 
+        */
+    export function tmpdir(): string;
+
+    /**
+        * 
+        * @brief 返回当前有效执行用户信息
+        * @param options 用于解释结果字符串的字符编码
+        * @return 当前有效执行用户信息
+        * 
+        * 
+        * 
+        */
+    export function userInfo(options?: Object/** = v8::Object::New(isolate)*/): Object;
+
+    /**
+        * 
+        * @brief 查询当前运行环境网络信息
+        * @return 返回网卡信息
+        * 
+        * 
+        * 
+        */
+    export function networkInterfaces(): Object;
+
+    /**
+        * 
+        * @brief 查询当前主机的打印机信息
+        * @return 返回打印机信息
+        * 
+        * 
+        * 
+        */
+    export function printerInfo(): any[];
+
+    /**
+        * 
+        * @brief 创建一个打印机输出对象
+        * @param name 打印机名称
+        * @return 返回打印机输出对象
+        * 
+        * 
+        * @async
+        */
+    export function openPrinter(name: string): FibJS.BufferedStream;
+
+    /**
+        * 
+        * @brief 查询当前平台名称
+        * @return 返回平台名称，可能的结果为 'darwin', 'freebsd', 'linux', 或 'win32'
+        * 
+        * 
+        * 
+        */
+    export function platform(): string;
+
+    /**
+        * 
+        * @brief 解析时间字符串或查询运行环境当前时间
+        * @param tmString 时间字符串，缺省则查询当前时间
+        * @return 返回 javascript Date 对象
+        * 
+        * 
+        * 
+        */
+    export function time(tmString?: string/** = ""*/): Date;
+
+    /**
+        * 
+        * @brief 时间计算函数，根据 part 指定计算时间
+        * @param d 指定用于计算 Date 对象
+        * @param num 指定运算的数值
+        * @param part 指定运算的时间部位，接收值为："year", "month", "day", "hour", "minute", "second"
+        * @return 返回 javascript Date 对象
+        * 
+        * 
+        * 
+        */
+    export function dateAdd(d: Date, num: number, part: string): Date;
+
+    /**
+        * 
+        * @brief 查询当前进程内存使用报告
+        * 
+        * 内存报告生成类似以下结果：
+        * ```JavaScript
+        * {
+        * "rss": 8622080,
+        * "heapTotal": 4083456,
+        * "heapUsed": 1621800,
+        * "nativeObjects": 122
+        * }
+        * ```
+        * 其中：
+        * - rss 返回进程当前占用物理内存大小
+        * - heapTotal 返回 v8 引擎堆内存大小
+        * - heapUsed 返回 v8 引擎正在使用堆内存大小
+        * - nativeObjects 返回当前有效内置对象数
+        * @return 返回包含内存报告
+        * 
+        * 
+        * 
+        */
+    export function memoryUsage(): Object;
+}
+
+declare module "path" {
+
+    interface Posix {
+
+
+
+
+		/**
+			* 
+			* @brief 标准化路径，处理路径中父目录等信息
+			* 
+			* @param path 给定的未处理的路径
+			* @return 返回经过处理的路径
+			* 
+			* 
+			* 
+			*/
+        normalize(path: string): string;
+
+        /**
+            * 
+            * @brief 查询路径中的文件名称，若指定扩展名，则自动取消匹配的扩展名
+            * 
+            * @param path 给定查询的路径
+            * @param ext 指定扩展名，若文件名中有符合条件的扩展名，将自动取消
+            * @return 返回文件名称
+            * 
+            * 
+            * 
+            */
+        basename(path: string, ext?: string/** = ""*/): string;
+
+        /**
+            * 
+            * @brief 查询路径中的文件扩展名
+            * 
+            * @param path 给定查询的路径
+            * @return 返回得到的扩展名
+            * 
+            * 
+            * 
+            */
+        extname(path: string): string;
+
+        /**
+            * 
+            * @brief 查询路径中的目录路径
+            * 
+            * @param path 给定查询的路径
+            * @return 返回得到的目录的路径
+            * 
+            * 
+            * 
+            */
+        dirname(path: string): string;
+
+        /**
+            * 
+            * @brief 转换给定路径为全路径
+            * 
+            * @param path 给定转换的路径
+            * @return 返回转换的全路径
+            * 
+            * 
+            * 
+            */
+        fullpath(path: string): string;
+
+        /**
+            * 
+            * @brief 识别给定的路径是否是绝对路径
+            * 
+            * @param path 给定需要识别的路径
+            * @return 是绝对路径则返回 true
+            * 
+            * 
+            * 
+            */
+        isAbsolute(path: string): boolean;
+
+        /**
+            * 
+            * @brief 合并一系列路径成为一个单一路径
+            * 
+            * @param ps 一个或多个相关的路径
+            * @return 返回得到的新路径
+            * 
+            * 
+            * 
+            */
+        join(...ps: any[]): string;
+
+        /**
+            * 
+            * @brief 合并一系列路径成为一个绝对路径
+            * 
+            * @param ps 一个或多个相关的路径
+            * @return 返回得到的新路径
+            * 
+            * 
+            * 
+            */
+        resolve(...ps: any[]): string;
+
+        /**
+            * 
+            * @brief 转换成 namespace-prefixed 路径。只在 windows 有效，其他系统直接返回。
+            * see: https://msdn.microsoft.com/library/windows/desktop/aa365247(v=vs.85).aspx#namespaces
+            * @param path 给定的路径。
+            * @return 返回得到的新路径
+            * 
+            * 
+            * 
+            */
+        toNamespacedPath(path?: any/** = v8::Undefined(isolate)*/): any;
+    }
+
+    interface Win32 {
+
+		/**
+			* 
+			* @brief 标准化路径，处理路径中父目录等信息
+			* 
+			* @param path 给定的未处理的路径
+			* @return 返回经过处理的路径
+			* 
+			* 
+			* 
+			*/
+        normalize(path: string): string;
+
+		/**
+			* 
+			* @brief 查询路径中的文件名称，若指定扩展名，则自动取消匹配的扩展名
+			* 
+			* @param path 给定查询的路径
+			* @param ext 指定扩展名，若文件名中有符合条件的扩展名，将自动取消
+			* @return 返回文件名称
+			* 
+			* 
+			* 
+			*/
+        basename(path: string, ext?: string/** = ""*/): string;
+
+		/**
+			* 
+			* @brief 查询路径中的文件扩展名
+			* 
+			* @param path 给定查询的路径
+			* @return 返回得到的扩展名
+			* 
+			* 
+			* 
+			*/
+        extname(path: string): string;
+
+		/**
+			* 
+			* @brief 查询路径中的目录路径
+			* 
+			* @param path 给定查询的路径
+			* @return 返回得到的目录的路径
+			* 
+			* 
+			* 
+			*/
+        dirname(path: string): string;
+
+		/**
+			* 
+			* @brief 转换给定路径为全路径
+			* 
+			* @param path 给定转换的路径
+			* @return 返回转换的全路径
+			* 
+			* 
+			* 
+			*/
+        fullpath(path: string): string;
+
+		/**
+			* 
+			* @brief 识别给定的路径是否是绝对路径
+			* 
+			* @param path 给定需要识别的路径
+			* @return 是绝对路径则返回 true
+			* 
+			* 
+			* 
+			*/
+        isAbsolute(path: string): boolean;
+
+		/**
+			* 
+			* @brief 合并一系列路径成为一个单一路径
+			* 
+			* @param ps 一个或多个相关的路径
+			* @return 返回得到的新路径
+			* 
+			* 
+			* 
+			*/
+        join(...ps: any[]): string;
+
+		/**
+			* 
+			* @brief 合并一系列路径成为一个绝对路径
+			* 
+			* @param ps 一个或多个相关的路径
+			* @return 返回得到的新路径
+			* 
+			* 
+			* 
+			*/
+        resolve(...ps: any[]): string;
+
+		/**
+			* 
+			* @brief 转换成 namespace-prefixed 路径。只在 windows 有效，其他系统直接返回。
+			* see: https://msdn.microsoft.com/library/windows/desktop/aa365247(v=vs.85).aspx#namespaces
+			* @param path 给定的路径。
+			* @return 返回得到的新路径
+			* 
+			* 
+			* 
+			*/
+        toNamespacedPath(path?: any/** = v8::Undefined(isolate)*/): any;
+    }
+
+    export var posix: Posix;
+
+    export var win32: Win32;
+
+    /**
+     * 查询当前操作系统的多路径组合字符，posix 返回 ':', windows 返回 ';'
+     */
+    export var delimiter: Readonly<string>;
+
+    /**
+        * 
+        * @brief 标准化路径，处理路径中父目录等信息
+        * 
+        * @param path 给定的未处理的路径
+        * @return 返回经过处理的路径
+        * 
+        * 
+        * 
+        */
+    export function normalize(path: string): string;
+
+    /**
+        * 
+        * @brief 查询路径中的文件名称，若指定扩展名，则自动取消匹配的扩展名
+        * 
+        * @param path 给定查询的路径
+        * @param ext 指定扩展名，若文件名中有符合条件的扩展名，将自动取消
+        * @return 返回文件名称
+        * 
+        * 
+        * 
+        */
+    export function basename(path: string, ext?: string/** = ""*/): string;
+
+    /**
+        * 
+        * @brief 查询路径中的文件扩展名
+        * 
+        * @param path 给定查询的路径
+        * @return 返回得到的扩展名
+        * 
+        * 
+        * 
+        */
+    export function extname(path: string): string;
+
+    /**
+        * 
+        * @brief 查询路径中的目录路径
+        * 
+        * @param path 给定查询的路径
+        * @return 返回得到的目录的路径
+        * 
+        * 
+        * 
+        */
+    export function dirname(path: string): string;
+
+    /**
+        * 
+        * @brief 转换给定路径为全路径
+        * 
+        * @param path 给定转换的路径
+        * @return 返回转换的全路径
+        * 
+        * 
+        * 
+        */
+    export function fullpath(path: string): string;
+
+    /**
+        * 
+        * @brief 识别给定的路径是否是绝对路径
+        * 
+        * @param path 给定需要识别的路径
+        * @return 是绝对路径则返回 true
+        * 
+        * 
+        * 
+        */
+    export function isAbsolute(path: string): boolean;
+
+    /**
+        * 
+        * @brief 合并一系列路径成为一个单一路径
+        * 
+        * @param ps 一个或多个相关的路径
+        * @return 返回得到的新路径
+        * 
+        * 
+        * 
+        */
+    export function join(...ps: any[]): string;
+
+    /**
+        * 
+        * @brief 合并一系列路径成为一个绝对路径
+        * 
+        * @param ps 一个或多个相关的路径
+        * @return 返回得到的新路径
+        * 
+        * 
+        * 
+        */
+    export function resolve(...ps: any[]): string;
+
+    /**
+        * 
+        * @brief 转换成 namespace-prefixed 路径。只在 windows 有效，其他系统直接返回。
+        * see: https://msdn.microsoft.com/library/windows/desktop/aa365247(v=vs.85).aspx#namespaces
+        * @param path 给定的路径。
+        * @return 返回得到的新路径
+        * 
+        * 
+        * 
+        */
+    export function toNamespacedPath(path?: any/** = v8::Undefined(isolate)*/): any;
+}
+
+declare module "gui" {
+
+    interface WebView extends FibJS.EventEmitter {
+
+        /**
+            * 
+            * @brief 设置 webview 的页面 html
+            * @param html 设置的 html
+            * 
+            * 
+            * @async
+            */
+        setHtml(html: string): void;
+
+        /**
+            * 
+            * @brief 打印当前窗口文档
+            * @param mode 打印参数，0: 快速打印; 1: 标准打印; 2: 打印预览。缺省为 1
+            * 
+            * 
+            * @async
+            */
+        print(mode?: number/** = 1*/): void;
+
+        /**
+            * 
+            * @brief 关闭当前窗口
+            * 
+            * @async
+            */
+        close(): void;
+
+        /**
+            * 
+            * @brief 等待当前窗口关闭
+            * 宿主程序在创建窗口后，需要进入等待，否则随着宿主程序的退出，窗口将自动关闭。同时 wait 的调用也并不是必须的，你可以在打开窗口后处理其它业务，只需要保证程序不会自行退出即可。
+            * 
+            * 
+            * @async
+            */
+        wait(): void;
+
+        /**
+            * 
+            * @brief 向 webview 内发送消息
+            * postMessage 需要在窗口加载完成后发送消息，在此之前发送的消息会丢失。因此建议在 onload 事件触发后再调用此方法。
+            * @param msg 要发送的消息
+            * 
+            * 
+            * @async
+            */
+        postMessage(msg: string): void;
+    }
+
+    /**
+        * 
+        * @brief WebView ie 模拟版本，指定 ie7
+        * 
+        * 
+        */
+    export const IE7 = 7000;
+
+    /**
+        * 
+        * @brief WebView ie 模拟版本，指定 ie8
+        * 
+        * 
+        */
+    export const IE8 = 8000;
+
+    /**
+        * 
+        * @brief WebView ie 模拟版本，指定 ie9
+        * 
+        * 
+        */
+    export const IE9 = 9000;
+
+    /**
+        * 
+        * @brief WebView ie 模拟版本，指定 ie10
+        * 
+        * 
+        */
+    export const IE10 = 10000;
+
+    /**
+        * 
+        * @brief WebView ie 模拟版本，指定 ie11
+        * 
+        * 
+        */
+    export const IE11 = 11000;
+
+    /**
+        * 
+        * @brief WebView ie 模拟版本，指定 edge
+        * 
+        * 
+        */
+    export const EDGE = 11001;
+
+
+
+
+
+    /**
+        * 
+        * 设置 WebView 内 ie 最高模拟版本，当系统 ie 版本低于此版本时，将模拟系统安装版本
+        * @param ver 指定 ie 模拟版本
+        * 
+        * 
+        * 
+        */
+    export function setVersion(ver: number): void;
+
+    /**
+        * 
+        * @brief 打开一个窗口并访问指定网址
+        * 
+        * 支持以下参数:
+        * ```JavaScript
+        * {
+        * "left": 100, // 窗口左上角 x，缺省系统自动设定
+        * "right": 100, // 窗口左上角 y，缺省系统自动设定
+        * "width": 100, // 窗口宽度，缺省系统自动设定
+        * "height": 100, // 窗口高度，缺省系统自动设定
+        * "border": true, // 是否有边框，缺省有边框
+        * "caption": true, // 是否有标题栏，缺省有标题栏
+        * "resizable": true, // 是否可改变尺寸，缺省可以改变
+        * "maximize": false, // 是否最大化显示，缺省不最大化
+        * "visible": true, // 是否显示，缺省显示
+        * "debug": true // 是否输出 WebView 内的错误和 console 信息，缺省显示
+        * }
+        * ```
+        * 当设定 width 和 height，而未设定 left 或 right 时，窗口将自动居中
+        * @param url 指定的网址，，可以使用 fs:path 访问本地文件系统
+        * @param opt 打开窗口参数
+        * @return 返回打开的窗口对象
+        * 
+        * 
+        * 
+        */
+    export function open(url: string, opt?: Object/** = v8::Object::New(isolate)*/): WebView;
+}
+
 //#region===================================================coroutine========================================================
 declare module "coroutine" {
     export var Lock: Lock;
@@ -8463,136 +11178,507 @@ declare module "constants" {
 //#region ===================================================net========================================================
 declare module "net" {
 
-    /**
-     * 地址集常量，指定 ipv4
-     */
-    export var AF_INET: number;
-
-    /**
-     * 地址集常量，指定 ipv6
-     */
-    export const AF_INET6: number;
-
-    /**
-     * 协议族常量，指定 tcp
-     */
-    export const SOCK_STREAM: number;
-
-    /**
-     * 协议族常量，指定 udp
-     */
-    export const SOCK_DGRAM: number;
-
-    /**
-     * Socket 对象
-     */
-    export class Socket {
+    interface Socket extends FibJS.Stream {
+        /**
+		* 
+		* @brief Socket 构造函数，创建一个新的 Socket 对象
+		* @param family 指定地址集，缺省为 AF_INET，ipv4
+		* @param type 指定协议族，缺省为 SOCK_STREAM，tcp
+		* 
+		* 
+		* 
+		*/
+        new(family?: number/** = undefined*/, type?: number/** = undefined*/);
 
         /**
-         *Creates an instance of Socket.
-         * @param {number} [family] default AF_INET
-         * @param {number} [type] default SOCK_STREAM
-         * @memberof Socket
-         */
-        constructor(family?: number, type?: number);
+            * 
+            * @brief 建立一个 tcp 连接
+            * @param host 指定对方地址或主机名
+            * @param port 指定对方端口
+            * 
+            * 
+            * @async
+            */
+        connect(host: string, port: number): void;
 
         /**
-         *查询当前 Socket 对象的地址集
-         *
-         * @type {number}
-         * @memberof Socket
-         */
-        readonly family: number;
+            * 
+            * @brief 将当前 Socket 绑定至本地所有地址的指定端口
+            * @param port 指定绑定的端口
+            * @param allowIPv4 指定是否接受 ipv4 连接，缺省为 true。本参数在 ipv6 时有效，并依赖于操作系统
+            * 
+            * 
+            * 
+            */
+        bind(port: number, allowIPv4?: boolean/** = true*/): void;
 
         /**
-         *查询当前 Socket 对象的协议族
-         *
-         * @type {number}
-         * @memberof Socket
-         */
-        readonly type: number;
+            * 
+            * @brief 将当前 Socket 绑定至指定地址的指定端口
+            * @param addr 指定绑定的地址
+            * @param port 指定绑定的端口
+            * @param allowIPv4 指定是否接受 ipv4 连接，缺省为 true。本参数在 ipv6 时有效，并依赖于操作系统
+            * 
+            * 
+            * 
+            */
+        bind(addr: string, port: number, allowIPv4?: boolean/** = true*/): void;
 
         /**
-         *查询当前连接的对方地址
-         *
-         * @type {string}
-         * @memberof Socket
-         */
-        readonly remoteAddress: string;
+            * 
+            * @brief 开始监听连接请求
+            * @param backlog 指定请求队列长度，超出的请求将被拒绝，缺省为 120
+            * 
+            * 
+            * 
+            */
+        listen(backlog?: number/** = 120*/): void;
 
         /**
-         *查询当前连接的对方端口
-         *
-         * @type {number}
-         * @memberof Socket
-         */
-        readonly remotePort: number;
-
-        /**
-         *查询当前连接的本地地址
-         *
-         * @type {string}
-         * @memberof Socket
-         */
-        readonly localAddress: string;
-
-        /**
-         *查询当前连接的本地端口
-         *
-         * @type {number}
-         * @memberof Socket
-         */
-        readonly localPort: number;
-
-        /**
-         *查询和设置超时时间 单位毫秒
-         *
-         * @type {number}
-         * @memberof Socket
-         */
-        timeout: number;
-
-        /**
-         * 建立一个 tcp 连接
-         * @async
-         * @param host  指定对方地址或主机名
-         * @param prot  指定对方端口
-         */
-        connect(host: string, prot: number): void;
-
-        /**
-        * 将当前 Socket 绑定至本地所有地址的指定端口
-        * @param port  指定绑定的端口
-        * @param allowIPv4  指定绑定的端口 default true
-        */
-        bind(port: number, allowIPv4?: boolean): void;
-
-        /**
-         *将当前 Socket 绑定至指定地址的指定端口
-         *
-         * @param {string} addr 指定绑定的地址
-         * @param {number} port 指定绑定的端口
-         * @param {boolean} [allowIPv4] 指定是否接受 ipv4 连接，缺省为 true。本参数在 ipv6 时有效，并依赖于操作系统
-         * @memberof Socket
-         */
-        bind(addr: string, port: number, allowIPv4?: boolean): void;
-
-        /**
-         *开始监听连接请求
-         *
-         * @param {number} [backlog] 指定请求队列长度，超出的请求将被拒绝，缺省为 120
-         * @memberof Socket
-         */
-        listen(backlog?: number): void;
-
-        /**
-         *等待并接受一个连接
-         * @async
-         * @memberof Socket
-         */
+            * 
+            * @brief 等待并接受一个连接
+            * @return 返回接收到得连接对象
+            * 
+            * 
+            * @async
+            */
         accept(): Socket;
 
-        recv(): void;
+        /**
+            * 
+            * @brief 从连接读取指定大小的数据，不同于 read 方法，recv 并不保证读完要求的数据，而是在读取到数据后立即返回
+            * @param bytes 指定要读取的数据量，缺省读取任意尺寸的数据
+            * @return 返回从连接读取的数据
+            * 
+            * 
+            * @async
+            */
+        recv(bytes?: number/** = -1*/): Buffer;
+
+        /**
+            * 
+            * @brief 读取一个 UDP 包
+            * recvfrom 返回结果中包含以下内容：
+            * - data: 接收到的二进制数据块
+            * - address: 发送方的地址
+            * - port: 发送方的端口
+            * @param bytes 指定要读取的数据量，缺省读取任意尺寸的数据
+            * @return 返回从连接读取的数据包
+            * 
+            * 
+            * @async
+            */
+        recvfrom(bytes?: number/** = -1*/): any;
+
+        /**
+            * 
+            * @brief 将给定的数据写入连接，此方法等效于 write 方法
+            * @param data 给定要写入的数据
+            * 
+            * 
+            * @async
+            */
+        send(data: Buffer): void;
+
+        /**
+            * 
+            * @brief 向给定 ip:port 发送一个 UDP 包
+            * @param data 给定要写入的数据
+            * @param host 指定目标 ip 或主机名
+            * @param port 指定目标端口
+            * 
+            * 
+            * @async
+            */
+        sendto(data: Buffer, host: string, port: number): void;
     }
+
+    interface Smtp {
+
+        /**
+            * 
+            * @brief Smtp 对象构造函数
+            * 
+            * 
+            */
+        new();
+
+        /**
+            * 
+            * @brief 建立到指定的服务器
+            * @param url 指定连接的协议，可以是：tcp://host:port 或者 ssl://host:port
+            * 
+            * 
+            * @async
+            */
+        connect(url: string): void;
+
+        /**
+            * 
+            * @brief 发送指定命令，并返回响应，服务器报错则抛出错误
+            * @param cmd 命令名
+            * @param arg 参数
+            * @return 如果成功，返回服务器响应
+            * 
+            * 
+            * @async
+            */
+        command(cmd: string, arg: string): string;
+
+        /**
+            * 
+            * @brief 发送 HELO 命令，服务器报错则抛出错误
+            * @param hostname 主机名，缺省为“localhost”
+            * 
+            * 
+            * @async
+            */
+        hello(hostname?: string/** = "localhost"*/): void;
+
+        /**
+            * 
+            * @brief 用指定的用户及密码登录服务器，服务器报错则抛出错误
+            * @param username 用户名
+            * @param password 密码
+            * 
+            * 
+            * @async
+            */
+        login(username: string, password: string): void;
+
+        /**
+            * 
+            * @brief 指定发件人信箱，服务器报错则抛出错误
+            * @param address 发件人信箱
+            * 
+            * 
+            * @async
+            */
+        from(address: string): void;
+
+        /**
+            * 
+            * @brief 指定收件人信箱，服务器报错则抛出错误
+            * @param address 收件人信箱
+            * 
+            * 
+            * @async
+            */
+        to(address: string): void;
+
+        /**
+            * 
+            * @brief 发送文本到收件人，服务器报错则抛出错误
+            * @param txt 要发送的文本
+            * 
+            * 
+            * @async
+            */
+        data(txt: string): void;
+
+        /**
+            * 
+            * @brief 退出并关闭连接，服务器报错则抛出错误
+            * 
+            * @async
+            */
+        quit(): void;
+    }
+
+    interface TcpServer {
+
+        /**
+            * 
+            * @brief TcpServer 构造函数，在所有本机地址侦听
+            * @param port 指定 tcp 服务器侦听端口
+            * @param listener 指定 tcp 接收到的内置消息处理器，处理函数，链式处理数组，路由对象，详见 mq.Handler
+            * 
+            * 
+            * 
+            */
+        new(port: number, listener: FibJS.Handler);
+
+        /**
+            * 
+            * @brief TcpServer 构造函数
+            * @param addr 指定 tcp 服务器侦听地址，为 "" 则在本机所有地址侦听
+            * @param port 指定 tcp 服务器侦听端口
+            * @param listener 指定 tcp 接收到的连接的内置消息处理器，处理函数，链式处理数组，路由对象，详见 mq.Handler
+            * 
+            * 
+            * 
+            */
+        new(addr: string, port: number, listener: FibJS.Handler);
+
+        /**
+            * 
+            * @brief 运行服务器并开始接收和分发连接，此函数不会返回
+            * 
+            * @async
+            */
+        run(): void;
+
+        /**
+            * 
+            * @brief 异步运行服务器并开始接收和分发连接，调用后立即返回，服务器在后台运行
+            * 
+            * 
+            */
+        asyncRun(): void;
+
+        /**
+            * 
+            * @brief 关闭 socket中止正在运行的服务器
+            * 
+            * @async
+            */
+        stop(): void;
+    }
+
+    interface UrlObject {
+
+        /**
+            * 
+            * @brief UrlObject 对象构造函数，使用参数构造
+            * @param args 指定构造参数的字典对象，支持的字段有：protocol, slashes, username, password, hostname, port, pathname, query, hash
+            * 
+            * 
+            * 
+            */
+        new(args: Object);
+
+        /**
+            * 
+            * @brief UrlObject 对象构造函数，使用 url 字符串构造
+            * @param url 指定构造 url 字符串
+            * @param parseQueryString 指定是否解析 query
+            * @param slashesDenoteHost  默认为false, 如果设置为true，则从字符串'//'之后到下一个'/'之前的字符串会被解析为host，例如'//foo/bar', 结果应该是{host: 'foo', pathname: '/bar'}而不是{pathname: '//foo/bar'}
+            * 
+            * 
+            * 
+            */
+        new(url?: string/** = ""*/, parseQueryString?: boolean/** = false*/, slashesDenoteHost?: boolean/** = false*/);
+
+        /**
+            * 
+            * @brief 解析一个 url 字符串
+            * @param url 指定需要解析的 url 字符串
+            * @param parseQueryString 指定是否解析 query
+            * @param slashesDenoteHost  默认为false, 如果设置为true，则从字符串'//'之后到下一个'/'之前的字符串会被解析为host，例如'//foo/bar', 结果应该是{host: 'foo', pathname: '/bar'}而不是{pathname: '//foo/bar'}
+            * 
+            * 
+            * 
+            */
+        parse(url: string, parseQueryString?: boolean/** = false*/, slashesDenoteHost?: boolean/** = false*/): void;
+
+        /**
+            * 
+            * @brief 使用指定的参数构造 UrlObject
+            * @param args 指定构造参数的字典对象，支持的字段有：protocol, slashes, username, password, hostname, port, pathname, query, hash
+            * 
+            * 
+            * 
+            */
+        format(args: Object): void;
+
+        /**
+            * 
+            * @brief 重定位 url 路径，自动识别新路径为相对路径还是绝对路径
+            * @param url 指定新的路径
+            * @return 返回包含重定位数据的对象
+            * 
+            * 
+            * 
+            */
+        resolve(url: string): UrlObject;
+
+        /**
+            * 
+            * @brief 标准化路径
+            * 
+            * 
+            * 
+            */
+        normalize(): void;
+    }
+
+    /**
+    * 
+    * @brief 地址集常量，指定 ipv4
+    * 
+    * 
+    */
+    export const AF_INET = 2;
+
+    /**
+        * 
+        * @brief 地址集常量，指定 ipv6
+        * 
+        * 
+        */
+    export const AF_INET6 = 10;
+
+    /**
+        * 
+        * @brief 协议族常量，指定 tcp
+        * 
+        * 
+        */
+    export const SOCK_STREAM = 1;
+
+    /**
+        * 
+        * @brief 协议族常量，指定 udp
+        * 
+        * 
+        */
+    export const SOCK_DGRAM = 2;
+
+
+
+    /**
+        * 
+        * @brief 创建一个 Socket 对象，参见 Socket
+        * 
+        * 
+        */
+    export const Socket: Socket;
+
+    /**
+        * 
+        * @brief 创建一个 Smtp 对象，参见 Smtp
+        * 
+        * 
+        */
+    export const Smtp: Smtp;
+
+    /**
+        * 
+        * @brief 创建一个 TcpServer 对象，参见 TcpServer
+        * 
+        * 
+        */
+    export const TcpServer: TcpServer;
+
+    /**
+        * 
+        * @brief 创建一个 UrlObject 对象，参见 UrlObject
+        * 
+        * 
+        */
+    export const Url: UrlObject;
+
+
+
+    /**
+        * 
+        * @brief 查询当前运行环境网络信息
+        * @return 返回网卡信息
+        * 
+        * 
+        * 
+        */
+    export function info(): Object;
+
+    /**
+        * 
+        * @brief 查询给定的主机名的地址
+        * @param name 指定主机名
+        * @param family 指定查询返回类型，缺省为 AF_INET
+        * @return 返回查询的 ip 字符串
+        * 
+        * 
+        * @async
+        */
+    export function resolve(name: string, family?: number/** = undefined*/): string;
+
+    /**
+        * 
+        * @brief 快速查询的主机地址，等效与 resolve(name)
+        * @param name 指定主机名
+        * @return 返回查询的 ip 字符串
+        * 
+        * 
+        * @async
+        */
+    export function ip(name: string): string;
+
+    /**
+        * 
+        * @brief 快速查询的主机 ipv6 地址，等效与 resolve(name, net.AF_INET6)
+        * @param name 指定主机名
+        * @return 返回查询的 ipv6 字符串
+        * 
+        * 
+        * @async
+        */
+    export function ipv6(name: string): string;
+
+    /**
+        * 
+        * @brief 创建一个 Socket 或 SslSocket 对象并建立连接
+        * @param url 指定连接的协议，可以是：tcp://host:port 或者 ssl://host:port
+        * @param timeout 指定超时时间，单位是毫秒，默认为0
+        * @return 返回连接成功的 Socket 或者 SslSocket 对象
+        * 
+        * 
+        * @async
+        */
+    export function connect(url: string, timeout?: number/** = 0*/): FibJS.Stream;
+
+    /**
+        * 
+        * @brief 创建一个 Smtp 对象并建立连接，参见 Smtp
+        * @param url 指定连接的协议，可以是：tcp://host:port 或者 ssl://host:port
+        * @param timeout 指定超时时间，单位是毫秒，默认为0
+        * @return 返回连接成功的 Smtp 对象
+        * 
+        * 
+        * @async
+        */
+    export function openSmtp(url: string, timeout?: number/** = 0*/): Smtp;
+
+    /**
+        * 
+        * @brief 查询当前系统异步网络引擎
+        * @return 返回网络引擎名称
+        * 
+        * 
+        * 
+        */
+    export function backend(): string;
+
+    /**
+        * 
+        * @brief 检测输入是否是 IP 地址
+        * @param ip 指定要检测的字符串
+        * @return 非合法的 IP 地址，返回 0, 如果是 IPv4 则返回 4，如果是 IPv6 则返回 6
+        * 
+        * 
+        * 
+        */
+    export function isIP(ip?: string/** = ""*/): number;
+
+    /**
+        * 
+        * @brief 检测输入是否是 IPv4 地址
+        * @param ip 指定要检测的字符串
+        * @return 如果是 IPv4 则返回 true.否则返回 false
+        * 
+        * 
+        * 
+        */
+    export function isIPv4(ip?: string/** = ""*/): boolean;
+
+    /**
+        * 
+        * @brief 检测输入是否是 IPv6 地址
+        * @param ip 指定要检测的字符串
+        * @return 如果是 IPv6 则返回 true.否则返回 false
+        * 
+        * 
+        * 
+        */
+    export function isIPv6(ip?: string/** = ""*/): boolean;
 }
 //#endregion
